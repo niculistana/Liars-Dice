@@ -23,7 +23,6 @@
 }
 
 #phaser-window {
-    float: center;
     min-height: 600px;
     background-color: #8d8d8d;
 }
