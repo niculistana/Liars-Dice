@@ -37,7 +37,6 @@ function waitGame(){
     numPlayers++;
     logo.alpha = 1;
     state.text = "";
-    console.log(numPlayers);
     if(!isRoomFull()) {
         setTimeout("waitGame()", 3000);
     } else {
