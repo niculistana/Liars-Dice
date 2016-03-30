@@ -72,7 +72,8 @@ function create() {
 }
 
 function testMethod1() {
-    alert("testMethod1");
+    // alert("testMethod1");
+    diePool.resetDiePool();
 }
 
 function testMethod2() {
