@@ -17,6 +17,8 @@ function preload() {
     // all_Files.forEach(logArrayElements);
     game.load.image('dollars', 'assets/sprites/dollar_sign.png');
     game.load.image('logo', 'assets/sprites/liars_dice_logo.png');
+
+    // load database
 }
 
 function create() {
