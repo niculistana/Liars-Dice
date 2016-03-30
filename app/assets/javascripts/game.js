@@ -4,6 +4,8 @@ var assetsLoaded = false;
 var haveWinner = false;
 var logo;
 var text;
+var state;
+var diePool;
 
 // function Game(){
 //     this.numPlayers = numPlayers;
@@ -17,9 +19,13 @@ function preload() {
     // all_Files.forEach(logArrayElements);
     game.load.image('dollars', 'assets/sprites/dollar_sign.png');
     game.load.image('logo', 'assets/sprites/liars_dice_logo.png');
+    game.load.spritesheet('button', 'assets/buttons/button_sprite_sheet.png', 193, 71);
 
-    // load database
+    diePool = new diePool(4);
+    diePool.generatePool();
 }
+
+var group;
 
 function create() {
     game.stage.backgroundColor = "#fff";
@@ -30,15 +36,62 @@ function create() {
     logo.alpha = 0;
 
     game.add.tween(logo).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true);
-    state = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "center" });
+    debugText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "center" });
+    diePoolText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "center", wordWrap: true, wordWrapWidth: 100 });
+
+    debugText.fixedToCamera = true;
+    debugText.cameraOffset.setTo(200, 500);
+
+    // Begin test UI group
+    group = game.add.group();
+    var button1 = game.make.button(game.world.centerX - 360, 10, 'button', testMethod1, this, 2, 1, 0);
+    button1.scale.setTo(0.35, 0.35);
+    window.rich = button1;
+
+    var button2 = game.make.button(game.world.centerX - 280, 10, 'button', testMethod2, this, 2, 1, 0);
+    button2.scale.setTo(0.35, 0.35);
+    window.rich = button2;
+
+    var button3 = game.make.button(game.world.centerX - 200, 10, 'button', testMethod3, this, 2, 1, 0);
+    button3.scale.setTo(0.35, 0.35);
+    window.rich = button3;
+
+    var button4 = game.make.button(game.world.centerX - 120, 10, 'button', testMethod4, this, 2, 1, 0);
+    button4.scale.setTo(0.35, 0.35);
+    window.rich = button4;
+
+    // game.input.onDown.addOnce(removeGroup, this);
+
+    group.add(button1);
+    group.add(button2);
+    group.add(button3);
+    group.add(button4);
+    // End test UI group
 
     waitGame();
+}
+
+function testMethod1() {
+    alert("testMethod1");
+}
+
+function testMethod2() {
+    alert("testMethod2");
+}
+
+function testMethod3() {
+    alert("testMethod3");
+}
+
+function testMethod4() {
+    alert("testMethod4");
 }
 
 function waitGame(){
     numPlayers++;
     logo.alpha = 1;
-    state.text = "";
+    state = "Wait;";
+    debugText.text = state;
     if(!isRoomFull()) {
         setTimeout("waitGame()", 3000);
     } else {
@@ -50,8 +103,7 @@ function waitGame(){
 function startGame() {
     if(!isLoaded()) {
         logo.alpha = 0;
-        state.text = "Start;";
-        // alert("Game has started!");
+        state = "Start;";
         setTimeout("startGame()", 5000);
         assetsLoaded = true;
     } else {
@@ -62,13 +114,18 @@ function startGame() {
 
 function continueGame() {
     if(!isContinue()) {
-        state.text = "Continue;";
-        // alert("Game is going on...");
+        state = "Continue;";
+        debugText.text = state;
+        diePoolText.text = "Die pool\n";
+        for (var die in diePool.allDice) {
+            diePoolText.text += " " + diePool.allDice[die].value.toString();
+        }
         setTimeout("continueGame()", 2000);
         haveWinner = true;
     } else {
-        // alert("Game has ended...");
-        state.text = "End;";
+        state = "End;";
+        diePoolText.text = "";
+        debugText.text = state;
         haveWinner = false;
 
         emitter = game.add.emitter(game.world.centerX, 250, 200);
@@ -79,8 +136,6 @@ function continueGame() {
         emitter.setScale(0.5, 1);
         emitter.gravity = 0;
 
-         // false means don't explode all the sprites at once, but instead release at a rate of 20 particles per frame
-         // The 5000 value is the lifespan of each particle
         emitter.start(false, 4000, 20);
         setTimeout(function(){
             emitter.destroy();
