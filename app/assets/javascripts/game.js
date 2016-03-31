@@ -1,11 +1,18 @@
 var game = new Phaser.Game(740, 600, Phaser.AUTO, 'phaser-window', { preload: preload, create: create });
 var numPlayers = 0;
+var players = [];
 var assetsLoaded = false;
 var haveWinner = false;
 var logo;
 var text;
 var state;
 var diePool;
+var names = {
+    0: "David",
+    1: "Nicu",
+    2: "Eric",
+    3: "Josh"
+}
 
 // function Game(){
 //     this.numPlayers = numPlayers;
@@ -78,17 +85,25 @@ function testMethod1() {
 
 function testMethod2() {
     alert("testMethod2");
+    //Challenge button
+    players[0].challengePlayer(players[1].playerNameText);
 }
 
 function testMethod3() {
     alert("testMethod3");
+    //displayHandbutton
+    players[0].displayHand();
 }
 
 function testMethod4() {
     alert("testMethod4");
+    players[0].loseDice();
+    players[0].displayHand();
 }
 
 function waitGame(){
+    players.push(new Player("2:00", names[numPlayers], numPlayers));
+    players[numPlayers].getDice(diePool.allDice);
     numPlayers++;
     logo.alpha = 1;
     state = "Wait;";
@@ -102,6 +117,7 @@ function waitGame(){
 }
 
 function startGame() {
+    console.log(players);
     if(!isLoaded()) {
         logo.alpha = 0;
         state = "Start;";
@@ -139,6 +155,7 @@ function continueGame() {
 
         emitter.start(false, 4000, 20);
         setTimeout(function(){
+            players = [];
             emitter.destroy();
             waitGame();
         }, 3000);
