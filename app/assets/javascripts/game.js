@@ -1,11 +1,22 @@
 var game = new Phaser.Game(740, 600, Phaser.AUTO, 'phaser-window', { preload: preload, create: create });
 var numPlayers = 0;
 var assetsLoaded = false;
-var haveWinner = false;
+var hasWinner = false;
 var logo;
 var text;
 var state;
 var diePool;
+
+
+// temporary button groups
+var testButtonGroup;
+var sceneButtonGroup;
+
+// timeouts for scenes
+var numPlayersTimeout;
+var assetsLoadedTimeout;
+var hasWinnerTimeout;
+
 
 // function Game(){
 //     this.numPlayers = numPlayers;
@@ -25,8 +36,6 @@ function preload() {
     diePool.generatePool();
 }
 
-var group;
-
 function create() {
     game.stage.backgroundColor = "#fff";
 
@@ -36,14 +45,14 @@ function create() {
     logo.alpha = 0;
 
     game.add.tween(logo).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true);
-    debugText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "center" });
+    debugText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "left" });
     diePoolText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "center", wordWrap: true, wordWrapWidth: 100 });
 
     debugText.fixedToCamera = true;
     debugText.cameraOffset.setTo(200, 500);
 
     // Begin test UI group
-    group = game.add.group();
+    testButtonGroup = game.add.group();
     var button1 = game.make.button(game.world.centerX - 360, 10, 'button', testMethod1, this, 2, 1, 0);
     button1.scale.setTo(0.35, 0.35);
     window.rich = button1;
@@ -60,19 +69,40 @@ function create() {
     button4.scale.setTo(0.35, 0.35);
     window.rich = button4;
 
-    // game.input.onDown.addOnce(removeGroup, this);
+    testButtonGroup.add(button1);
+    testButtonGroup.add(button2);
+    testButtonGroup.add(button3);
+    testButtonGroup.add(button4);
+    // End test UI testButtonGroup
 
-    group.add(button1);
-    group.add(button2);
-    group.add(button3);
-    group.add(button4);
-    // End test UI group
+    // Begin scene UI group
+    sceneButtonGroup = game.add.group();
+    var button5 = game.make.button(game.world.centerX - 360, 550, 'button', waitGame, this, 2, 1, 0);
+    button5.scale.setTo(0.35, 0.35);
+    window.rich = button5;
+
+    var button6 = game.make.button(game.world.centerX - 280, 550, 'button', startGame, this, 2, 1, 0);
+    button6.scale.setTo(0.35, 0.35);
+    window.rich = button6;
+
+    var button7 = game.make.button(game.world.centerX - 200, 550, 'button', continueGame, this, 2, 1, 0);
+    button7.scale.setTo(0.35, 0.35);
+    window.rich = button7;
+
+    var button8 = game.make.button(game.world.centerX - 120, 550, 'button', endGame, this, 2, 1, 0);
+    button8.scale.setTo(0.35, 0.35);
+    window.rich = button8;
+
+    sceneButtonGroup.add(button5);
+    sceneButtonGroup.add(button6);
+    sceneButtonGroup.add(button7);
+    sceneButtonGroup.add(button8);
+    // End scene UI testButtonGroup
 
     waitGame();
 }
 
 function testMethod1() {
-    // alert("testMethod1");
     diePool.resetDiePool();
 }
 
@@ -91,60 +121,57 @@ function testMethod4() {
 function waitGame(){
     numPlayers++;
     logo.alpha = 1;
-    state = "Wait;";
-    debugText.text = state;
-    if(!isRoomFull()) {
-        setTimeout("waitGame()", 3000);
-    } else {
-        numPlayers = 0;
-        startGame();
-    }
+    state = "Wait";
+    debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
+    numPlayersTimeout = setTimeout("waitGame()", 3000);
 }
 
 function startGame() {
-    if(!isLoaded()) {
-        logo.alpha = 0;
-        state = "Start;";
-        setTimeout("startGame()", 5000);
-        assetsLoaded = true;
-    } else {
-        assetsLoaded = false;
-        continueGame();
-    }
+    clearTimeout(numPlayersTimeout);
+    logo.alpha = 0;
+    state = "Start";
+    debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
+    assetsLoadedTimeout = setTimeout("startGame()", 5000);
+    assetsLoaded = true;
 }
 
 function continueGame() {
-    if(!isContinue()) {
-        state = "Continue;";
-        debugText.text = state;
-        diePoolText.text = "Die pool\n";
-        for (var die in diePool.allDice) {
-            diePoolText.text += " " + diePool.allDice[die].value.toString();
-        }
-        setTimeout("continueGame()", 2000);
-        haveWinner = true;
-    } else {
-        state = "End;";
-        diePoolText.text = "";
-        debugText.text = state;
-        haveWinner = false;
-
-        emitter = game.add.emitter(game.world.centerX, 250, 200);
-        emitter.makeParticles('dollars');
-
-        emitter.setRotation(0, 0);
-        emitter.setAlpha(0.3, 0.8);
-        emitter.setScale(0.5, 1);
-        emitter.gravity = 0;
-
-        emitter.start(false, 4000, 20);
-        setTimeout(function(){
-            emitter.destroy();
-            waitGame();
-        }, 3000);
+    clearTimeout(assetsLoadedTimeout);
+    state = "Continue";
+    debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
+    diePoolText.text = "Die pool\n";
+    for (var die in diePool.allDice) {
+        diePoolText.text += " " + diePool.allDice[die].value.toString();
     }
+    hasWinnerTimeout = setTimeout("continueGame()", 3000);
+    hasWinner = true;
 }
 
+function endGame() {
+    // reset flags
+    clearTimeout(hasWinnerTimeout);
+    numPlayers = 0;
+    assetsLoaded = false;
+    hasWinner = false;
+    state = "End";
+    diePoolText.text = "";
+    debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
+
+    emitter = game.add.emitter(game.world.centerX, 250, 200);
+    emitter.makeParticles('dollars');
+    emitter.setRotation(0, 0);
+    emitter.setAlpha(0.3, 0.8);
+    emitter.setScale(0.5, 1);
+    emitter.gravity = 0;
+    emitter.start(false, 4000, 20);
+
+    setTimeout(function(){
+        emitter.destroy();
+        waitGame();
+    }, 3000);
+}
+
+// isRoomFull, isLoaded, and isContinue will be used for future implementation of the game loop
 function isRoomFull() {
     if (numPlayers === 4) {
         return true;
@@ -162,7 +189,7 @@ function isLoaded() {
 }
 
 function isContinue() {
-    if (haveWinner) {
+    if (hasWinner) {
         return true;
     } else {
         return false;
