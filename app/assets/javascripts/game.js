@@ -7,13 +7,14 @@ var logo;
 var text;
 var state;
 var diePool;
-var names = {
+var playerNames = {
     0: "David",
     1: "Nicu",
     2: "Eric",
     3: "Josh"
-}
+};
 
+var maxPlayers = 4;
 
 // temporary button groups
 var testButtonGroup;
@@ -54,6 +55,7 @@ function create() {
     game.add.tween(logo).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true);
     debugText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "left" });
     diePoolText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "center", wordWrap: true, wordWrapWidth: 100 });
+    playerText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "center", wordWrap: true, wordWrapWidth: 100 });
 
     debugText.fixedToCamera = true;
     debugText.cameraOffset.setTo(200, 500);
@@ -132,8 +134,9 @@ function testMethod4() {
 }
 
 function waitGame(){
-    players.push(new Player("2:00", names[numPlayers], numPlayers));
+    players.push(new Player("2:00", playerNames[numPlayers], numPlayers));
     players[numPlayers].getDice(diePool.allDice);
+    playerText.text += players[numPlayers].playerNameText;
     numPlayers++;
     logo.alpha = 1;
     state = "Wait";
@@ -171,6 +174,7 @@ function endGame() {
     state = "End";
     diePoolText.text = "";
     players = [];
+    playerText.text = "";
     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
 
     emitter = game.add.emitter(game.world.centerX, 250, 200);
