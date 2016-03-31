@@ -1,9 +1,9 @@
 // the client... the player
 var diceAssignment = {
-    1: [0, 4],
-    2: [5, 9],
-    3: [10, 14],
-    4: [15, 19]
+    0: [0, 4],
+    1: [5, 9],
+    2: [10, 14],
+    3: [15, 19]
 }
 
 function Player (timeLimit, playerName, playerID) {
@@ -40,6 +40,7 @@ function Player (timeLimit, playerName, playerID) {
     //Challenge someone
     this.challengePlayer = function (playerName) {
         //Do UI logic where playerName is challenged by challenger player
+        console.log("Player "+this.playerNameText+" challenged "+playerName);
     }
     //Keep track if player is still in?
     this.changePlayerState = function (state) {
@@ -54,5 +55,10 @@ function Player (timeLimit, playerName, playerID) {
 
     this.displayHand = function () {
         //Display dice to the DOM
+        var dieText = "";
+        for (var i = 0; i<this.playerDice.length; i++) {
+            dieText += " " + this.playerDice[i].value;
+        }
+        console.log("The player's hand is: "+dieText);
     }
 };

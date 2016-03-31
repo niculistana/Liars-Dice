@@ -1,11 +1,11 @@
 function diePool (numPlayers) {
   this.numPlayers = numPlayers;
-  this.allDice = new Array(numPlayers);
+  this.allDice = [];
 
   // default number of dice per player is 5
   this.generatePool = function() {
     for (var i = 0; i <= numPlayers*5; i++) {
-      this.allDice[i] = new Die(Math.ceil(Math.random()*6));
+      this.allDice.push(new Die(Math.ceil(Math.random()*6)));
     }
   };
 
@@ -21,7 +21,8 @@ function diePool (numPlayers) {
   };
 
   this.resetDiePool = function () {
-    this.allDice.fill(new Dice(0));
+    //this.allDice.fill(new Dice(0));
+    this.allDice = [];
   };
 
 }
