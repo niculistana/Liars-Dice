@@ -108,7 +108,12 @@ function create() {
     sceneButtonGroup.add(button8);
     // End scene UI testButtonGroup
 
-    waitGame();
+    // loop until engine(game).numPlayers = 4
+        // waitGame();
+    // startGame();
+    // loop until engine(game).hasWinner == true
+        // continueGame();
+    // endGame();
 }
 
 function testMethod1() {
@@ -134,6 +139,7 @@ function testMethod4() {
 }
 
 function waitGame(){
+    // if client connection is recieved
     players.push(new Player("2:00", playerNames[numPlayers], numPlayers));
     players[numPlayers].getDice(diePool.allDice);
     playerText.text += players[numPlayers].playerNameText;
@@ -141,11 +147,14 @@ function waitGame(){
     logo.alpha = 1;
     state = "Wait";
     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
-    numPlayersTimeout = setTimeout("waitGame()", 3000);
+    // numPlayersTimeout = setTimeout("waitGame()", 3000);
 }
 
 function startGame() {
-    clearTimeout(numPlayersTimeout);
+    // probably do some threading here to load assets faster?
+    // clearTimeout(numPlayersTimeout);
+    // once done, update engine(game).assetsLoaded == true
+    // mine a directory and load every single asset from that directory
     logo.alpha = 0;
     state = "Start";
     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
@@ -154,15 +163,16 @@ function startGame() {
 }
 
 function continueGame() {
-    clearTimeout(assetsLoadedTimeout);
+    // clearTimeout(assetsLoadedTimeout);
     state = "Continue";
     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
     diePoolText.text = "Die pool\n";
     for (var die in diePool.allDice) {
         diePoolText.text += " " + diePool.allDice[die].value.toString();
     }
-    hasWinnerTimeout = setTimeout("continueGame()", 3000);
-    hasWinner = true;
+    // update diePool depending on engine(game) rules...
+    // use diePool API
+    // hasWinnerTimeout = setTimeout("continueGame()", 3000);
 }
 
 function endGame() {
