@@ -1,0 +1,1 @@
+function diePool(i){this.numPlayers=i,this.allDice=[],this.generatePool=function(){for(var e=0;5*i>=e;e++)this.allDice.push(new Die(Math.ceil(6*Math.random())))},this.getCurrentDiePool=function(){return this.allDice},this.setCurrentCurrentDie=function(){},this.removeDie=function(i){this.allDice[i].value=0},this.resetDiePool=function(){this.allDice=[]}}
