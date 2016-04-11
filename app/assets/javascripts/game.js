@@ -25,7 +25,6 @@ var numPlayersTimeout;
 var assetsLoadedTimeout;
 var hasWinnerTimeout;
 
-
 // function Game(){
 //     this.numPlayers = numPlayers;
 // }
@@ -39,7 +38,12 @@ function preload() {
     game.load.image('dollars', 'assets/sprites/dollar_sign.png');
     game.load.image('logo', 'assets/sprites/liars_dice_logo.png');
     game.load.spritesheet('button', 'assets/buttons/button_sprite_sheet.png', 193, 71);
-
+    game.load.image('dice1', 'assets/sprites/boardgamepack/PNG/Dice/dieRed1.png');
+    game.load.image('dice2', 'assets/sprites/boardgamepack/PNG/Dice/dieRed2.png');
+    game.load.image('dice3', 'assets/sprites/boardgamepack/PNG/Dice/dieRed3.png');
+    game.load.image('dice4', 'assets/sprites/boardgamepack/PNG/Dice/dieRed4.png');
+    game.load.image('dice5', 'assets/sprites/boardgamepack/PNG/Dice/dieRed5.png');
+    game.load.image('dice6', 'assets/sprites/boardgamepack/PNG/Dice/dieRed6.png');
     diePool = new diePool(4);
     diePool.generatePool();
 }
@@ -54,11 +58,21 @@ function create() {
 
     game.add.tween(logo).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true);
     debugText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "left" });
+    testButtonText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "left" });
     diePoolText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "center", wordWrap: true, wordWrapWidth: 100 });
     playerText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "center", wordWrap: true, wordWrapWidth: 100 });
 
     debugText.fixedToCamera = true;
     debugText.cameraOffset.setTo(200, 500);
+
+    testButtonText.fixedToCamera = true;
+    testButtonText.cameraOffset.setTo(10, 50);
+
+    // shows the die group
+    dieGroup = game.add.group();
+    dieSpriteGroup = new SpriteGroup("dice", dieGroup, diePool, 6, 900, 700);
+    // dieSpriteGroup.renderSprites("box");
+    dieGroup.scale.setTo(0.35,0.35);
 
     // Begin test UI group
     testButtonGroup = game.add.group();
@@ -85,67 +99,78 @@ function create() {
     // End test UI testButtonGroup
 
     // Begin scene UI group
-    sceneButtonGroup = game.add.group();
-    var button5 = game.make.button(game.world.centerX - 360, 550, 'button', waitGame, this, 2, 1, 0);
-    button5.scale.setTo(0.35, 0.35);
-    window.rich = button5;
+    // sceneButtonGroup = game.add.group();
+    // var button5 = game.make.button(game.world.centerX - 360, 550, 'button', waitGame, this, 2, 1, 0);
+    // button5.scale.setTo(0.35, 0.35);
+    // window.rich = button5;
 
-    var button6 = game.make.button(game.world.centerX - 280, 550, 'button', startGame, this, 2, 1, 0);
-    button6.scale.setTo(0.35, 0.35);
-    window.rich = button6;
+    // var button6 = game.make.button(game.world.centerX - 280, 550, 'button', startGame, this, 2, 1, 0);
+    // button6.scale.setTo(0.35, 0.35);
+    // window.rich = button6;
 
-    var button7 = game.make.button(game.world.centerX - 200, 550, 'button', continueGame, this, 2, 1, 0);
-    button7.scale.setTo(0.35, 0.35);
-    window.rich = button7;
+    // var button7 = game.make.button(game.world.centerX - 200, 550, 'button', continueGame, this, 2, 1, 0);
+    // button7.scale.setTo(0.35, 0.35);
+    // window.rich = button7;
 
-    var button8 = game.make.button(game.world.centerX - 120, 550, 'button', endGame, this, 2, 1, 0);
-    button8.scale.setTo(0.35, 0.35);
-    window.rich = button8;
+    // var button8 = game.make.button(game.world.centerX - 120, 550, 'button', endGame, this, 2, 1, 0);
+    // button8.scale.setTo(0.35, 0.35);
+    // window.rich = button8;
 
-    sceneButtonGroup.add(button5);
-    sceneButtonGroup.add(button6);
-    sceneButtonGroup.add(button7);
-    sceneButtonGroup.add(button8);
+    // sceneButtonGroup.add(button5);
+    // sceneButtonGroup.add(button6);
+    // sceneButtonGroup.add(button7);
+    // sceneButtonGroup.add(button8);
     // End scene UI testButtonGroup
 
-    waitGame();
+    // loop until engine(game).numPlayers = 4
+        // waitGame();
+    // startGame();
+    // loop until engine(game).hasWinner == true
+        // continueGame();
+    // endGame();
 }
 
 function testMethod1() {
-    diePool.resetDiePool();
+    // diePool.resetDiePool();
+    dieSpriteGroup.renderSprites("box");
+    testButtonText.text = "renderSprites";
+    // console.log(diePool.allObjects.length);
 }
 
 function testMethod2() {
-    alert("testMethod2");
-    //Challenge button
-    players[0].challengePlayer(players[1].playerNameText);
+    diePool.shuffleDice();
+    testButtonText.text = "shuffleDice";
 }
 
 function testMethod3() {
-    alert("testMethod3");
-    //displayHandbutton
-    players[0].displayHand();
+    diePool.removeDie(0);
+    dieGroup.removeAll();
+    dieSpriteGroup.renderSprites("box");
+    testButtonText.text = "RemoveAll()";
 }
 
 function testMethod4() {
-    alert("testMethod4");
-    players[0].loseDice();
-    players[0].displayHand();
+    diePool.resetDiePool();
+    testButtonText.text = "resetDiePool";
 }
 
 function waitGame(){
+    // if client connection is recieved
     players.push(new Player("2:00", playerNames[numPlayers], numPlayers));
-    players[numPlayers].getDice(diePool.allDice);
+    players[numPlayers].getDice(diePool.allObjects);
     playerText.text += players[numPlayers].playerNameText;
     numPlayers++;
     logo.alpha = 1;
     state = "Wait";
     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
-    numPlayersTimeout = setTimeout("waitGame()", 3000);
+    // numPlayersTimeout = setTimeout("waitGame()", 3000);
 }
 
 function startGame() {
-    clearTimeout(numPlayersTimeout);
+    // probably do some threading here to load assets faster?
+    // clearTimeout(numPlayersTimeout);
+    // once done, update engine(game).assetsLoaded == true
+    // mine a directory and load every single asset from that directory
     logo.alpha = 0;
     state = "Start";
     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
@@ -154,15 +179,16 @@ function startGame() {
 }
 
 function continueGame() {
-    clearTimeout(assetsLoadedTimeout);
+    // clearTimeout(assetsLoadedTimeout);
     state = "Continue";
     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
     diePoolText.text = "Die pool\n";
-    for (var die in diePool.allDice) {
-        diePoolText.text += " " + diePool.allDice[die].value.toString();
+    for (var die in diePool.allObjects) {
+        diePoolText.text += " " + diePool.allObjects[die].value.toString();
     }
-    hasWinnerTimeout = setTimeout("continueGame()", 3000);
-    hasWinner = true;
+    // update diePool depending on engine(game) rules...
+    // use diePool API
+    // hasWinnerTimeout = setTimeout("continueGame()", 3000);
 }
 
 function endGame() {
