@@ -1,28 +1,40 @@
 function diePool (numPlayers) {
   this.numPlayers = numPlayers;
-  this.allDice = [];
+  this.allObjects = [];
 
   // default number of dice per player is 5
   this.generatePool = function() {
-    for (var i = 0; i <= numPlayers*5; i++) {
-      this.allDice.push(new Die(Math.ceil(Math.random()*6)));
+    for (var i = 0; i < numPlayers*5; i++) {
+      this.allObjects.push(new Die(Math.ceil(Math.random()*6)));
     }
   };
 
-  this.getCurrentDiePool = function () {
-    return this.allDice;
-  };
-
-  this.setCurrentCurrentDie = function (index) {
+  this.setCurrentCurrentDie = function (index, die) {
+    this.allObjects[index] = die;
   };
 
   this.removeDie = function (index) {
-    this.allDice[index].value = 0;
+    if (index > -1) {
+      this.allObjects.splice(index, 1);
+    }
+  };
+
+  this.emptyDiePool = function () {
+    this.allObjects = [];
   };
 
   this.resetDiePool = function () {
-    //this.allDice.fill(new Dice(0));
-    this.allDice = [];
+    this.emptyDiePool();
+    this.generatePool();
+  };
+
+  this.shuffleDice = function () {
+    for (var i = this.allObjects.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = this.allObjects[i];
+      this.allObjects[i] = this.allObjects[j];
+      this.allObjects[j] = temp;
+    }
   };
 
 }

@@ -1,11 +1,11 @@
 // contains information about the die
 // plural, dice[]
 
-// Value
+// id
 // Sprite
 // Sound
 // Physics
 
-function Die (value) {
-  this.value = value;
+function Die (id) {
+  this.id = id;
 }
