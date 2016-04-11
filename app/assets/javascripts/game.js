@@ -143,8 +143,10 @@ function testMethod2() {
 }
 
 function testMethod3() {
-    diePool.removeDie(3);
-    testButtonText.text = "removeDie(3)";
+    diePool.removeDie(0);
+    dieGroup.removeAll();
+    dieSpriteGroup.renderSprites("box");
+    testButtonText.text = "RemoveAll()";
 }
 
 function testMethod4() {
