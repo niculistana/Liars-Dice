@@ -12,7 +12,12 @@
  *
  *= require_tree .
  *= require_self
+ *= require bootstrap.min
  */
+
+body {
+	padding-top: 15px;
+}
 
 .slim {
   padding: 50px 300px 0px 300px;

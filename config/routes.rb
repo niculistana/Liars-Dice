@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
-  root "pages#login"
+  devise_for :users
+  
+  #root "home#index"
+  root "pages#index"
   get "play" => "pages#index", as: :play
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
