@@ -1,10 +1,18 @@
 Rails.application.routes.draw do
   devise_for :users
-  
-  #root "home#index"
-  root "pages#index"
-  get "play" => "pages#index", as: :play
+  devise_scope :user do
+    authenticated :user do
+      root :to => 'pages#index', as: :authenticated_root
+    end
+    unauthenticated :user do
+      root :to => 'devise/registrations#new', as: :unauthenticated_root
+    end
+  end
 
+  #root "home#index"
+  #root "pages#"
+  get "play" => "pages#index", as: :play
+  
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
