@@ -18,16 +18,3 @@
 body {
 	padding-top: 15px;
 }
-
-.slim {
-  padding: 50px 300px 0px 300px;
-}
-
-.spacer {
-  padding-top: 10px;
-}
-
-#phaser-window {
-    min-height: 600px;
-    background-color: #8d8d8d;
-}
