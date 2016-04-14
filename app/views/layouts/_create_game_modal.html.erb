@@ -1,0 +1,22 @@
+<div class="modal fade" id="myModal" role="dialog" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Create a Game</h4>
+      </div>
+      <%= form_for(:game) do |f| %>
+        <div class="modal-body">
+            <div class="field">
+              <%= f.label :game_name %><br />
+              <%= f.text_field :name, autofocus: true %>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <div class="action" data-dismiss="modal">
+            <%= f.submit "Create", :class => "btn btn-success" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -5,11 +5,24 @@ Rails.application.routes.draw do
   resources :games
   devise_for :users
   resources :users, only: [:index]
-  
-  #root "home#index"
-  root "pages#index"
+
+  root                  "pages#landing"
+  get 'create' =>       "pages#create", as: :create
+  get 'join' =>         "pages#join", as: :join
+  get 'leaderboard' =>  "pages#leaderboard", as: :leaderboard
+  get 'spectate' =>     "pages#spectate", as: :spectate
   get "play" => "pages#index", as: :play
-  # get 'users/:id' => 'users#show'
+
+  #devise_scope :user do
+  #  authenticated :user do
+  #    root :to => 'pages#index', as: :authenticated_root
+  #  end
+  #  unauthenticated :user do
+  #    root :to => 'devise/registrations#new', as: :unauthenticated_root
+  #  end
+  #end
+
+  
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

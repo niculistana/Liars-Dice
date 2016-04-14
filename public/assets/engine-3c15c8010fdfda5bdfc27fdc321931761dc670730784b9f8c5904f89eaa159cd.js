@@ -1,0 +1,1 @@
+function isRoomFull(){return 4===numPlayers}function isLoaded(){return!!assetsLoaded}function isContinue(){return!!hasWinner}function updateGlobalPool(){}
