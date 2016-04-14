@@ -1,13 +1,20 @@
 Rails.application.routes.draw do
   devise_for :users
-  devise_scope :user do
-    authenticated :user do
-      root :to => 'pages#index', as: :authenticated_root
-    end
-    unauthenticated :user do
-      root :to => 'devise/registrations#new', as: :unauthenticated_root
-    end
-  end
+
+  root                  "pages#landing"
+  get 'create' =>       "pages#create", as: :create
+  get 'join' =>         "pages#join", as: :join
+  get 'leaderboard' =>  "pages#leaderboard", as: :leaderboard
+  get 'spectate' =>     "pages#spectate", as: :spectate
+
+  #devise_scope :user do
+  #  authenticated :user do
+  #    root :to => 'pages#index', as: :authenticated_root
+  #  end
+  #  unauthenticated :user do
+  #    root :to => 'devise/registrations#new', as: :unauthenticated_root
+  #  end
+  #end
 
   #root "home#index"
   #root "pages#"
