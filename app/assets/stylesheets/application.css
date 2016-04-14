@@ -47,3 +47,7 @@ body {
 .border-form-div h2 {
   text-align: center;
 }
+
+#myModal {
+  top:25%;
+}

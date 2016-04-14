@@ -31,3 +31,27 @@
     </div>
   </div>
 </div>
+
+
+<div class="modal fade" id="myModal" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Create a Game</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="field">
+          <%= form_for(:game) do |f| %>
+            <%= f.label :game_name %><br />
+            <%= f.text_field :game_name, autofocus: true %>
+        </div>
+        <p>This is a small modal.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Start Game</button>
+      </div>
+    </div>
+  </div>
+</div>
