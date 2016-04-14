@@ -1,9 +1,15 @@
 Rails.application.routes.draw do
+  resources :game_users
+  resources :games
+  resources :game_users
+  resources :games
   devise_for :users
+  resources :users, only: [:index]
   
   #root "home#index"
   root "pages#index"
   get "play" => "pages#index", as: :play
+  # get 'users/:id' => 'users#show'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

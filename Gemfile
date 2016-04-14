@@ -7,6 +7,9 @@ gem 'rails', '4.2.5'
 #https://github.com/plataformatec/devise
 gem 'devise'
 
+#https://github.com/voormedia/rails-erd
+gem "rails-erd"
+
 # Use sqlite3 as the database for Active Record
 # gem 'sqlite3'
 gem 'sqlite3', group: :development
