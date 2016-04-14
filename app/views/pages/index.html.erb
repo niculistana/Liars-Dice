@@ -41,13 +41,12 @@
         <h4 class="modal-title">Create a Game</h4>
       </div>
       <div class="modal-body">
-
-        <div class="field">
           <%= form_for(:game) do |f| %>
+          <div class="field">
             <%= f.label :game_name %><br />
-            <%= f.text_field :game_name, autofocus: true %>
-        </div>
-        <p>This is a small modal.</p>
+            <%= f.text_field :name, autofocus: true %>
+          </div>
+          <% end %>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Start Game</button>
