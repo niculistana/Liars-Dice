@@ -147,13 +147,17 @@ function testMethod2() {
 function testMethod3() {
     diePool.removeDie(0);
     var testAjax = {
-        name: "Fucking hell",
-        diepool: [],
-        completed: 1
-    }
+        game: {
+            name: "Fucking hell",
+            turn: "1",
+            diepool: [],
+            completed: 1
+        }
+    };
     for(var die in diePool.allObjects) {
-        testAjax.diepool.push(diePool.allObjects[die].id);
+        testAjax.game.diepool.push(diePool.allObjects[die].id);
     }
+    testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
     $.ajax({
         url: '/games',
         type: 'POST',
