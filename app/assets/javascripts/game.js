@@ -163,7 +163,7 @@ function testMethod3() {
         type: 'POST',
         data: testAjax,
         success: function(response) {
-            console.log("Yay");
+            console.log("POST");
 
         }
     });
@@ -173,8 +173,18 @@ function testMethod3() {
 }
 
 function testMethod4() {
-    diePool.resetDiePool();
-    testButtonText.text = "resetDiePool";
+    // diePool.resetDiePool();
+    testButtonText.text = "Ajax Get Dice from Database";
+    $.ajax({
+        url: "/games/4",
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            console.log("GET");
+            console.log(data);
+            console.log(data.name);
+        }
+    })
 }
 
 function waitGame(){
