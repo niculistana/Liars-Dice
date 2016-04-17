@@ -146,6 +146,23 @@ function testMethod2() {
 
 function testMethod3() {
     diePool.removeDie(0);
+    var testAjax = {
+        name: "Fucking hell",
+        diepool: [],
+        completed: 1
+    }
+    for(var die in diePool.allObjects) {
+        testAjax.diepool.push(diePool.allObjects[die].id);
+    }
+    $.ajax({
+        url: '/games',
+        type: 'POST',
+        data: testAjax,
+        success: function(response) {
+            console.log("Yay");
+
+        }
+    });
     dieGroup.removeAll();
     dieSpriteGroup.renderSprites("box");
     testButtonText.text = "RemoveAll()";

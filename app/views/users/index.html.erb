@@ -4,7 +4,7 @@
   <h1><%= @user.email %></h1>
 </div>
 <div class="container">
-  <%= link_to "Create Game", new_game_path, class: "btn btn-primary pull-right" %>
+  <%= link_to "Create Game", :create, class: "btn btn-primary pull-right" %>
 </div>
 <div class="container">
   <h2>Live game</h2>
@@ -12,7 +12,7 @@
     <h1><%= game_users.game.name %></h1>
     <p>Turn: <%= game_users.game.turn %>, Completed: <%= (game_users.game.completed==1) ? "Yes" : "No" %>
       <span class="btn-group pull-right">
-        <%= link_to "Show Game", :play, class: "btn btn-secondary btn-sm" %>
+        <%= link_to "Show Game", :game, class: "btn btn-secondary btn-sm" %>
         <%= link_to "Edit Game", edit_game_path(game_users.game), class: "btn btn-secondary btn-sm"  %>
         <%= link_to "Delete Game", game_users.game, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-secondary btn-sm"  %>
       </span>
@@ -26,7 +26,7 @@
     <h1>Josh's Game</h1>
     <p>Winner: Josh
       <span class="btn-group pull-right">
-        <%= link_to "Show Game", :play, class: "btn btn-secondary btn-sm" %>
+        <%= link_to "Show Game", :game, class: "btn btn-secondary btn-sm" %>
         <%= link_to "Edit Game", edit_game_path(game_users.game), class: "btn btn-secondary btn-sm"  %>
         <%= link_to "Delete Game", game_users.game, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-secondary btn-sm"  %>
       </span>

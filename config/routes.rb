@@ -1,8 +1,6 @@
 Rails.application.routes.draw do
   resources :game_users
-  resources :games
-  resources :game_users
-  resources :games
+  # resources :games
   devise_for :users
   resources :users, only: [:index]
 
@@ -11,7 +9,7 @@ Rails.application.routes.draw do
   get 'join' =>         "pages#join", as: :join
   get 'leaderboard' =>  "pages#leaderboard", as: :leaderboard
   get 'spectate' =>     "pages#spectate", as: :spectate
-  get "play" => "pages#index", as: :play
+  match "games" => "pages#index", as: :game, via: [:get, :post, :patch, :put, :delete]
 
   #devise_scope :user do
   #  authenticated :user do
