@@ -134,18 +134,6 @@ function create() {
 
 function testMethod1() {
     // diePool.resetDiePool();
-    dieSpriteGroup.renderSprites("box");
-    testButtonText.text = "renderSprites";
-    // console.log(diePool.allObjects.length);
-}
-
-function testMethod2() {
-    diePool.shuffleDice();
-    testButtonText.text = "shuffleDice";
-}
-
-function testMethod3() {
-    diePool.removeDie(0);
     var testAjax = {
         game: {
             name: "Fucking hell",
@@ -154,6 +142,7 @@ function testMethod3() {
             completed: 1
         }
     };
+    //If used a lot, make into a function
     for(var die in diePool.allObjects) {
         testAjax.game.diepool.push(diePool.allObjects[die].id);
     }
@@ -167,6 +156,40 @@ function testMethod3() {
 
         }
     });
+    dieSpriteGroup.renderSprites("box");
+    testButtonText.text = "renderSprites";
+    // console.log(diePool.allObjects.length);
+}
+
+function testMethod2() {
+    diePool.shuffleDice();
+    testButtonText.text = "shuffleDice";
+}
+
+function testMethod3() {
+    diePool.removeDie(0);
+    var testAjax = {
+        _method: 'PUT',
+        game: {
+            name: "Fucking hell",
+            turn: "1",
+            diepool: [],
+            completed: 1
+        }
+    };
+    for(var die in diePool.allObjects) {
+        testAjax.game.diepool.push(diePool.allObjects[die].id);
+    }
+    testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
+    $.ajax({
+        url: '/games/4',
+        type: 'POST',
+        data: testAjax,
+        success: function(response) {
+            console.log("I have put");
+
+        }
+    });
     dieGroup.removeAll();
     dieSpriteGroup.renderSprites("box");
     testButtonText.text = "RemoveAll()";
@@ -175,6 +198,7 @@ function testMethod3() {
 function testMethod4() {
     // diePool.resetDiePool();
     testButtonText.text = "Ajax Get Dice from Database";
+    //Append element id to url "/games/"
     $.ajax({
         url: "/games/4",
         type: "GET",
@@ -182,7 +206,10 @@ function testMethod4() {
         success: function (data) {
             console.log("GET");
             console.log(data);
-            console.log(data.name);
+            var dataString = JSON.parse(data.diepool);
+            //Create temp diepool object
+            //Make die object with die.id = each element in dataString
+            //Overwrite old diepool to temp diepool
         }
     })
 }
