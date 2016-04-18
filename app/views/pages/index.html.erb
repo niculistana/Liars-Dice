@@ -16,7 +16,7 @@
     <div class="col-xs-12 col-md-4 well" style="height: 640px;">
       <h3>Chat</h3>
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12", id="chat">
           Nicu: Hi!
         </div>
         <div class="col-md-12">
@@ -25,7 +25,7 @@
               <input type="text" id="chatInput" class="form-control" placeholder="Say something here..." required autofocus>
             </div>
             <div class="col-xs-4">
-              <button class="btn btn-md btn-primary btn-block" type="submit">Send</button>
+              <button class="btn btn-md btn-primary btn-block" type="submit" onclick = 'submitMessage()'>Send</button>
             </div>
           </div>
         </div>

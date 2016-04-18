@@ -13,6 +13,13 @@ var playerNames = {
     2: "Eric",
     3: "Josh"
 };
+var pusher = new Pusher("926b2fce0ff5222dc001", {
+    cluster: 'eu',
+    encrypted: true
+});
+var gameId = "";
+var gameChannel = "game_channel";
+var channel;
 
 var maxPlayers = 4;
 
@@ -51,6 +58,7 @@ function preload() {
 function create() {
     //Do a if statement to check if game is not created
     $("#myModal").modal();
+
     game.stage.backgroundColor = "#fff";
 
     logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
@@ -98,6 +106,16 @@ function create() {
     testButtonGroup.add(button2);
     testButtonGroup.add(button3);
     testButtonGroup.add(button4);
+
+
+    var channel = pusher.subscribe(gameChannel);
+    channel.bind('my_event', function(data) {
+        console.log("I have made my move");
+    });
+
+    channel.bind('chat', function(data) {
+        console.log("I have chat");
+    });
     // End test UI testButtonGroup
 
     // Begin scene UI group
@@ -148,7 +166,7 @@ function testMethod1() {
     }
     testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
     $.ajax({
-        url: '/games',
+        url: '/games/',
         type: 'POST',
         dataType: 'json',
         data: testAjax,
@@ -183,7 +201,7 @@ function testMethod3() {
     }
     testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
     $.ajax({
-        url: '/games/4',
+        url: '/games/'+gameId,
         type: 'POST',
         data: testAjax,
         success: function(response) {
@@ -201,7 +219,7 @@ function testMethod4() {
     testButtonText.text = "Ajax Get Dice from Database";
     //Append element id to url "/games/"
     $.ajax({
-        url: "/games/4",
+        url: "/games/"+gameId,
         type: "GET",
         dataType: "json",
         success: function (data) {
@@ -309,12 +327,24 @@ Pusher.log = function(message) {
     }
 };
 
-var pusher = new Pusher("926b2fce0ff5222dc001", {
-    cluster: 'eu',
-    encrypted: true
-});
-
-var channel = pusher.subscribe('game_channel');
-channel.bind('my_event', function(data) {
-    console.log("I have made my move");
-});
+function submitMessage() {
+    console.log($('#chatInput').val());
+    //Chat implementation
+    // var chatMessage = {
+    //     _method: "PUT"
+    //     chat: {
+    //         user: "username",
+    //         message: $('#chatInput').val()
+    //     }
+    // }
+    // $('#chatInput').val() = "";
+    // $.ajax({
+    //     type: 'POST',
+    //     url: "/chat/"+gameId,
+    //     data: chatMessage,
+    //     dataType: 'json'
+    //     success: function (data) {
+    //         $('#chat').val() = data;
+    //     }
+    // })
+}
