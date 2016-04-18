@@ -150,10 +150,11 @@ function testMethod1() {
     $.ajax({
         url: '/games',
         type: 'POST',
+        dataType: 'json',
         data: testAjax,
         success: function(response) {
             console.log("POST");
-
+            console.log(response);
         }
     });
     dieSpriteGroup.renderSprites("box");
@@ -301,3 +302,19 @@ function isContinue() {
         return false;
     }
 }
+
+Pusher.log = function(message) {
+    if (window.console && window.console.log) {
+        window.console.log(message);
+    }
+};
+
+var pusher = new Pusher("926b2fce0ff5222dc001", {
+    cluster: 'eu',
+    encrypted: true
+});
+
+var channel = pusher.subscribe('game_channel');
+channel.bind('my_event', function(data) {
+    console.log("I have made my move");
+});
