@@ -4,6 +4,7 @@
   <div class="row">
     <div class="col-xs-12 col-md-8 well">
       <div id="phaser-window">
+        <script src = "https://js.pusher.com/3.0/pusher.min.js"></script>
         <%= javascript_include_tag 'phaser.min.js', 'data-turbolinks-track' => true %>
         <%= javascript_include_tag 'game', 'data-turbolinks-track' => true %>
         <%= javascript_include_tag 'engine', 'data-turbolinks-track' => true %>
@@ -22,9 +23,9 @@
       </div>
       <div class="panel-footer">
         <div class="input-group" id="user-input">
-          <input id="chat-input" type="text" class="form-control input-md" placeholder="Flame on..." />
+          <input id="chatInput" type="text" class="form-control input-md" placeholder="Flame on..." required autofocus/>
           <span class="input-group-btn">
-            <button class="btn btn-primary btn-md" id="chat-btn">Send</button>
+            <button class="btn btn-primary btn-md" id="chat-btn" type="submit" onclick = 'submitMessage()'>Send</button>
           </span>
         </div>
       </div>

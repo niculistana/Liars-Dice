@@ -1,8 +1,6 @@
 Rails.application.routes.draw do
   resources :game_users
   resources :games
-  resources :game_users
-  resources :games
   devise_for :users
   resources :users, only: [:index]
 
@@ -12,6 +10,7 @@ Rails.application.routes.draw do
   get 'leaderboard' =>  "pages#leaderboard", as: :leaderboard
   get 'spectate' =>     "pages#spectate", as: :spectate
   get "play" => "pages#index", as: :play
+  post "chat/message" => "chat#message"
 
   #devise_scope :user do
   #  authenticated :user do

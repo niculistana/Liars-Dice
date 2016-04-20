@@ -13,6 +13,10 @@ var playerNames = {
     2: "Eric",
     3: "Josh"
 };
+var pusher = new Pusher("926b2fce0ff5222dc001", {
+    cluster: 'eu',
+    encrypted: true
+});
 var gameId = "";
 var gameChannel = "game_channel";
 var channel;
@@ -329,13 +333,14 @@ function submitMessage() {
     // var chatMessage = {
     //     _method: "PUT"
     //     chat: {
-    //         chatMessage: $('#chatInput').val()
+    //         user: "username",
+    //         message: $('#chatInput').val()
     //     }
     // }
      $('#chatInput').val('');
     // $.ajax({
     //     type: 'POST',
-    //     url: "/chat/message",
+    //     url: "/chat/"+gameId,
     //     data: chatMessage,
     //     dataType: 'json'
     //     success: function (data) {

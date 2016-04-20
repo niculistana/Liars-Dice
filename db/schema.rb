@@ -11,7 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160412004700) do
+ActiveRecord::Schema.define(version: 20160419005931) do
+
+  create_table "chats", force: :cascade do |t|
+    t.string   "name"
+    t.text     "message"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "game_users", force: :cascade do |t|
     t.integer  "game_id"
