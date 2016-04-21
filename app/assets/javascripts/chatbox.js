@@ -2,13 +2,13 @@ var channel = pusher.subscribe("chat_channel");
 channel.bind('chat', function(data) {
     //edit chat window
     var name = $("<span>").addClass("name").text(data.name+":");
-    var message = $("<span>").addClass("message").text(data.message);
+    var message = $("<span>").addClass("chat-message").text(data.message);
     var chatPost = $("<div>").addClass("message").append(name).append(message);
-    $('#messages').append(chatPost);
+    $('#messages').append(chatPost).css("background-color", "#f5f5f5");
 });
 
 $(document).keypress(function(event){
-    if(event.keyCode === 13 && $('#chatInput').val() !== "") {
+    if(event.keyCode === 13) {
         submitMessage();
     }
 });
