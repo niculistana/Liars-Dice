@@ -7,37 +7,27 @@ channel.bind('chat', function(data) {
     $('#messages').append(chatPost);
 });
 
-// $("#chatInput").keypress(function(event){
-//     console.log("I'm in keypress");
-//     console.log(event);
-//     if(event.keyCode === 13) {
-//         submitMessage();
-//     }
-// });
-
-var chatInput = document.getElementById("chatInput");
-chatInput.addEventListener("keypress", function(event){
-    console.log("I'm in keypress");
-    console.log(event);
-    if(event.keyCode === 13) {
+$(document).keypress(function(event){
+    if(event.keyCode === 13 && $('#chatInput').val() !== "") {
         submitMessage();
     }
 });
 
 function submitMessage() {
-    console.log($('#chatInput').val());
-    //Chat implementation
-    var chatMessage = {
-        chatMessage: $('#chatInput').val()
-    }
-    $('#chatInput').val('');
-    $.ajax({
-        type: 'POST',
-        url: "/chat/message",
-        data: chatMessage,
-        dataType: 'json',
-        success: function (data) {
-            console.log("I succeed");
+    if($('#chatInput').val() !== ""){
+        //Chat implementation
+        var chatMessage = {
+            chatMessage: $('#chatInput').val()
         }
-    })
+        $('#chatInput').val('');
+        $.ajax({
+            type: 'POST',
+            url: "/chat/message",
+            data: chatMessage,
+            dataType: 'json',
+            success: function (data) {
+                console.log("I succeed");
+            }
+        });
+    }
 }
