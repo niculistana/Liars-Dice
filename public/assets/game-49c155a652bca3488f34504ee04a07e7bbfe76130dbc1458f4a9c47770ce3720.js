@@ -14,6 +14,7 @@ var playerNames = {
     3: "Josh"
 };
 var gameId = "";
+var gameChannel = "game_channel";
 var channel;
 
 var maxPlayers = 4;
@@ -103,14 +104,14 @@ function create() {
     testButtonGroup.add(button4);
 
 
-    channel = pusher.subscribe("game_channel");
+    var channel = pusher.subscribe(gameChannel);
     channel.bind('my_event', function(data) {
         console.log("I have made my move");
     });
 
-    // channel.bind('chat', function(data) {
-    //     console.log("I have chat");
-    // });
+    channel.bind('chat', function(data) {
+        console.log("I have chat");
+    });
     // End test UI testButtonGroup
 
     // Begin scene UI group
