@@ -1,6 +1,21 @@
 // Place all the styles related to the Pages controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.navbar {
+  background:transparent;
+  border-color: none;
+  border: none;
+  color: white;
+}
+
+.navbar-default .navbar-nav>li>a {
+    color: white;
+}
+
+body {
+  background-image: url("nightocean.jpg");
+}
+
 .slim {
   padding: 50px 300px 0px 300px;
 }
@@ -17,9 +32,11 @@
 #chat-well {
   min-height: 600px;
   height: 640px;
-  
+  background-image: url("woodenboards.jpg");
   h3 {
     text-align: center;
+    padding-bottom: 15px;
+    color: white;
   }
 }
 
@@ -27,4 +44,9 @@
   position: absolute;
     bottom: 22px;
     left: 18px;    
+}
+
+#mainContainer h1 {
+  text-align: center;
+  color: white;
 }
