@@ -2,9 +2,10 @@ var channel = pusher.subscribe("chat_channel");
 channel.bind('chat', function(data) {
     //edit chat window
     var name = $("<span>").addClass("name").text(data.name+":");
-    var message = $("<span>").addClass("chat-message").text(data.message);
+    var message = $("<span>").addClass("chat-message").text(" "+data.message);
     var chatPost = $("<div>").addClass("message").append(name).append(message);
-    $('#messages').append(chatPost).css("background-color", "#f5f5f5");
+    $('#messages').append(chatPost);
+    $('#messages').scrollTop($('#messages').scrollTop()+$('#messages').height());
 });
 
 $(document).keypress(function(event){

@@ -40,6 +40,16 @@ body {
   }
 }
 
+#messages {
+  background-color: #f5f5f5;
+  overflow-y:auto; 
+  height:470px;
+}
+
+.chat-message {
+  word-wrap: break-word;
+}
+
 #user-input {
   position: absolute;
     bottom: 22px;
