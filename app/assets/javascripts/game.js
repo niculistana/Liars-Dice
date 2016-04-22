@@ -103,7 +103,7 @@ function create() {
     testButtonGroup.add(button4);
 
 
-    channel = pusher.subscribe("game_channel");
+    channel = pusher.subscribe("game_channel"+gameId);
     channel.bind('my_event', function(data) {
         console.log("I have made my move");
     });
@@ -144,6 +144,10 @@ function create() {
         // continueGame();
     // endGame();
 }
+
+//On Document load, make an ajax get call to game controller
+//Then set gameId to data received from ajax
+//Append gameId to game_channel
 
 function testMethod1() {
     // diePool.resetDiePool();
@@ -315,9 +319,3 @@ function isContinue() {
         return false;
     }
 }
-
-Pusher.log = function(message) {
-    if (window.console && window.console.log) {
-        window.console.log(message);
-    }
-};

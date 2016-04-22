@@ -39,6 +39,7 @@ class GamesController < ApplicationController
   # PATCH/PUT /games/1
   # PATCH/PUT /games/1.json
   def update
+    #Append @game.id.to_s to game_channel
     Pusher.trigger('game_channel', 'my_event', game_params)
     respond_to do |format|
       if @game.update(game_params)
