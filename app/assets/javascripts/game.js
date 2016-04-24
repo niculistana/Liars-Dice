@@ -37,6 +37,15 @@ function preload() {
     // for each file, load sprite
     // var all_Files = getAllFilesFromFolder("assets/sprites/");
     // all_Files.forEach(logArrayElements);
+
+    //For production, we change the url to intense-temple
+    game.load.baseURL = "http://localhost:3000/"
+    //To mitigate having to always copy and paste game.load.image
+    //I suggest we take advantage of game.load.images
+    //where we push in shit like dollar_sign.png and other images
+    //into an array and call game.load.images to load every single one of those
+    //elements in the array
+    //http://phaser.io/docs/2.4.4/Phaser.Loader.html#images
     game.load.image('dollars', 'assets/sprites/dollar_sign.png');
     game.load.image('logo', 'assets/sprites/liars_dice_logo.png');
     game.load.spritesheet('button', 'assets/buttons/button_sprite_sheet.png', 193, 71);
@@ -48,6 +57,8 @@ function preload() {
     game.load.image('dice6', 'assets/sprites/boardgamepack/PNG/Dice/dieRed6.png');
     diePool = new diePool(4);
     diePool.generatePool();
+    console.log(game.load);
+    console.log(game.load.path);
 }
 
 function create() {
