@@ -1,7 +1,7 @@
 //Need to find a way to append gameId to chat_channel
+//Maybe create another file just for Pusher related things
 var channel = pusher.subscribe("chat_channel");
 channel.bind('chat', function(data) {
-    //edit chat window
     var name = $("<span>").addClass("name").text(data.name+":");
     var message = $("<span>").addClass("chat-message").text(" "+data.message);
     var chatPost = $("<div>").addClass("message").append(name).append(message);

@@ -59,23 +59,24 @@ function preload() {
     diePool.generatePool();
 }
 
-function create() {
-    //Do a if statement to check if game is not created
-    $("#myModal").modal();
-
+$(document).ready(function(event){
     $.ajax({
-        url: '/chat/id',
+        url: '/session/id',
         type: 'GET',
         dataType: 'json',
         success: function(event) {
-            console.log("I'm doing this first");
             gameId = event.id.toString();
             channel = pusher.subscribe("game_channel"+gameId);
             channel.bind('my_event', function(data) {
                 console.log("I have made my move");
             });
         }
-    })
+    });
+})
+
+function create() {
+    //Do a if statement to check if game is not created
+    $("#myModal").modal();
 
     game.stage.backgroundColor = "#fff";
 
