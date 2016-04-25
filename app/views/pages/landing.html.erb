@@ -1,7 +1,7 @@
 <% provide(:title, 'Landing') %>
 <div class="container">
-  <%= link_to "Create", :play , class: "btn btn-primary" %>
-  <%= link_to "Join", :join , class: "btn btn-danger" %>
+  <%= link_to "Create", "#", data: {toggle: "modal", target: "#myModal"}, class: "btn btn-primary" %>
+  <%= link_to "Join", :games , class: "btn btn-danger" %>
   <%= link_to "Leaderboard", :leaderboard , class: "btn btn-info" %>
   <%= link_to "Spectate", :spectate , class: "btn btn-success" %>
 </div> <!-- /container -->

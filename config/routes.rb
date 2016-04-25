@@ -11,7 +11,8 @@ Rails.application.routes.draw do
   get 'spectate' =>     "pages#spectate", as: :spectate
   get "play" => "pages#index", as: :play
   post "chat/message" => "chat#message"
-  get "session/id" => "session#id"
+  get "session/name_id" => "session#name_id"
+  post "/" => "games#create"
 
   #devise_scope :user do
   #  authenticated :user do

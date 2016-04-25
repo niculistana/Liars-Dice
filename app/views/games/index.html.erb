@@ -8,7 +8,7 @@
       <h1><%= game.name %></h1>
       <p>Turn: <%= game.turn %>, Completed: <%= (game.completed==1) ? "Yes" : "No" %>
         <span class="btn-group pull-right">
-          <%= link_to "Show Game", :play, class: "btn btn-secondary btn-sm" %>
+          <%= link_to "Show Game", game, class: "btn btn-secondary btn-sm" %>
           <%= link_to "Edit Game", edit_game_path(game), class: "btn btn-secondary btn-sm"  %>
           <%= link_to "Delete Game", game, method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-secondary btn-sm"  %>
         </span>

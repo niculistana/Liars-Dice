@@ -15,6 +15,12 @@ var playerNames = {
 };
 var channel;
 var gameId = "";
+var gameName = "";
+var gameFileKeys = ['dollars', 'logo', 'dice1', 'dice2', 'dice3', 'dice4', 'dice5', 'dice6']
+var gameFiles = ['sprites/dollar_sign.png', 'sprites/liars_dice_logo.png',
+'sprites/boardgamepack/PNG/Dice/dieRed1.png', 'sprites/boardgamepack/PNG/Dice/dieRed2.png', 
+'sprites/boardgamepack/PNG/Dice/dieRed3.png', 'sprites/boardgamepack/PNG/Dice/dieRed4.png', 
+'sprites/boardgamepack/PNG/Dice/dieRed5.png', 'sprites/boardgamepack/PNG/Dice/dieRed6.png'];
 
 var maxPlayers = 4;
 
@@ -32,40 +38,23 @@ var hasWinnerTimeout;
 // }
 
 function preload() {
-    // opal stuff
-    // ruby code to scan files
-    // for each file, load sprite
-    // var all_Files = getAllFilesFromFolder("assets/sprites/");
-    // all_Files.forEach(logArrayElements);
-
     //For production, we change the url to intense-temple
-    game.load.baseURL = "http://localhost:3000/"
-    //To mitigate having to always copy and paste game.load.image
-    //I suggest we take advantage of game.load.images
-    //where we push in shit like dollar_sign.png and other images
-    //into an array and call game.load.images to load every single one of those
-    //elements in the array
-    //http://phaser.io/docs/2.4.4/Phaser.Loader.html#images
-    game.load.image('dollars', 'assets/sprites/dollar_sign.png');
-    game.load.image('logo', 'assets/sprites/liars_dice_logo.png');
-    game.load.spritesheet('button', 'assets/buttons/button_sprite_sheet.png', 193, 71);
-    game.load.image('dice1', 'assets/sprites/boardgamepack/PNG/Dice/dieRed1.png');
-    game.load.image('dice2', 'assets/sprites/boardgamepack/PNG/Dice/dieRed2.png');
-    game.load.image('dice3', 'assets/sprites/boardgamepack/PNG/Dice/dieRed3.png');
-    game.load.image('dice4', 'assets/sprites/boardgamepack/PNG/Dice/dieRed4.png');
-    game.load.image('dice5', 'assets/sprites/boardgamepack/PNG/Dice/dieRed5.png');
-    game.load.image('dice6', 'assets/sprites/boardgamepack/PNG/Dice/dieRed6.png');
+    game.load.baseURL = "http://localhost:3000/";
+    game.load.path = "assets/";
+    game.load.spritesheet('button', 'buttons/button_sprite_sheet.png', 193, 71);
+    game.load.images(gameFileKeys, gameFiles);
     diePool = new diePool(4);
     diePool.generatePool();
 }
 
 $(document).ready(function(event){
     $.ajax({
-        url: '/session/id',
+        url: '/session/name_id',
         type: 'GET',
         dataType: 'json',
         success: function(event) {
             gameId = event.id.toString();
+            gameName = event.name;
             channel = pusher.subscribe("game_channel"+gameId);
             channel.bind('my_event', function(data) {
                 console.log("I have made my move");
@@ -76,7 +65,8 @@ $(document).ready(function(event){
 
 function create() {
     //Do a if statement to check if game is not created
-    $("#myModal").modal();
+    
+    // $("#myModal").modal();
 
     game.stage.backgroundColor = "#fff";
 
@@ -126,9 +116,6 @@ function create() {
     testButtonGroup.add(button3);
     testButtonGroup.add(button4);
     
-    // channel.bind('chat', function(data) {
-    //     console.log("I have chat");
-    // });
     // End test UI testButtonGroup
 
     // Begin scene UI group
@@ -167,7 +154,7 @@ function testMethod1() {
     // diePool.resetDiePool();
     var testAjax = {
         game: {
-            name: "Fucking hell",
+            name: gameName,
             turn: "1",
             diepool: [],
             completed: 1
@@ -203,7 +190,7 @@ function testMethod3() {
     var testAjax = {
         _method: 'PUT',
         game: {
-            name: "Fucking hell",
+            name: gameName,
             turn: "1",
             diepool: [],
             completed: 1

@@ -11,6 +11,7 @@ class GamesController < ApplicationController
   # GET /games/1.json
   def show
     session[:game_id] = @game.id
+    session[:game_name] = @game.name
   end
 
   # GET /games/new
@@ -27,6 +28,7 @@ class GamesController < ApplicationController
   def create
     @game = Game.new(game_params)
     session[:game_id] = @game.id
+    session[:game_name] = @game.name
     respond_to do |format|
       if @game.save
         format.html { redirect_to @game, notice: 'Game was successfully created.' }
