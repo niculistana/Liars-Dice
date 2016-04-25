@@ -10,6 +10,7 @@ class GamesController < ApplicationController
   # GET /games/1
   # GET /games/1.json
   def show
+    session[:game_id] = @game.id
   end
 
   # GET /games/new
@@ -25,6 +26,7 @@ class GamesController < ApplicationController
   # POST /games.json
   def create
     @game = Game.new(game_params)
+    session[:game_id] = @game.id
     respond_to do |format|
       if @game.save
         format.html { redirect_to @game, notice: 'Game was successfully created.' }
@@ -40,7 +42,7 @@ class GamesController < ApplicationController
   # PATCH/PUT /games/1.json
   def update
     #Append @game.id.to_s to game_channel
-    Pusher.trigger('game_channel', 'my_event', game_params)
+    Pusher.trigger('game_channel'+@game.id.to_s, 'my_event', game_params)
     respond_to do |format|
       if @game.update(game_params)
         format.html { redirect_to @game, notice: 'Game was successfully updated.' }

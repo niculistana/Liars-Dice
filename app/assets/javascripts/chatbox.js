@@ -1,3 +1,4 @@
+//Need to find a way to append gameId to chat_channel
 var channel = pusher.subscribe("chat_channel");
 channel.bind('chat', function(data) {
     //edit chat window

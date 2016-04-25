@@ -13,8 +13,8 @@ var playerNames = {
     2: "Eric",
     3: "Josh"
 };
-var gameId = "";
 var channel;
+var gameId = "";
 
 var maxPlayers = 4;
 
@@ -57,13 +57,25 @@ function preload() {
     game.load.image('dice6', 'assets/sprites/boardgamepack/PNG/Dice/dieRed6.png');
     diePool = new diePool(4);
     diePool.generatePool();
-    console.log(game.load);
-    console.log(game.load.path);
 }
 
 function create() {
     //Do a if statement to check if game is not created
     $("#myModal").modal();
+
+    $.ajax({
+        url: '/chat/id',
+        type: 'GET',
+        dataType: 'json',
+        success: function(event) {
+            console.log("I'm doing this first");
+            gameId = event.id.toString();
+            channel = pusher.subscribe("game_channel"+gameId);
+            channel.bind('my_event', function(data) {
+                console.log("I have made my move");
+            });
+        }
+    })
 
     game.stage.backgroundColor = "#fff";
 
@@ -112,13 +124,7 @@ function create() {
     testButtonGroup.add(button2);
     testButtonGroup.add(button3);
     testButtonGroup.add(button4);
-
-
-    channel = pusher.subscribe("game_channel"+gameId);
-    channel.bind('my_event', function(data) {
-        console.log("I have made my move");
-    });
-
+    
     // channel.bind('chat', function(data) {
     //     console.log("I have chat");
     // });
@@ -155,10 +161,6 @@ function create() {
         // continueGame();
     // endGame();
 }
-
-//On Document load, make an ajax get call to game controller
-//Then set gameId to data received from ajax
-//Append gameId to game_channel
 
 function testMethod1() {
     // diePool.resetDiePool();
@@ -211,7 +213,7 @@ function testMethod3() {
     }
     testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
     $.ajax({
-        url: '/games/1',
+        url: '/games/'+gameId,
         type: 'POST',
         data: testAjax,
         success: function(response) {
