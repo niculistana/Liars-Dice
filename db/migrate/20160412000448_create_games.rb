@@ -4,9 +4,9 @@ class CreateGames < ActiveRecord::Migration
       t.string :name
       t.string :turn
       t.integer :max_users
-      t.integer :logged_in_users
+      t.integer :logged_in_users, :default => 1
       t.string :diepool
-      t.integer :completed
+      t.integer :completed, :default => 0
 
       t.timestamps null: false
     end
