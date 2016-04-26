@@ -3,7 +3,7 @@
 <h1>Listing Games</h1>
 
 <div class="container">
-  <%= link_to "Create Game", new_game_path, class: "btn btn-primary pull-right" %>
+  <%= link_to "Create", "#", data: {toggle: "modal", target: "#myModal"}, class: "btn btn-primary pull-right" %>
     <% @games.each do |game| %>
       <h1><%= game.name %></h1>
       <p>Turn: <%= game.turn %>, Completed: <%= (game.completed==1) ? "Yes" : "No" %>

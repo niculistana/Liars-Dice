@@ -64,10 +64,6 @@ $(document).ready(function(event){
 })
 
 function create() {
-    //Do a if statement to check if game is not created
-    
-    // $("#myModal").modal();
-
     game.stage.backgroundColor = "#fff";
 
     logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');

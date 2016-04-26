@@ -1,5 +1,5 @@
 <%= form_for(:game) do |f| %>
-  <div class="modal fade" id="myModal" role="dialog" data-backdrop="static">
+  <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -13,6 +13,10 @@
           <div class="field">
             <%= f.label :diepool %><br>
             <%= f.text_field :diepool %>
+          </div>
+          <div class="field">
+            <%= f.label :max_users %><br>
+            <%= f.text_field :max_users %>
           </div>
         </div>
         <div class="modal-footer">
