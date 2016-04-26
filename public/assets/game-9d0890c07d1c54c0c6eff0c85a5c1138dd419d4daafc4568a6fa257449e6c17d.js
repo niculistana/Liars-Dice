@@ -53,8 +53,8 @@ function preload() {
     //For production, we change the url to intense-temple
     game.load.baseURL = "http://localhost:3000/";
     game.load.path = "assets/";
-    game.load.spritesheet('rect_buttons', 'sprites/uipack_fixed/new_ui/buttons/rect_buttons.png', 192, 49);
-    game.load.spritesheet('square_buttons', 'sprites/uipack_fixed/new_ui/buttons/square_buttons.png', 51, 49);
+    game.load.spritesheet('rect_buttons', 'assets/sprites/uipack_fixed/new_ui/buttons/rect_buttons.png', 192, 49);
+    game.load.spritesheet('square_buttons', 'assets/sprites/uipack_fixed/new_ui/buttons/square_buttons.png', 51, 49);
     game.load.images(gameFileKeys, gameFiles);
     diePool = new diePool(4);
     diePool.generatePool();

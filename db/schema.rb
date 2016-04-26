@@ -27,10 +27,12 @@ ActiveRecord::Schema.define(version: 20160412004700) do
   create_table "games", force: :cascade do |t|
     t.string   "name"
     t.string   "turn"
+    t.integer  "max_users"
+    t.integer  "logged_in_users", default: 1
     t.string   "diepool"
-    t.integer  "completed"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "completed",       default: 0
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
   create_table "users", force: :cascade do |t|

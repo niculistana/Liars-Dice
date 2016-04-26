@@ -10,6 +10,8 @@ class GamesController < ApplicationController
   # GET /games/1
   # GET /games/1.json
   def show
+    session[:game_id] = @game.id
+    session[:game_name] = @game.name
   end
 
   # GET /games/new
@@ -25,7 +27,8 @@ class GamesController < ApplicationController
   # POST /games.json
   def create
     @game = Game.new(game_params)
-
+    session[:game_id] = @game.id
+    session[:game_name] = @game.name
     respond_to do |format|
       if @game.save
         format.html { redirect_to @game, notice: 'Game was successfully created.' }
@@ -40,6 +43,8 @@ class GamesController < ApplicationController
   # PATCH/PUT /games/1
   # PATCH/PUT /games/1.json
   def update
+    #Append @game.id.to_s to game_channel
+    Pusher.trigger('game_channel'+@game.id.to_s, 'my_event', game_params)
     respond_to do |format|
       if @game.update(game_params)
         format.html { redirect_to @game, notice: 'Game was successfully updated.' }
@@ -69,6 +74,6 @@ class GamesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
-      params.require(:game).permit(:name, :turn, :diepool, :completed)
+      params.require(:game).permit(:name, :turn, :max_users, :logged_in_users, :diepool, :completed)
     end
 end
