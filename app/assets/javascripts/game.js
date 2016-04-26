@@ -20,6 +20,18 @@ var maxPlayers = 4;
 var testButtonGroup;
 var sceneButtonGroup;
 
+// ui groups
+
+var gameRoundGroup;
+var gameNameGroup;
+var gameTimeGroup;
+var gameModeGroup;
+var playerProfileGroup;
+
+var gameControlsGroup;
+var gameMenuGroup;
+var playerDiceGroup;
+
 // timeouts for scenes
 var numPlayersTimeout;
 var assetsLoadedTimeout;
@@ -37,7 +49,8 @@ function preload() {
     // all_Files.forEach(logArrayElements);
     game.load.image('dollars', 'assets/sprites/dollar_sign.png');
     game.load.image('logo', 'assets/sprites/liars_dice_logo.png');
-    game.load.spritesheet('button', 'assets/buttons/button_sprite_sheet.png', 193, 71);
+    game.load.spritesheet('rect_buttons', 'assets/sprites/uipack_fixed/new_ui/buttons/rect_buttons.png', 192, 49);
+    game.load.spritesheet('square_buttons', 'assets/sprites/uipack_fixed/new_ui/buttons/square_buttons.png', 51, 49);
     game.load.image('dice1', 'assets/sprites/boardgamepack/PNG/Dice/dieRed1.png');
     game.load.image('dice2', 'assets/sprites/boardgamepack/PNG/Dice/dieRed2.png');
     game.load.image('dice3', 'assets/sprites/boardgamepack/PNG/Dice/dieRed3.png');
@@ -70,51 +83,174 @@ function create() {
     testButtonText.fixedToCamera = true;
     testButtonText.cameraOffset.setTo(10, 50);
 
+    graphics = game.add.graphics(game.world.centerX, game.world.centerY);
+
+    //*** top-ui ***
+    // gameRoundGroup
+    // graphics.lineStyle(5, 0x0000FF, 1);
+    // graphics.drawRect(-360, -290, 140, 50);
+    gameRoundGroup = game.add.group();
+    gameRoundGroup.position.x = game.world.centerX-340;
+    gameRoundGroup.position.y = game.world.centerY-280;
+
+    gameRoundTitleText = "Round #: 6";
+    style = { font: "20px Arial", fill: "#000", align: "left" };
+    gameRoundTitleText = game.add.text(0, 0, gameRoundTitleText, style);
+    gameRoundGroup.add(gameRoundTitleText);
+    // end gameRoundGroup
+
+    // gameNameGroup
+    // graphics.lineStyle(5, 0x0000FF, 1);
+    // graphics.drawRect(-220, -290, 160, 50);
+    gameNameGroup = game.add.group();
+    gameNameGroup.position.x = game.world.centerX-180;
+    gameNameGroup.position.y = game.world.centerY-280;
+
+    gameRoundTitleText = "Cool Kids";
+    style = { font: "20px Arial", fill: "#000", align: "left" };
+    gameRoundTitleText = game.add.text(0, 0, gameRoundTitleText, style);
+    gameNameGroup.add(gameRoundTitleText);
+    // end gameNameGroup
+    
+    // gameTimeGroup
+    // graphics.lineStyle(5, 0x0000FF, 1);
+    // graphics.drawRect(-60, -290, 160, 50);
+    gameTimeGroup = game.add.group();
+    gameTimeGroup.position.x = game.world.centerX;
+    gameTimeGroup.position.y = game.world.centerY-280;
+
+    gameTimeValueText = "0:59";
+    style = { font: "20px Arial", fill: "#000", align: "left" };
+    gameTimeValueText = game.add.text(0, 0, gameTimeValueText, style);
+    gameTimeGroup.add(gameTimeValueText);
+    // end gameTimeGroup
+
+    // gameModeGroup
+    // graphics.lineStyle(5, 0x0000FF, 1);
+    // graphics.drawRect(100, -290, 210, 50);
+    gameModeGroup = game.add.group();
+    gameModeGroup.position.x = game.world.centerX+180;
+    gameModeGroup.position.y = game.world.centerY-280;
+
+    gameModeValueText = "Classic";
+    style = { font: "20px Arial", fill: "#000", align: "left" };
+    gameModeValueText = game.add.text(0, 0, gameModeValueText, style);
+    gameModeGroup.add(gameModeValueText);
+    // end gameModeGroup
+
+    // playerProfileGroup
+    // graphics.lineStyle(5, 0x0000FF, 1);
+    // graphics.drawRect(310, -290, 50, 50);
+
+    playerProfileGroup = game.add.group();
+    playerProfileGroup.position.x = game.world.centerX+320;
+    playerProfileGroup.position.y = game.world.centerY-280;
+    playerProfileButton = game.make.button(0, 0, 'square_buttons', function(){}, this, 2, 1, 0);
+    playerProfileButton.scale.setTo(0.70, 0.70);
+    window.rich = playerProfileButton;
+
+    playerProfileGroup.add(playerProfileButton);
+    // end playerProfileGroup
+
+    //*** bottom-ui ***
+    // diceSpriteGroup
+    graphics.lineStyle(5, 0x0000FF, 1);
+    graphics.drawRect(-360, 190, 300, 100);
+
     // shows the die group
     dieGroup = game.add.group();
-    dieSpriteGroup = new SpriteGroup("dice", dieGroup, diePool, 6, 900, 700);
+    dieSpriteGroup = new SpriteGroup("dice", dieGroup, diePool, 6, 120, 1450);
     // dieSpriteGroup.renderSprites("box");
     dieGroup.scale.setTo(0.35,0.35);
+    // end diceSpriteGroup
 
-    // Begin test UI group
-    testButtonGroup = game.add.group();
-    var button1 = game.make.button(game.world.centerX - 360, 10, 'button', testMethod1, this, 2, 1, 0);
-    button1.scale.setTo(0.35, 0.35);
-    window.rich = button1;
+    // gameControlsGroup
+    graphics.lineStyle(5, 0x0000FF, 1);
+    graphics.drawRect(-60, 190, 160, 100);
 
-    var button2 = game.make.button(game.world.centerX - 280, 10, 'button', testMethod2, this, 2, 1, 0);
-    button2.scale.setTo(0.35, 0.35);
-    window.rich = button2;
+    gameControlsGroup = game.add.group();
+    gameControlsGroup.position.x = game.world.centerX;
+    gameControlsGroup.position.y = game.world.centerY+200;
+    decrementDiceAmountButton = game.make.button(-50, 50, 'square_buttons', function(){}, this, 2, 1, 0);
+    decrementDiceAmountButton.scale.setTo(0.50, 0.50);
+    window.rich = decrementDiceAmountButton;
 
-    var button3 = game.make.button(game.world.centerX - 200, 10, 'button', testMethod3, this, 2, 1, 0);
-    button3.scale.setTo(0.35, 0.35);
-    window.rich = button3;
+    incrementDiceAmountButton = game.make.button(-20, 50, 'square_buttons', function(){}, this, 2, 1, 0);
+    incrementDiceAmountButton.scale.setTo(0.50, 0.50);
+    window.rich = incrementDiceAmountButton;
 
-    var button4 = game.make.button(game.world.centerX - 120, 10, 'button', testMethod4, this, 2, 1, 0);
-    button4.scale.setTo(0.35, 0.35);
-    window.rich = button4;
+    decrementDiceValueButton = game.make.button(40, 50, 'square_buttons', function(){}, this, 2, 1, 0);
+    decrementDiceValueButton.scale.setTo(0.50, 0.50);
+    window.rich = decrementDiceValueButton;
 
-    testButtonGroup.add(button1);
-    testButtonGroup.add(button2);
-    testButtonGroup.add(button3);
-    testButtonGroup.add(button4);
-    // End test UI testButtonGroup
+    incrementDiceValueButton = game.make.button(70, 50, 'square_buttons', function(){}, this, 2, 1, 0);
+    incrementDiceValueButton.scale.setTo(0.50, 0.50);
+    window.rich = incrementDiceValueButton;
+
+    diceAmountText = "3";
+    style = { font: "50px Arial", fill: "#000", align: "left" };
+    diceAmountTextElement = game.add.text(-35, -10, diceAmountText, style);
+
+    diceValueText = "5";
+    style = { font: "50px Arial", fill: "#000", align: "left" };
+    diceValueTextElement = game.add.text(55, -10, diceValueText, style);
+
+    gameControlsGroup.add(diceAmountTextElement);
+    gameControlsGroup.add(diceValueTextElement);
+    gameControlsGroup.add(decrementDiceAmountButton);
+    gameControlsGroup.add(incrementDiceAmountButton);
+    gameControlsGroup.add(decrementDiceValueButton);
+    gameControlsGroup.add(incrementDiceValueButton);
+    // end gameControlsGroup
+
+    // gameMenuGroup
+    graphics.lineStyle(5, 0x0000FF, 1);
+    graphics.drawRect(100, 190, 260, 100);
+    window.graphics = graphics;
+
+    gameMenuGroup = game.add.group();
+    gameMenuGroup.position.x = game.world.centerX+115;
+    gameMenuGroup.position.y = game.world.centerY+200;
+
+    menuButton1 = game.make.button(0, 25, 'rect_buttons', testMethod1, this, 2, 1, 0);
+    menuButton1.scale.setTo(0.60, 0.50);
+    window.rich = menuButton1;
+
+    menuButton2 = game.make.button(0, 50, 'rect_buttons', testMethod2, this, 2, 1, 0);
+    menuButton2.scale.setTo(0.60, 0.50);
+    window.rich = menuButton2;
+
+    menuButton3 = game.make.button(120, 25, 'rect_buttons', testMethod3, this, 2, 1, 0);
+    menuButton3.scale.setTo(0.60, 0.50);
+    window.rich = menuButton3;
+
+    menuButton4 = game.make.button(120, 50, 'rect_buttons', testMethod4, this, 2, 1, 0);
+    menuButton4.scale.setTo(0.60, 0.50);
+    window.rich = menuButton4;
+
+    gameMenuGroup.add(menuButton1);
+    gameMenuGroup.add(menuButton2);
+    gameMenuGroup.add(menuButton3);
+    gameMenuGroup.add(menuButton4);
+    // end gameMenuGroup
+
+    // *** end-bottom-ui ***
 
     // Begin scene UI group
     // sceneButtonGroup = game.add.group();
-    // var button5 = game.make.button(game.world.centerX - 360, 550, 'button', waitGame, this, 2, 1, 0);
+    // var button5 = game.make.button(game.world.centerX - 360, 550, 'rect_buttons', waitGame, this, 2, 1, 0);
     // button5.scale.setTo(0.35, 0.35);
     // window.rich = button5;
 
-    // var button6 = game.make.button(game.world.centerX - 280, 550, 'button', startGame, this, 2, 1, 0);
+    // var button6 = game.make.button(game.world.centerX - 280, 550, 'rect_buttons', startGame, this, 2, 1, 0);
     // button6.scale.setTo(0.35, 0.35);
     // window.rich = button6;
 
-    // var button7 = game.make.button(game.world.centerX - 200, 550, 'button', continueGame, this, 2, 1, 0);
+    // var button7 = game.make.button(game.world.centerX - 200, 550, 'rect_buttons', continueGame, this, 2, 1, 0);
     // button7.scale.setTo(0.35, 0.35);
     // window.rich = button7;
 
-    // var button8 = game.make.button(game.world.centerX - 120, 550, 'button', endGame, this, 2, 1, 0);
+    // var button8 = game.make.button(game.world.centerX - 120, 550, 'rect_buttons', endGame, this, 2, 1, 0);
     // button8.scale.setTo(0.35, 0.35);
     // window.rich = button8;
 
@@ -145,10 +281,10 @@ function testMethod2() {
 }
 
 function testMethod3() {
-    diePool.removeDie(0);
+    diePool.removeDie(3);
     dieGroup.removeAll();
     dieSpriteGroup.renderSprites("box");
-    testButtonText.text = "RemoveAll()";
+    testButtonText.text = "removeDie";
 }
 
 function testMethod4() {
