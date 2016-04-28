@@ -34,3 +34,23 @@ function isContinue() {
 function updateGlobalPool(game) {
   
 }
+
+function bid() {
+
+}
+
+function challenge() {
+
+}
+
+function loseDice() {
+
+}
+
+function revealDice() {
+
+}
+
+function dealDice() {
+    
+}

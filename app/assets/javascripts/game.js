@@ -7,12 +7,7 @@ var logo;
 var text;
 var state;
 var diePool;
-var playerNames = {
-    0: "David",
-    1: "Nicu",
-    2: "Eric",
-    3: "Josh"
-};
+
 var channel;
 var gameId = "";
 var gameName = "";
