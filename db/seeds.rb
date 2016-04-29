@@ -7,8 +7,8 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 u1 = User.create(email: "nicu@test.com", username:"Listana", password:"ayyylmao", password_confirmation:"ayyylmao")
-u2 = User.create(email: "david@test.com", username:"DChau", password:"ayyylmao", password_confirmation:"ayyylmao")
-u3 = User.create(email: "eric@test.com", username:"EChen",password:"ayyylmao", password_confirmation:"ayyylmao")
+u2 = User.create(email: "david@test.com", username:"MastahChau", password:"ayyylmao", password_confirmation:"ayyylmao")
+u3 = User.create(email: "eric@test.com", username:"Cheneric",password:"ayyylmao", password_confirmation:"ayyylmao")
 u4 = User.create(email: "josh@test.com", username:"Majiccow", password:"ayyylmao", password_confirmation:"ayyylmao")
 
 g1 = Game.create(name: "Nicu's Game", turn: "nicu", max_users: 4, logged_in_users: 4, diepool: "1,2,3,4,5,6", completed: 0)
