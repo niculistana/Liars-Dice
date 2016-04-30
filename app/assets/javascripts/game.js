@@ -36,13 +36,10 @@ var numPlayersTimeout;
 var assetsLoadedTimeout;
 var hasWinnerTimeout;
 
-// function Game(){
-//     this.numPlayers = numPlayers;
-// }
-
 function preload() {
     //For production, we change the url to intense-temple
     game.load.baseURL = "http://localhost:3000/";
+    // game.load.baseURL = "https://intense-temple-36417.herokuapp.com";
     game.load.path = "assets/";
     game.load.spritesheet('rect_buttons', 'sprites/uipack_fixed/new_ui/buttons/rect_buttons.png', 192, 49);
     game.load.spritesheet('square_buttons', 'sprites/uipack_fixed/new_ui/buttons/square_buttons.png', 51, 49);
@@ -393,29 +390,4 @@ function endGame() {
         emitter.destroy();
         waitGame();
     }, 3000);
-}
-
-// isRoomFull, isLoaded, and isContinue will be used for future implementation of the game loop
-function isRoomFull() {
-    if (numPlayers === 4) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-function isLoaded() {
-    if (assetsLoaded) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-function isContinue() {
-    if (hasWinner) {
-        return true;
-    } else {
-        return false;
-    }
 }

@@ -41,6 +41,14 @@ function updateGlobalPool(game) {
 
 //Make ajax request to get id before making post request?/?
 function readyButton() {
+    readyOrNotReady(true);    
+}
+
+function notReadyButton() {
+    readyOrNotReady(false);
+}
+
+function readyOrNotReady(booleanSwitch) {
     $.ajax({
         url: '/session/user_id/',
         type: 'GET',
@@ -53,37 +61,7 @@ function readyButton() {
                 game_user : {
                     game_id: parseInt(gameId),
                     user_id: userId,
-                    is_ready: true
-                }
-            };
-            $.ajax({
-                url: '/game_users/'+userId,
-                type: 'POST',
-                dataType: 'json',
-                data: game_user_info,
-                success: function(event) {
-                    console.log(event);
-                }
-            });
-        }
-    });
-    
-}
-
-function notReady() {
-       $.ajax({
-        url: '/session/user_id/',
-        type: 'GET',
-        dataType: 'json',
-        success: function(event) {
-            var userId = event.uid;
-            console.log(event);
-            var game_user_info = {
-                _method: 'PUT',
-                game_user : {
-                    game_id: parseInt(gameId),
-                    user_id: userId,
-                    is_ready: false
+                    is_ready: booleanSwitch
                 }
             };
             $.ajax({
