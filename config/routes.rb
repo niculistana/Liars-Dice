@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'pages/about'
+
   resources :game_users
   resources :games
   devise_for :users
@@ -8,7 +10,7 @@ Rails.application.routes.draw do
   get 'create' =>       "pages#create", as: :create
   get 'join' =>         "pages#join", as: :join
   get 'leaderboard' =>  "pages#leaderboard", as: :leaderboard
-  get 'spectate' =>     "pages#spectate", as: :spectate
+  get 'about' =>     "pages#about", as: :about
   get "play" => "pages#index", as: :play
   post "chat/message" => "chat#message"
   get "session/name_id" => "session#name_id"
