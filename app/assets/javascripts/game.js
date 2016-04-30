@@ -1,18 +1,11 @@
 var game = new Phaser.Game(740, 600, Phaser.AUTO, 'phaser-window', { preload: preload, create: create });
-var numPlayers = 0;
-var players = [];
 var assetsLoaded = false;
 var hasWinner = false;
 var logo;
 var text;
 var state;
 var diePool;
-var playerNames = {
-    0: "David",
-    1: "Nicu",
-    2: "Eric",
-    3: "Josh"
-};
+
 var channel;
 var gameId = "";
 var gameName = "";
@@ -21,8 +14,6 @@ var gameFiles = ['sprites/dollar_sign.png', 'sprites/liars_dice_logo.png',
 'sprites/boardgamepack/PNG/Dice/dieRed1.png', 'sprites/boardgamepack/PNG/Dice/dieRed2.png', 
 'sprites/boardgamepack/PNG/Dice/dieRed3.png', 'sprites/boardgamepack/PNG/Dice/dieRed4.png', 
 'sprites/boardgamepack/PNG/Dice/dieRed5.png', 'sprites/boardgamepack/PNG/Dice/dieRed6.png', ];
-
-var maxPlayers = 4;
 
 // temporary button groups
 var testButtonGroup;
@@ -317,51 +308,28 @@ function testMethod2() {
 }
 
 function testMethod3() {
-    diePool.removeDie(0);
-    var testAjax = {
-        _method: 'PUT',
-        game: {
-            name: gameName,
-            turn: "1",
-            diepool: [],
-            completed: 1
-        }
-    };
-    for(var die in diePool.allObjects) {
-        testAjax.game.diepool.push(diePool.allObjects[die].id);
-    }
-    testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
-    $.ajax({
-        url: '/games/'+gameId,
-        type: 'POST',
-        data: testAjax,
-        success: function(response) {
-            console.log("I have put");
-
-        }
-    });
-    dieGroup.removeAll();
-    dieSpriteGroup.renderSprites("box");
-    testButtonText.text = "removeDie";
+    // loseDice();
+    readyButton();
 }
 
 function testMethod4() {
+    notReady();
     // diePool.resetDiePool();
     testButtonText.text = "Ajax Get Dice from Database";
-    //Append element id to url "/games/"
-    $.ajax({
-        url: "/games/"+gameId,
-        type: "GET",
-        dataType: "json",
-        success: function (data) {
-            console.log("GET");
-            console.log(data);
-            var dataString = JSON.parse(data.diepool);
-            //Create temp diepool object
-            //Make die object with die.id = each element in dataString
-            //Overwrite old diepool to temp diepool
-        }
-    });
+    // //Append element id to url "/games/"
+    // $.ajax({
+    //     url: "/games/"+gameId,
+    //     type: "GET",
+    //     dataType: "json",
+    //     success: function (data) {
+    //         console.log("GET");
+    //         console.log(data);
+    //         var dataString = JSON.parse(data.diepool);
+    //         //Create temp diepool object
+    //         //Make die object with die.id = each element in dataString
+    //         //Overwrite old diepool to temp diepool
+    //     }
+    // });
 }
 
 function waitGame(){

@@ -13,7 +13,7 @@ u4 = User.create(email: "josh@test.com", username:"Majiccow", password:"ayyylmao
 
 g1 = Game.create(name: "Nicu's Game", turn: "nicu", max_users: 4, logged_in_users: 4, diepool: "1,2,3,4,5,6", completed: 0)
 
-GameUser.create(game_id: g1.id, user_id: u1.id, dice: "1,2,3,4,5")
+# GameUser.create(game_id: g1.id, user_id: u1.id, dice: "1,2,3,4,5")
 GameUser.create(game_id: g1.id, user_id: u2.id, dice: "5,4,3,2,1")
 GameUser.create(game_id: g1.id, user_id: u3.id, dice: "3,2,1,2,5")
-GameUser.create(game_id: g1.id, user_id: u4.id, dice: "4,3,5,1,2")
+# GameUser.create(game_id: g1.id, user_id: u4.id, dice: "4,3,5,1,2")
