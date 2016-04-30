@@ -1,18 +1,14 @@
 <% provide(:title, 'Landing') %>
-<div class="container">
-  <%= link_to "Create", "#", data: {toggle: "modal", target: "#myModal"}, class: "btn btn-primary" %>
-  <%= link_to "Join", :join , class: "btn btn-danger" %>
-  <%= link_to "Leaderboard", :leaderboard , class: "btn btn-info" %>
-  <%= link_to "Spectate", :games , class: "btn btn-success" %>
+<div id="landingContainer" class="container">
+  <h1>LIARS DICE<h1/>
+  <div class="row">
+    <%= link_to "Create", "#", data: {toggle: "modal", target: "#myModal"}, class: "btn btn-primary btn-lg" %>
+    <%= link_to "Join", :join , class: "btn btn-danger btn-lg" %>
+  </div>
+  <div class="row">
+    <%= link_to "Leaderboard", :leaderboard , class: "btn btn-info btn-lg" %>
+    <%= link_to "Spectate", :games , class: "btn btn-success btn-lg" %>
+  </div>
 </div> <!-- /container -->
-<div class ="row">
-<div style="width:400px;height:300px;-webkit-border-radius: 11px;-moz-border-radius: 11px;border-radius: 11px;border:3px solid #191313;background:rgba(13,145,35,0.5);-webkit-box-shadow: #B3B3B3 5px 5px 5px;-moz-box-shadow: #B3B3B3 5px 5px 5px; box-shadow: #B3B3B3 5px 5px 5px;">Create</div>
 
-<div style="width:400px;height:300px;-webkit-border-radius: 11px;-moz-border-radius: 11px;border-radius: 11px;border:3px solid #191313;background:rgba(13,145,35,0.5);-webkit-box-shadow: #B3B3B3 5px 5px 5px;-moz-box-shadow: #B3B3B3 5px 5px 5px; box-shadow: #B3B3B3 5px 5px 5px;">Join</div>
-</div>
-<div class="row">
-<div style="width:400px;height:300px;-webkit-border-radius: 11px;-moz-border-radius: 11px;border-radius: 11px;border:3px solid #191313;background:rgba(13,145,35,0.5);-webkit-box-shadow: #B3B3B3 5px 5px 5px;-moz-box-shadow: #B3B3B3 5px 5px 5px; box-shadow: #B3B3B3 5px 5px 5px;">Leaderboard</div>
-
-<div style="width:400px;height:300px;-webkit-border-radius: 11px;-moz-border-radius: 11px;border-radius: 11px;border:3px solid #191313;background:rgba(13,145,35,0.5);-webkit-box-shadow: #B3B3B3 5px 5px 5px;-moz-box-shadow: #B3B3B3 5px 5px 5px; box-shadow: #B3B3B3 5px 5px 5px;">Spectate</div>
-</div>
 <div class="text-center text-uppercase spacer"><%=link_to "or play as guest", :play%></div>
