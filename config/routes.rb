@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get "play" => "pages#index", as: :play
   post "chat/message" => "chat#message"
   get "session/name_id" => "session#name_id"
+  get "session/user_id" => "session#user_id"
   post "/" => "games#create"
 
   #devise_scope :user do

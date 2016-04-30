@@ -1,11 +1,12 @@
 class ChatController < ApplicationController
+  $guest_name = ["Jack Sparrow", "Barbossa", "Davy Jones", "Will Turner", "Elizabeth Swann"]
   def message
     #append to chat_channel +session[:game_id].to_s
     username = "";
     if current_user != nil
       username = current_user.username
     else
-      username = "guest"
+      username = "Guest"
     end
     Pusher.trigger('chat_channel', 'chat', {name: username, 
       message: params[:chatMessage]})

@@ -40,6 +40,8 @@ class GameUsersController < ApplicationController
   # PATCH/PUT /game_users/1
   # PATCH/PUT /game_users/1.json
   def update
+    
+    
     respond_to do |format|
       if @game_user.update(game_user_params)
         format.html { redirect_to @game_user, notice: 'Game user was successfully updated.' }
@@ -69,6 +71,6 @@ class GameUsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_user_params
-      params.require(:game_user).permit(:game_id, :user_id, :dice)
+      params.require(:game_user).permit(:game_id, :user_id, :dice, :is_ready)
     end
 end

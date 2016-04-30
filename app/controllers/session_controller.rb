@@ -5,4 +5,11 @@ class SessionController < ApplicationController
       format.json {render :json => id_message}
     end
   end
+
+  def user_id
+    respond_to do |format|
+      uid_message = {:status => "ok", :uid => current_user.id}
+      format.json {render :json => uid_message}
+    end
+  end
 end
