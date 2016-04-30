@@ -13,7 +13,7 @@
           </div>
           <div class="field">
             <%= f.label :max_users %><br>
-            <%= f.text_field :max_users, required: "true"%>
+            <%= f.text_field :max_users, required: "true", pattern: '[2-4]{1}', title:"Max 4 players" %>
           </div>
         </div>
         <div class="modal-footer">
