@@ -7,7 +7,6 @@ Rails.application.routes.draw do
   resources :users, only: [:index]
 
   root                      "pages#landing"
-  get 'create'           => "pages#create",       as: :create
   get 'join'             => "pages#join",         as: :join
   get 'leaderboard'      => "pages#leaderboard",  as: :leaderboard
   get 'about'            => "pages#about",        as: :about
