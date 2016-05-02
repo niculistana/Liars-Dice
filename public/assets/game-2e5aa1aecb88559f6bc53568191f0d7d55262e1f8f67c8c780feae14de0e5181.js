@@ -10,7 +10,7 @@ var channel;
 var gameId = "";
 var gameName = "";
 var gameFileKeys = ['dollars', 'logo', 'dice1', 'dice2', 'dice3', 'dice4', 'dice5', 'dice6',
-'player1','player2','player3','player4','player5','player6','player7','player8'];
+'player1','player2','player3','player4','player5','player6'];
 var gameFiles = ['sprites/dollar_sign.png', 'sprites/liars_dice_logo.png',
 'sprites/_main/dice/dieRed1.png', 'sprites/_main/dice/dieRed2.png',
 'sprites/_main/dice/dieRed3.png', 'sprites/_main/dice/dieRed4.png',
@@ -164,7 +164,7 @@ function create() {
     // ** player area **
     // shows the player group
     playerGroup = game.add.group();
-    playerSpriteGroup = new SpriteGroup("player", playerGroup, playerPool, 6, -20, -80);
+    playerSpriteGroup = new SpriteGroup("player", playerGroup, playerPool, 6, 0, 0);
     playerSpriteGroup.renderSprites("octagonal");
     playerGroup.position.setTo(game.world.centerX, game.world.centerY);
     playerGroup.scale.setTo(0.75,0.75);
