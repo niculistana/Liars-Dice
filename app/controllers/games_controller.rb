@@ -78,6 +78,8 @@ class GamesController < ApplicationController
     end
   end
 
+  #Handle challenge
+  #
   def challenge
     respond_to do |format|
       test = {:status => "ok", :test1 => 0, 
