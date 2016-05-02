@@ -15,6 +15,10 @@ Rails.application.routes.draw do
   post "chat/message" => "chat#message"
   get "session/name_id" => "session#name_id"
   get "session/user_id" => "session#user_id"
+  post "games/bid" => "games#bid"
+  post "games/challenge" => "games#challenge"
+  post "games/lose_dice" => "games#lose_dice"
+  post "games/deal_dice" => "games#deal_dice"
   post "/" => "games#create"
 
   #devise_scope :user do

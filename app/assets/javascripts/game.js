@@ -306,7 +306,9 @@ function testMethod2() {
 
 function testMethod3() {
     // loseDice();
-    readyButton();
+    testButtonText.text = "Bid";
+    // readyButton();
+    bid();
 }
 
 function testMethod4() {

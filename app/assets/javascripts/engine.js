@@ -39,7 +39,7 @@ function updateGlobalPool(game) {
   
 }
 
-//Make ajax request to get id before making post request?/?
+//Behavior to see if user is ready to play
 function readyButton() {
     readyOrNotReady(true);    
 }
@@ -77,12 +77,47 @@ function readyOrNotReady(booleanSwitch) {
     });
 }
 
+//Behavior to bet
+//Get quantity and value from DOM
 function bid() {
-
+    var bid_info = {
+        game: {
+            quantity: 0,
+            value: 0
+        }
+    };
+    $.ajax({
+        url: '/games/bid',
+        type: 'POST',
+        data: bid_info,
+        success: function(event) {
+            console.log(event);
+        }
+    });
 }
 
 function challenge() {
+    var challenge_info = {
+        game: {
+            challenger: "name",
+            challengee: "name2",
 
+        }
+    };
+    //reveal dice
+    $.ajax({
+        url: '/games/challenge',
+        type: 'POST',
+        data: challenge_info,
+        success: function(event) {
+            console.log(event);
+            if(event.result) {
+                //Challenger loses dice
+            } else {
+                //Challengee loses dice
+            }
+        }
+    });
 }
 
 //Behavior when player loses a challenge and then loses a dice
@@ -115,6 +150,7 @@ function loseDice() {
     testButtonText.text = "removeDie";
 }
 
+//Behavior to reveal dice
 function revealDice() {
 
 }

@@ -37,6 +37,10 @@ function submitMessage() {
             dataType: 'json',
             success: function (data) {
                 console.log("I succeed");
+            },
+            error: function(xhr, err, errThrown) {
+                console.log(err);
+                console.log(errThrown);
             }
         });
     }

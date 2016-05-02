@@ -66,6 +66,32 @@ class GamesController < ApplicationController
     end
   end
 
+  #Save bid into the database
+  #Check if bid is valid
+  #If valid, save
+  #If not, return with prompt
+  def bid
+    respond_to do |format|
+      test = {:status => "ok", :test1 => 0, 
+        :test2 => 1}
+      format.json {render :json => test}
+    end
+  end
+
+  def challenge
+    respond_to do |format|
+      test = {:status => "ok", :test1 => 0, 
+        :test2 => 1}
+      format.json {render :json => test}
+    end
+  end
+
+  def lose_dice
+  end
+
+  def deal_dice
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_game
@@ -74,6 +100,7 @@ class GamesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
-      params.require(:game).permit(:name, :turn, :max_users, :logged_in_users, :diepool, :completed)
+      params.require(:game).permit(:name, :turn, :max_users, :logged_in_users,
+       :diepool, :completed, :quantity, :value)
     end
 end
