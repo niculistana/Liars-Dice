@@ -5,8 +5,14 @@ function playerPool (numPlayers) {
   // default number of dice per player is 5
   this.generatePool = function() {
     for (var i = 0; i < numPlayers; i++) {
-      this.allObjects.push(i);
+      this.allObjects.push(new Player(9,"nicu",9));
     }
+  };
+
+  this.addPlayer = function(player) {
+    if (this.allObjects.length < numPlayers)
+      this.allObjects.push(player);
+    console.log(this.allObjects);
   };
 
   this.setCurrentCurrentplayer = function (index, player) {

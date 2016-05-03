@@ -19,6 +19,7 @@ var gameFiles = ['sprites/dollar_sign.png', 'sprites/liars_dice_logo.png',
 'sprites/_main/player/player3.png', 'sprites/_main/player/player4.png',
 'sprites/_main/player/player5.png', 'sprites/_main/player/player6.png',
 'sprites/_main/player/player7.png', 'sprites/_main/player/player8.png'];
+var numPlayers = 0;
 
 // temporary button groups
 var testButtonGroup;
@@ -52,7 +53,7 @@ function preload() {
     diePool = new diePool(4);
     diePool.generatePool();
     playerPool = new playerPool(8);
-    playerPool.generatePool();
+    // playerPool.generatePool();
 }
 
 $(document).ready(function(event){
@@ -169,7 +170,6 @@ function create() {
     playerGroup.scale.setTo(0.75,0.75);
     // end playerSpriteGroup
     // ** end player area **
-
 
     //*** bottom-ui ***
     // diceSpriteGroup
@@ -323,7 +323,10 @@ function testMethod2() {
 }
 
 function testMethod3() {
-    testButtonText.text = "Render players";
+    testButtonText.text = "Add player";
+    playerGroup.removeAll();
+    playerPool.addPlayer(new Player("2:00", "nicu", numPlayers));
+    numPlayers++;
     playerSpriteGroup.renderSprites("octagonal");
 }
 
