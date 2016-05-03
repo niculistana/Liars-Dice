@@ -1,6 +1,5 @@
 var game = new Phaser.Game(740, 600, Phaser.AUTO, 'phaser-window', { preload: preload, create: create });
 var assetsLoaded = false;
-var hasWinner = false;
 var logo;
 var text;
 var state;
@@ -55,8 +54,8 @@ function preload() {
     game.load.images(gameFileKeys, gameFiles);
     diePool = new diePool(4);
     diePool.generatePool();
-    playerPool = new playerPool(7);
-    playerPool.generatePool();
+    playerPool = new playerPool(8);
+    // playerPool.generatePool();
 }
 
 $(document).ready(function(event){
@@ -169,12 +168,10 @@ function create() {
     // shows the player group
     playerGroup = game.add.group();
     playerSpriteGroup = new SpriteGroup("player", playerGroup, playerPool, 6, -20, -80);
-    playerSpriteGroup.renderSprites("octagonal");
     playerGroup.position.setTo(game.world.centerX, game.world.centerY);
     playerGroup.scale.setTo(0.75,0.75);
     // end playerSpriteGroup
     // ** end player area **
-
 
     //*** bottom-ui ***
     // diceSpriteGroup
@@ -328,11 +325,18 @@ function testMethod2() {
 }
 
 function testMethod3() {
-    testButtonText.text = "Render players";
+    testButtonText.text = "Add player";
+    playerGroup.removeAll();
+    playerPool.addPlayer(new Player("2:00", "nicu", numPlayers));
+    numPlayers++;
+    playerSpriteGroup.renderSprites("octagonal");
 }
 
 function testMethod4() {
-    testButtonText.text = "Delete player";
+    testButtonText.text = "Delete player 1";
+    playerPool.removePlayer(0);
+    playerGroup.removeAll();
+    playerSpriteGroup.renderSprites("octagonal");
 }
 
 function waitGame(){

@@ -7,16 +7,9 @@ function SpriteGroup (spriteName, spriteGroup, objectPool, numSprite, spriteOrig
   this.lastSprite;
 
   // array of hashes, coordinate points for octagon
-  this.octagonCoordinates = [{x:0, y:0},
-                              {x:280, y:180},
-                              {x:280, y:-180},
-                              {x:-280, y:-180},
-                              {x:-280, y:180},
-                              {x:280, y:0},
-                              {x:-280, y:0},
-                              {x:0, y:230},
-                              {x:0, y:-230}];
-
+  this.octagonCoordinates = [{x:0, y:0},{x:280, y:180},{x:280, y:-180},
+                            {x:-280, y:-180},{x:-280, y:180},{x:280, y:0},
+                            {x:-280, y:0},{x:0, y:230},{x:0, y:-230}];
 
   this.renderSprites = function (shape) {
     var spriteFileName = "";
@@ -25,13 +18,12 @@ function SpriteGroup (spriteName, spriteGroup, objectPool, numSprite, spriteOrig
 
     // todo: renders in an octagonal fashion
     if (shape == "octagonal") {
-      for (var i = 1; i < objectPool.allObjects.length+2; i++) {
-          spriteFileName = spriteName + i;
-          spritePosX = this.octagonCoordinates[i].x + spriteOriginPosX;
-          spritePosY = this.octagonCoordinates[i].y + spriteOriginPosY;
-          console.log("spriteFileName: " + spriteFileName + " x: " + spritePosX + " y: " + spritePosY);
-          this.lastSprite = game.add.sprite(spritePosX, spritePosY, spriteFileName);
-          spriteGroup.add(this.lastSprite);
+      for (var i = 1; i < objectPool.allObjects.length+1; i++) {
+        spriteFileName = spriteName + i;
+        spritePosX = this.octagonCoordinates[i].x + spriteOriginPosX;
+        spritePosY = this.octagonCoordinates[i].y + spriteOriginPosY;
+        this.lastSprite = game.add.sprite(spritePosX, spritePosY, spriteFileName);
+        spriteGroup.add(this.lastSprite);
       }
     }
 
