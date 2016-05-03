@@ -104,13 +104,13 @@ function challenge() {
 
         }
     };
-    //reveal dice
     $.ajax({
         url: '/games/challenge',
         type: 'POST',
         data: challenge_info,
         success: function(event) {
             console.log(event);
+            //reveal dice
             if(event.result) {
                 //Challenger loses dice
             } else {

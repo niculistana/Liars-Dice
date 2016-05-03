@@ -43,8 +43,6 @@ class GamesController < ApplicationController
   # PATCH/PUT /games/1
   # PATCH/PUT /games/1.json
   def update
-    #Append @game.id.to_s to game_channel
-    Pusher.trigger('game_channel'+@game.id.to_s, 'my_event', game_params)
     respond_to do |format|
       if @game.update(game_params)
         format.html { redirect_to @game, notice: 'Game was successfully updated.' }
@@ -79,8 +77,11 @@ class GamesController < ApplicationController
   end
 
   #Handle challenge
-  #
+  #Check if bid is in the diepool
+  #Use pusher to display results to everyone.
   def challenge
+    Pusher.trigger('game_channel'+@game.id.to_s, 'my_event', game_params)
+    diepool = @game.diepool
     respond_to do |format|
       test = {:status => "ok", :test1 => 0, 
         :test2 => 1}
