@@ -190,29 +190,37 @@ function create() {
     gameControlsGroup = game.add.group();
     gameControlsGroup.position.x = game.world.centerX;
     gameControlsGroup.position.y = game.world.centerY+200;
-    decrementDiceAmountButton = game.make.button(-50, 50, 'square_buttons', function(){}, this, 2, 1, 0);
-    decrementDiceAmountButton.scale.setTo(0.50, 0.50);
+    decrementDiceAmountButton = game.make.button(-50, 30, 'square_buttons', function(){}, this, 2, 1, 0);
+    decrementDiceAmountButton.scale.setTo(0.35, 0.35);
     window.rich = decrementDiceAmountButton;
 
-    incrementDiceAmountButton = game.make.button(-20, 50, 'square_buttons', function(){}, this, 2, 1, 0);
-    incrementDiceAmountButton.scale.setTo(0.50, 0.50);
+    incrementDiceAmountButton = game.make.button(-20, 30, 'square_buttons', function(){}, this, 2, 1, 0);
+    incrementDiceAmountButton.scale.setTo(0.35, 0.35);
     window.rich = incrementDiceAmountButton;
 
-    decrementDiceValueButton = game.make.button(40, 50, 'square_buttons', function(){}, this, 2, 1, 0);
-    decrementDiceValueButton.scale.setTo(0.50, 0.50);
+    decrementDiceValueButton = game.make.button(40, 30, 'square_buttons', function(){}, this, 2, 1, 0);
+    decrementDiceValueButton.scale.setTo(0.35, 0.35);
     window.rich = decrementDiceValueButton;
 
-    incrementDiceValueButton = game.make.button(70, 50, 'square_buttons', function(){}, this, 2, 1, 0);
-    incrementDiceValueButton.scale.setTo(0.50, 0.50);
+    incrementDiceValueButton = game.make.button(70, 30, 'square_buttons', function(){}, this, 2, 1, 0);
+    incrementDiceValueButton.scale.setTo(0.35, 0.35);
     window.rich = incrementDiceValueButton;
 
+    challengeButton = game.make.button(-50, 60, 'rect_buttons', function(){}, this, 2, 1, 0);
+    challengeButton.scale.setTo(0.25, 0.50);
+    window.rich = challengeButton;
+
+    makeBidButton = game.make.button(40, 60, 'rect_buttons', function(){}, this, 2, 1, 0);
+    makeBidButton.scale.setTo(0.25, 0.50);
+    window.rich = makeBidButton;
+
     diceAmountText = "3";
-    style = { font: "50px Arial", fill: "#000", align: "left" };
-    diceAmountTextElement = game.add.text(-35, -10, diceAmountText, style);
+    style = { font: "30px Arial", fill: "#000", align: "left" };
+    diceAmountTextElement = game.add.text(-35, -5, diceAmountText, style);
 
     diceValueText = "5";
-    style = { font: "50px Arial", fill: "#000", align: "left" };
-    diceValueTextElement = game.add.text(55, -10, diceValueText, style);
+    style = { font: "30px Arial", fill: "#000", align: "left" };
+    diceValueTextElement = game.add.text(55, -5, diceValueText, style);
 
     gameControlsGroup.add(diceAmountTextElement);
     gameControlsGroup.add(diceValueTextElement);
@@ -220,6 +228,8 @@ function create() {
     gameControlsGroup.add(incrementDiceAmountButton);
     gameControlsGroup.add(decrementDiceValueButton);
     gameControlsGroup.add(incrementDiceValueButton);
+    gameControlsGroup.add(challengeButton);
+    gameControlsGroup.add(makeBidButton);
     // end gameControlsGroup
 
     // gameMenuGroup
@@ -325,6 +335,7 @@ function testMethod2() {
 function testMethod3() {
     testButtonText.text = "Add player";
     playerGroup.removeAll();
+    // readyButton();
     playerPool.addPlayer(new Player("2:00", "nicu", numPlayers));
     numPlayers++;
     playerSpriteGroup.renderSprites("octagonal");

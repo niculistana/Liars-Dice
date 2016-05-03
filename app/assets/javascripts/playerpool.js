@@ -12,7 +12,6 @@ function playerPool (numPlayers) {
   this.addPlayer = function(player) {
     if (this.allObjects.length < numPlayers)
       this.allObjects.push(player);
-    console.log(this.allObjects);
   };
 
   this.setCurrentCurrentplayer = function (index, player) {
