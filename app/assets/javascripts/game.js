@@ -67,8 +67,14 @@ $(document).ready(function(event){
             gameId = event.id.toString();
             gameName = event.name;
             channel = pusher.subscribe("game_channel"+gameId);
-            channel.bind('my_event', function(data) {
+            channel.bind('challenge_event', function(data) {
                 console.log("I have made my move");
+                //render diepool
+                if(!event.result) {
+                    //Challenger loses dice
+                } else {
+                    //Challengee loses dice
+                }
             });
         }
     });

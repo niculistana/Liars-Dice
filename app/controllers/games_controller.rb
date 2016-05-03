@@ -80,12 +80,17 @@ class GamesController < ApplicationController
   #Check if bid is in the diepool
   #Use pusher to display results to everyone.
   def challenge
-    Pusher.trigger('game_channel'+@game.id.to_s, 'my_event', game_params)
-    diepool = @game.diepool
+    return_data = {:diepool => @game.diepool}
+    temp_quantity = 0
+    @game.diepool.each do |die|
+      temp_quantity += 1 if game_params.value == die
+    end
+
+    return_data[:result] = temp_quantity == game_params.quantity ? true : false
+
+    Pusher.trigger('game_channel'+@game.id.to_s, 'challenge_event', return_data)
     respond_to do |format|
-      test = {:status => "ok", :test1 => 0, 
-        :test2 => 1}
-      format.json {render :json => test}
+      format.json {render :json => return_data}
     end
   end
 

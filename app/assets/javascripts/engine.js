@@ -110,12 +110,6 @@ function challenge() {
         data: challenge_info,
         success: function(event) {
             console.log(event);
-            //reveal dice
-            if(event.result) {
-                //Challenger loses dice
-            } else {
-                //Challengee loses dice
-            }
         }
     });
 }
