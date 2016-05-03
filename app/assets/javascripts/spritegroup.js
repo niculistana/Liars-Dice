@@ -25,7 +25,7 @@ function SpriteGroup (spriteName, spriteGroup, objectPool, numSprite, spriteOrig
 
     // todo: renders in an octagonal fashion
     if (shape == "octagonal") {
-      for (var i = 1; i < objectPool.allObjects.length+2; i++) {
+      for (var i = 1; i < objectPool.allObjects.length+1; i++) {
           spriteFileName = spriteName + i;
           spritePosX = this.octagonCoordinates[i].x + spriteOriginPosX;
           spritePosY = this.octagonCoordinates[i].y + spriteOriginPosY;
@@ -33,6 +33,7 @@ function SpriteGroup (spriteName, spriteGroup, objectPool, numSprite, spriteOrig
           this.lastSprite = game.add.sprite(spritePosX, spritePosY, spriteFileName);
           spriteGroup.add(this.lastSprite);
       }
+      console.log(objectPool.allObjects);
     }
 
     // renders in a box like fashion

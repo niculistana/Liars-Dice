@@ -51,7 +51,7 @@ function preload() {
     game.load.images(gameFileKeys, gameFiles);
     diePool = new diePool(4);
     diePool.generatePool();
-    playerPool = new playerPool(7);
+    playerPool = new playerPool(8);
     playerPool.generatePool();
 }
 
@@ -165,7 +165,6 @@ function create() {
     // shows the player group
     playerGroup = game.add.group();
     playerSpriteGroup = new SpriteGroup("player", playerGroup, playerPool, 6, -20, -80);
-    playerSpriteGroup.renderSprites("octagonal");
     playerGroup.position.setTo(game.world.centerX, game.world.centerY);
     playerGroup.scale.setTo(0.75,0.75);
     // end playerSpriteGroup
@@ -325,10 +324,14 @@ function testMethod2() {
 
 function testMethod3() {
     testButtonText.text = "Render players";
+    playerSpriteGroup.renderSprites("octagonal");
 }
 
 function testMethod4() {
-    testButtonText.text = "Delete player";
+    testButtonText.text = "Delete player 1";
+    playerPool.removePlayer(0);
+    playerGroup.removeAll();
+    playerSpriteGroup.renderSprites("octagonal");
 }
 
 function waitGame(){
