@@ -14,8 +14,3 @@
 //= require jquery_ujs
 //= require_tree .
 //= require bootstrap.min
-
-var pusher = new Pusher("926b2fce0ff5222dc001", {
-    cluster: 'eu',
-    encrypted: true
-});

@@ -19,6 +19,10 @@ var gameFiles = ['sprites/dollar_sign.png', 'sprites/liars_dice_logo.png',
 'sprites/_main/player/player3.png', 'sprites/_main/player/player4.png',
 'sprites/_main/player/player5.png', 'sprites/_main/player/player6.png',
 'sprites/_main/player/player7.png', 'sprites/_main/player/player8.png'];
+var pusher = new Pusher("926b2fce0ff5222dc001", {
+    cluster: 'eu',
+    encrypted: true
+});
 
 // temporary button groups
 var testButtonGroup;
