@@ -358,27 +358,31 @@ function joinLobby () {
         type: 'GET',
         dataType: 'json',
         success: function(event) {
-            var playerId = event.uid; 
+            var playerId = event.uid;
+            // var playerDice = event.dice;
+            var game_user_info = {
+                game_user : {
+                    game_id: gameId,
+                    user_id: playerId
+                    // dice: playerDice
+                }
+            };
             $.ajax({
-                url: '/game_users/'+playerId,
-                type: 'GET',
+                url: '/game_users/',
+                type: 'POST',
                 dataType: 'json',
+                data: game_user_info,
                 success: function(event) {
-                    var playerDice = event.dice;
-                    $.ajax({
-                        url: '/session/user_username',
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(event) {
-                            var playerUserName = event.uname;
-                            testButtonText.text = playerUserName + " joined the game.";
-                            playerGroup.removeAll();
-                            playerPool.addPlayer(new Player("2:00", playerUserName, playerId));
-                            playerSpriteGroup.renderSprites("octagonal");
-                        }
-                    });
+                    console.log(event);
                 }
             });
+            // channel.bind("render", function(event) {
+            //         var playerUserName = event.uname;
+            //         testButtonText.text = playerUserName + " left the game.";
+            //         playerGroup.removeAll();
+            //         playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
+            //         playerSpriteGroup.renderSprites("octagonal");
+            // });
         }
     });
 }
@@ -389,31 +393,32 @@ function leaveLobby () {
         type: 'GET',
         dataType: 'json',
         success: function(event) {
-            var playerId = event.uid; 
+            var playerId = event.uid;
+            // var playerDice = event.dice;
+            var game_user_info = {
+                _method: "DELETE",
+                game_user : {
+                    game_id: gameId,
+                    user_id: playerId
+                    // dice: playerDice
+                }
+            };
             $.ajax({
                 url: '/game_users/'+playerId,
-                type: 'GET',
+                type: 'POST',
                 dataType: 'json',
-                success: function(event) {
-                    var playerDice = event.dice;
-                    $.ajax({
-                        url: '/session/user_username',
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(event) {
-                            var playerUserName = event.uname;
-                            testButtonText.text = playerUserName + " left the game.";
-                            playerGroup.removeAll();
-                            playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
-                            playerSpriteGroup.renderSprites("octagonal");
-                        }
-                    });
-                }
+                data: game_user_info
             });
+            // channel.bind("render", function(event) {
+            //     var playerUserName = event.uname;
+            //     testButtonText.text = playerUserName + " left the game.";
+            //     playerGroup.removeAll();
+            //     playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
+            //     playerSpriteGroup.renderSprites("octagonal");
+            // });
         }
     });
 }
-
 // end lobby methods
 
 function waitGame(){
