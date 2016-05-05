@@ -341,20 +341,80 @@ function testMethod2() {
 }
 
 function testMethod3() {
-    testButtonText.text = "Add player";
-    playerGroup.removeAll();
+    joinLobby();
     // readyButton();
-    playerPool.addPlayer(new Player("2:00", "nicu", numPlayers));
-    numPlayers++;
-    playerSpriteGroup.renderSprites("octagonal");
 }
 
 function testMethod4() {
-    testButtonText.text = "Delete player 1";
-    playerPool.removePlayer(0);
-    playerGroup.removeAll();
-    playerSpriteGroup.renderSprites("octagonal");
+    leaveLobby();
+    // playerPool.removePlayer(0);
+    // playerSpriteGroup.renderSprites("octagonal");
 }
+
+// lobby methods
+function joinLobby () {
+    $.ajax({
+        url: '/session/user_id/',
+        type: 'GET',
+        dataType: 'json',
+        success: function(event) {
+            var playerId = event.uid; 
+            $.ajax({
+                url: '/game_users/'+playerId,
+                type: 'GET',
+                dataType: 'json',
+                success: function(event) {
+                    var playerDice = event.dice;
+                    $.ajax({
+                        url: '/session/user_username',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(event) {
+                            var playerUserName = event.uname;
+                            testButtonText.text = playerUserName + " joined the game.";
+                            playerGroup.removeAll();
+                            playerPool.addPlayer(new Player("2:00", playerUserName, playerId));
+                            playerSpriteGroup.renderSprites("octagonal");
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+
+function leaveLobby () {
+    $.ajax({
+        url: '/session/user_id/',
+        type: 'GET',
+        dataType: 'json',
+        success: function(event) {
+            var playerId = event.uid; 
+            $.ajax({
+                url: '/game_users/'+playerId,
+                type: 'GET',
+                dataType: 'json',
+                success: function(event) {
+                    var playerDice = event.dice;
+                    $.ajax({
+                        url: '/session/user_username',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(event) {
+                            var playerUserName = event.uname;
+                            testButtonText.text = playerUserName + " left the game.";
+                            playerGroup.removeAll();
+                            playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
+                            playerSpriteGroup.renderSprites("octagonal");
+                        }
+                    });
+                }
+            });
+        }
+    });
+}
+
+// end lobby methods
 
 function waitGame(){
     // if client connection is recieved

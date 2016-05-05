@@ -24,6 +24,14 @@ function playerPool (numPlayers) {
     }
   };
 
+  this.getUserIndexByUserName = function (username) {
+    for (var index = 0; index < this.allObjects.length; index++) {
+      if (this.allObjects[index]["playerNameText"] === username) {
+        return index;
+      }
+    }
+  };
+
   this.emptyPlayerPool = function () {
     this.allObjects = [];
   };
