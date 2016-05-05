@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get 'about'            => "pages#about",        as: :about
   get "session/name_id"  => "session#name_id"
   get "session/user_id"  => "session#user_id"
+  get "session/user_username"  => "session#user_username"
   post "chat/message"    => "chat#message"
   post "games/bid"       => "games#bid"
   post "games/challenge" => "games#challenge"
