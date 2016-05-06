@@ -101,6 +101,7 @@ function challenge() {
         game: {
             challenger: "name",
             challengee: "name2",
+
         }
     };
     $.ajax({

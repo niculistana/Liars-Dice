@@ -76,39 +76,12 @@ $(document).ready(function(event){
                     //Challengee loses dice
                 }
             });
-            channel.bind("render_add", function(event) {
-                console.log("I have rendered");
-                console.log(event);
-                $.ajax({
-                    url: '/session/user_username/',
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(event) {
-                        //Make button unclickable so that user does
-                        //not join multiple times
-                        var playerUserName = event.uname;
-                        testButtonText.text = playerUserName + " joined the game.";
-                        playerPool.addPlayer(new Player("7:00", playerUserName, "1"));
-                        // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
-                        playerSpriteGroup.renderSprites("octagonal");
-                    }
-                });
-            });
-            channel.bind("render_delete", function(event) {
-                console.log("I have rendered");
-                console.log(event);
-                $.ajax({
-                    url: '/session/user_username/',
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(event) {
-                        var playerUserName = event.uname;
-                        testButtonText.text = playerUserName + " left the game.";
-                        playerGroup.removeAll();
-                        playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
-                        playerSpriteGroup.renderSprites("octagonal");
-                    }
-                });
+            channel.bind("render", function(event) {
+                    var playerUserName = event.uname;
+                    testButtonText.text = playerUserName + " left the game.";
+                    playerGroup.removeAll();
+                    playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
+                    playerSpriteGroup.renderSprites("octagonal");
             });
         }
     });
@@ -430,7 +403,6 @@ function leaveLobby () {
                     // dice: playerDice
                 }
             };
-            //Player ID is not the same as database ID
             $.ajax({
                 url: '/game_users/'+playerId,
                 type: 'POST',
