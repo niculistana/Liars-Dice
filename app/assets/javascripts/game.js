@@ -76,6 +76,40 @@ $(document).ready(function(event){
                     //Challengee loses dice
                 }
             });
+            channel.bind("render_add", function(event) {
+                console.log("I have rendered");
+                console.log(event);
+                $.ajax({
+                    url: '/session/user_username/',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(event) {
+                        //Make button unclickable so that user does
+                        //not join multiple times
+                        var playerUserName = event.uname;
+                        testButtonText.text = playerUserName + " joined the game.";
+                        // playerGroup.removeAll();
+                        // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
+                        // playerSpriteGroup.renderSprites("octagonal");
+                    }
+                });
+            });
+            channel.bind("render_delete", function(event) {
+                console.log("I have rendered");
+                console.log(event);
+                $.ajax({
+                    url: '/session/user_username/',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(event) {
+                        var playerUserName = event.uname;
+                        testButtonText.text = playerUserName + " left the game.";
+                        playerGroup.removeAll();
+                        playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
+                        playerSpriteGroup.renderSprites("octagonal");
+                    }
+                });
+            });
         }
     });
 });
@@ -376,13 +410,6 @@ function joinLobby () {
                     console.log(event);
                 }
             });
-            // channel.bind("render", function(event) {
-            //         var playerUserName = event.uname;
-            //         testButtonText.text = playerUserName + " left the game.";
-            //         playerGroup.removeAll();
-            //         playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
-            //         playerSpriteGroup.renderSprites("octagonal");
-            // });
         }
     });
 }
@@ -409,13 +436,6 @@ function leaveLobby () {
                 dataType: 'json',
                 data: game_user_info
             });
-            // channel.bind("render", function(event) {
-            //     var playerUserName = event.uname;
-            //     testButtonText.text = playerUserName + " left the game.";
-            //     playerGroup.removeAll();
-            //     playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
-            //     playerSpriteGroup.renderSprites("octagonal");
-            // });
         }
     });
 }
