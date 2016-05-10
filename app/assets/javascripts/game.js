@@ -9,6 +9,8 @@ var channel;
 var channel2;
 var gameId = "";
 var gameName = "";
+var numPlayers = 0;
+
 var gameFileKeys = ['dollars', 'logo', 'dice1', 'dice2', 'dice3', 'dice4', 'dice5', 'dice6',
 'player1','player2','player3','player4','player5','player6','player7','player8'];
 var gameFiles = ['sprites/dollar_sign.png', 'sprites/liars_dice_logo.png',
@@ -87,16 +89,18 @@ $(document).ready(function(event){
                 console.log("I have rendered");
                 console.log(event);
                 $.ajax({
-                    url: '/session/user_username/',
+                    url: '/session/recent_user/',
                     type: 'GET',
                     dataType: 'json',
                     success: function(event) {
                         //Make button unclickable so that user does
                         //not join multiple times
-                        var playerUserName = event.uname;
-                        testButtonText.text = playerUserName + " joined the game.";
-                        playerPool.addPlayer(new Player("7:00", playerUserName, "1"));
-                        // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
+                        var playerId = event.user_id;
+                        var playerUsername = event.uname;
+                        var dice = event.dice;
+                        testButtonText.text = playerUsername + " joined the game.";
+                        playerPool.addPlayer(new Player(playerUsername, playerId));
+                        // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
                         playerSpriteGroup.renderSprites("octagonal");
                     }
                 });
@@ -109,10 +113,10 @@ $(document).ready(function(event){
                     type: 'GET',
                     dataType: 'json',
                     success: function(event) {
-                        var playerUserName = event.uname;
-                        testButtonText.text = playerUserName + " left the game.";
+                        var playerUsername = event.uname;
+                        testButtonText.text = playerUsername + " left the game.";
                         playerGroup.removeAll();
-                        playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
+                        playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
                         playerSpriteGroup.renderSprites("octagonal");
                     }
                 });
