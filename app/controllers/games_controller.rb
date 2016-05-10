@@ -1,5 +1,6 @@
 class GamesController < ApplicationController
-  before_action :set_game, only: [:show, :edit, :update, :destroy, :challenge]
+  before_action :set_game, only: [:show, :edit, :update, 
+    :destroy, :bid, :challenge]
 
   # GET /games
   # GET /games.json
@@ -69,10 +70,18 @@ class GamesController < ApplicationController
   #If valid, save
   #If not, return with prompt
   def bid
-    respond_to do |format|
-      test = {:status => "ok", :test1 => 0, 
-        :test2 => 1}
-      format.json {render :json => test}
+
+    puts game_params[:quantity]
+    if game_params[:quantity].to_i > @game.quantity.to_i || 
+      game_params[:value].to_i > @game.value.to_i
+      @game.update(game_params)
+      #Do pusher
+      head :ok
+    else
+      respond_to do |format|
+        test = {:status => "ok", :test1 => 0, :test2 => 1}
+        format.json {render :json => test}
+      end
     end
   end
 

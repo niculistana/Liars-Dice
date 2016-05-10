@@ -62,68 +62,67 @@ function preload() {
 }
 
 $(document).ready(function(event){
-    $.ajax({
-        url: '/session/name_id',
-        type: 'GET',
-        dataType: 'json',
-        success: function(event) {
-            gameId = event.id.toString();
-            gameName = event.name;
-            console.log("game_channel"+gameId)
-            channel = pusher.subscribe("game_channel"+gameId);
-            channel2 = pusher.subscribe("chat_channel"+gameId);
-            channel2.bind('chat', chat);
-            channel.bind('challenge_event', function(data) {
-                console.log(data);
-                //render diepool
-                console.log("render");
-                if(data.result) {
-                    //Challenger loses dice
-                    console.log("Current player lost")
-                } else {
-                    //Challengee loses dice
-                    console.log("previous player lost")
-                }
-            });
-            channel.bind("render_add", function(event) {
-                console.log("I have rendered");
-                console.log(event);
-                $.ajax({
-                    url: '/session/recent_user/',
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(event) {
-                        //Make button unclickable so that user does
-                        //not join multiple times
-                        var playerId = event.user_id;
-                        var playerUsername = event.uname;
-                        var dice = event.dice;
-                        testButtonText.text = playerUsername + " joined the game.";
-                        playerPool.addPlayer(new Player(playerUsername, playerId));
-                        // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
-                        playerSpriteGroup.renderSprites("octagonal");
-                    }
-                });
-            });
-            channel.bind("render_delete", function(event) {
-                console.log("I have rendered");
-                console.log(event);
-                $.ajax({
-                    url: '/session/user_username/',
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(event) {
-                        var playerUsername = event.uname;
-                        testButtonText.text = playerUsername + " left the game.";
-                        playerGroup.removeAll();
-                        playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
-                        playerSpriteGroup.renderSprites("octagonal");
-                    }
-                });
-            });
-        }
-    });
+    $.get('/session/name_id', onGetNameIdSuccess);
 });
+
+function onGetNameIdSuccess(event) {
+    gameId = event.id.toString();
+    gameName = event.name;
+    console.log("game_channel"+gameId)
+    channel = pusher.subscribe("game_channel"+gameId);
+    channel2 = pusher.subscribe("chat_channel"+gameId);
+    channel2.bind('chat', chat);
+    channel.bind('challenge_event', function(data) {
+        //Convert diepool from the controller into diepool object
+        var diePoolController = data.diepool.split(",").map(Number);
+        var newObject = [];
+        for(var i = 0; i < diePoolController.length; i++) {
+            newObject.push(new Die(diePoolController[i]));
+        }
+        //Set diePool.allObjects = newObject
+        diePool.allObjects = newObject;
+
+        //render diepool
+        console.log(diePool.allObjects);
+
+        //Maybe remove a die
+        //Deal back die, with the loser getting the less die
+        if(data.result) {
+            //Challenger loses dice
+            console.log("Current player lost")
+        } else {
+            //Challengee loses dice
+            console.log("previous player lost")
+        }
+        //deal back dice
+    });
+    channel.bind("render_add", function(event) {
+        console.log("I have rendered");
+        console.log(event);
+        $.get('/session/recent_user/', function(event) {
+            //Make button unclickable so that user does
+            //not join multiple times
+            var playerId = event.user_id;
+            var playerUsername = event.uname;
+            var dice = event.dice;
+            testButtonText.text = playerUsername + " joined the game.";
+            playerPool.addPlayer(new Player(playerUsername, playerId));
+            // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
+            playerSpriteGroup.renderSprites("octagonal");
+        })
+    });
+    channel.bind("render_delete", function(event) {
+        console.log("I have rendered");
+        console.log(event);
+        $.get('/session/user_username/', function(event) {
+            var playerUsername = event.uname;
+            testButtonText.text = playerUsername + " left the game.";
+            playerGroup.removeAll();
+            playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
+            playerSpriteGroup.renderSprites("octagonal");
+        })
+    });
+}
 
 function create() {
     game.stage.backgroundColor = "#fff";
@@ -384,6 +383,7 @@ function testMethod1() {
 function testMethod2() {
     // diePool.shuffleDice();
     challenge();
+    // bid();
     testButtonText.text = "Challenge";
 }
 
@@ -397,63 +397,6 @@ function testMethod4() {
     // playerPool.removePlayer(0);
     // playerSpriteGroup.renderSprites("octagonal");
 }
-
-// lobby methods
-function joinLobby () {
-    $.ajax({
-        url: '/session/user_id/',
-        type: 'GET',
-        dataType: 'json',
-        success: function(event) {
-            var playerId = event.uid;
-            // var playerDice = event.dice;
-            var game_user_info = {
-                game_user : {
-                    game_id: gameId,
-                    user_id: playerId
-                    // dice: playerDice
-                }
-            };
-            $.ajax({
-                url: '/game_users/',
-                type: 'POST',
-                dataType: 'json',
-                data: game_user_info,
-                success: function(event) {
-                    console.log(event);
-                }
-            });
-        }
-    });
-}
-
-function leaveLobby () {
-    $.ajax({
-        url: '/session/user_id/',
-        type: 'GET',
-        dataType: 'json',
-        success: function(event) {
-            var playerId = event.uid;
-            // var playerDice = event.dice;
-            var game_user_info = {
-                _method: "DELETE",
-                game_user : {
-                    game_id: gameId,
-                    user_id: playerId
-                    // dice: playerDice
-                }
-            };
-            //Player ID is not the same as database ID
-            $.ajax({
-                url: '/game_users/'+playerId,
-                type: 'POST',
-                dataType: 'json',
-                data: game_user_info
-            });
-        }
-    });
-}
-// end lobby methods
 
 function waitGame(){
     // if client connection is recieved
