@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   
   resources :game_users
   resources :games
-  resources :users, only: [:index]
+  resources :users, only: [:index, :pages]
 
   root                      "pages#landing"
   get 'join'             => "pages#join",         as: :join
