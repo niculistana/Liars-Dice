@@ -104,7 +104,7 @@ function challenge() {
         }
     };
     $.ajax({
-        url: '/games/challenge',
+        url: '/games/'+gameId+'/challenge',
         type: 'POST',
         data: challenge_info,
         success: function(event) {

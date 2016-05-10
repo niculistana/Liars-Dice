@@ -6,6 +6,7 @@ var state;
 var diePool;
 var playerPool;
 var channel;
+var channel2;
 var gameId = "";
 var gameName = "";
 var gameFileKeys = ['dollars', 'logo', 'dice1', 'dice2', 'dice3', 'dice4', 'dice5', 'dice6',
@@ -66,18 +67,20 @@ $(document).ready(function(event){
         success: function(event) {
             gameId = event.id.toString();
             gameName = event.name;
-            console.log("In game.js");
-            console.log(gameId);
+            console.log("game_channel"+gameId)
             channel = pusher.subscribe("game_channel"+gameId);
-            channel = pusher.subscribe("chat_channel"+gameId);
-            channel.bind('chat', chat);
+            channel2 = pusher.subscribe("chat_channel"+gameId);
+            channel2.bind('chat', chat);
             channel.bind('challenge_event', function(data) {
-                console.log("I have made my move");
+                console.log(data);
                 //render diepool
-                if(!event.result) {
+                console.log("render");
+                if(data.result) {
                     //Challenger loses dice
+                    console.log("Current player lost")
                 } else {
                     //Challengee loses dice
+                    console.log("previous player lost")
                 }
             });
             channel.bind("render_add", function(event) {
@@ -346,11 +349,11 @@ function create() {
 function testMethod1() {
     // diePool.resetDiePool();
     var testAjax = {
+        _method: 'PUT',
         game: {
-            name: gameName,
-            turn: "1",
+            turn: "Nicu",
             diepool: [],
-            completed: 1
+            completed: 1,
         }
     };
     //If used a lot, make into a function
@@ -358,8 +361,9 @@ function testMethod1() {
         testAjax.game.diepool.push(diePool.allObjects[die].id);
     }
     testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
+    testAjax.game.diepool = testAjax.game.diepool.substring(1, testAjax.game.diepool.length-1);
     $.ajax({
-        url: '/games/',
+        url: '/games/'+gameId,
         type: 'POST',
         dataType: 'json',
         data: testAjax,
@@ -374,8 +378,9 @@ function testMethod1() {
 }
 
 function testMethod2() {
-    diePool.shuffleDice();
-    testButtonText.text = "shuffleDice";
+    // diePool.shuffleDice();
+    challenge();
+    testButtonText.text = "Challenge";
 }
 
 function testMethod3() {

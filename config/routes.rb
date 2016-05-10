@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   get "session/user_username"  => "session#user_username"
   post "chat/message"    => "chat#message"
   post "games/bid"       => "games#bid"
-  post "games/challenge" => "games#challenge"
+  post "games/:id/challenge" => "games#challenge"
   post "games/lose_dice" => "games#lose_dice"
   post "games/deal_dice" => "games#deal_dice"
   post "/"               => "games#create"
