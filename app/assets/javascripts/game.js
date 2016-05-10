@@ -137,58 +137,6 @@ function create() {
     graphics = game.add.graphics(game.world.centerX, game.world.centerY);
 
     //*** top-ui ***
-    // gameRoundGroup
-    // graphics.lineStyle(5, 0x0000FF, 1);
-    // graphics.drawRect(-360, -290, 140, 50);
-    gameRoundGroup = game.add.group();
-    gameRoundGroup.position.x = game.world.centerX-340;
-    gameRoundGroup.position.y = game.world.centerY-280;
-
-    gameRoundTitleText = "Round #: 6";
-    style = { font: "20px Arial", fill: "#000", align: "left" };
-    gameRoundTitleText = game.add.text(0, 0, gameRoundTitleText, style);
-    gameRoundGroup.add(gameRoundTitleText);
-    // end gameRoundGroup
-
-    // gameNameGroup
-    // graphics.lineStyle(5, 0x0000FF, 1);
-    // graphics.drawRect(-220, -290, 160, 50);
-    gameNameGroup = game.add.group();
-    gameNameGroup.position.x = game.world.centerX-180;
-    gameNameGroup.position.y = game.world.centerY-280;
-
-    gameRoundTitleText = "Cool Kids";
-    style = { font: "20px Arial", fill: "#000", align: "left" };
-    gameRoundTitleText = game.add.text(0, 0, gameRoundTitleText, style);
-    gameNameGroup.add(gameRoundTitleText);
-    // end gameNameGroup
-    
-    // gameTimeGroup
-    // graphics.lineStyle(5, 0x0000FF, 1);
-    // graphics.drawRect(-60, -290, 160, 50);
-    gameTimeGroup = game.add.group();
-    gameTimeGroup.position.x = game.world.centerX;
-    gameTimeGroup.position.y = game.world.centerY-280;
-
-    gameTimeValueText = "0:59";
-    style = { font: "20px Arial", fill: "#000", align: "left" };
-    gameTimeValueText = game.add.text(0, 0, gameTimeValueText, style);
-    gameTimeGroup.add(gameTimeValueText);
-    // end gameTimeGroup
-
-    // gameModeGroup
-    // graphics.lineStyle(5, 0x0000FF, 1);
-    // graphics.drawRect(100, -290, 210, 50);
-    gameModeGroup = game.add.group();
-    gameModeGroup.position.x = game.world.centerX+180;
-    gameModeGroup.position.y = game.world.centerY-280;
-
-    gameModeValueText = "Classic";
-    style = { font: "20px Arial", fill: "#000", align: "left" };
-    gameModeValueText = game.add.text(0, 0, gameModeValueText, style);
-    gameModeGroup.add(gameModeValueText);
-    // end gameModeGroup
-
     // playerProfileGroup
     // graphics.lineStyle(5, 0x0000FF, 1);
     // graphics.drawRect(310, -290, 50, 50);
@@ -256,16 +204,6 @@ function create() {
     makeBidButton.scale.setTo(0.25, 0.50);
     window.rich = makeBidButton;
 
-    diceAmountText = "3";
-    style = { font: "30px Arial", fill: "#000", align: "left" };
-    diceAmountTextElement = game.add.text(-35, -5, diceAmountText, style);
-
-    diceValueText = "5";
-    style = { font: "30px Arial", fill: "#000", align: "left" };
-    diceValueTextElement = game.add.text(55, -5, diceValueText, style);
-
-    gameControlsGroup.add(diceAmountTextElement);
-    gameControlsGroup.add(diceValueTextElement);
     gameControlsGroup.add(decrementDiceAmountButton);
     gameControlsGroup.add(incrementDiceAmountButton);
     gameControlsGroup.add(decrementDiceValueButton);

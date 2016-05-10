@@ -11,10 +11,24 @@
         <%= javascript_include_tag 'player', 'data-turbolinks-track' => true %>
         <%= javascript_include_tag 'diepool', 'data-turbolinks-track' => true %>
         <%= javascript_include_tag 'die', 'data-turbolinks-track' => true %>
+        <div class="uiOverlay"> 
+          <div class="overLayTopLeft"id="roundNumber">
+            Round #: 42
+          </div>
+          <div class="overLayTopRight" id="challengeTime">
+            15 Seconds
+          </div>
+          <div id="dieQuantity">
+            3
+          </div>
+          <div id="dieValue">
+            5
+          </div>
+        </div>
       </div>
     </div>
     <div id="chat-well" class="col-xs-12 col-md-4 well">
-      <h3>Chat</h3>
+      <h3><%= @game.name =%></h3>
       <div id="messages" class="col-md-12">
         <div class="message">
           <span class="name"></span>

@@ -8,6 +8,52 @@ h1 {
   text-align: center;
 }
 
+#phaser-window {
+  position: relative;
+}
+
 #listingGames {
   background-color: red;
+}
+
+.uiOverlay {
+  background-color: transparent;
+  position: relative;
+  z-index: 20;
+  pointer-events: none;
+}
+
+#roundNumber {
+  top: 26px;
+  left: 20px;
+  font-size: 3em;
+  position: absolute;
+}
+
+#challengeTime {
+  top: 26px;
+  right: 60px;
+  font-size: 3em;
+  position: absolute;
+}
+
+#challengeTime {
+  top: 26px;
+  right: 60px;
+  font-size: 3em;
+  position: absolute;
+}
+
+#dieQuantity {
+  top: 502px;
+  left: 334px;
+  font-size: 3em;
+  position: absolute;
+}
+
+#dieValue {
+  top: 502px;
+  left: 424px;
+  font-size: 3em;
+  position: absolute;
 }
