@@ -1,5 +1,5 @@
 class GameUsersController < ApplicationController
-  before_action :set_game_user, only: [:show, :edit, :update, :destroy]
+  before_action :set_game_user, only: [:show, :edit, :update]
 
   # GET /game_users
   # GET /game_users.json
@@ -10,6 +10,8 @@ class GameUsersController < ApplicationController
   # GET /game_users/1
   # GET /game_users/1.json
   def show
+    @game_user = GameUser.find(params[:id])
+    @params = params
   end
 
   # GET /game_users/new
