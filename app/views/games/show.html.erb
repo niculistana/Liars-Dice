@@ -13,16 +13,16 @@
         <%= javascript_include_tag 'die', 'data-turbolinks-track' => true %>
         <div class="uiOverlay"> 
           <div class="overLayTopLeft"id="roundNumber">
-            Round #: 42
+            Round: <%= @game.round =%>
           </div>
           <div class="overLayTopRight" id="challengeTime">
             15 Seconds
           </div>
           <div id="dieQuantity">
-            3
+            <%= @game.quantity =%>
           </div>
           <div id="dieValue">
-            5
+            <%= @game.value =%>
           </div>
         </div>
       </div>
