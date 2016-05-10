@@ -55,7 +55,7 @@ class GameUsersController < ApplicationController
   # DELETE /game_users/1.json
   def destroy
     Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_delete', game_user_params)
-    @game_user.destroy
+    GameUser.destroy(GameUser.where({user_id: game_user_params.user_id}))
     respond_to do |format|
       format.html { redirect_to game_users_url, notice: 'Game user was successfully destroyed.' }
       format.json { head :no_content }
