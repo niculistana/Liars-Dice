@@ -10,6 +10,8 @@ class GamesController < ApplicationController
   # GET /games/1
   # GET /games/1.json
   def show
+    session[:game_id] = @game.id
+    session[:game_name] = @game.name
   end
 
   # GET /games/new
@@ -25,10 +27,11 @@ class GamesController < ApplicationController
   # POST /games.json
   def create
     @game = Game.new(game_params)
-
+    session[:game_id] = @game.id
+    session[:game_name] = @game.name
     respond_to do |format|
       if @game.save
-        format.html { redirect_to @game, notice: 'Game was successfully created.' }
+        format.html { redirect_to @game }
         format.json { render :show, status: :created, location: @game }
       else
         format.html { render :new }
@@ -61,6 +64,42 @@ class GamesController < ApplicationController
     end
   end
 
+  #Save bid into the database
+  #Check if bid is valid
+  #If valid, save
+  #If not, return with prompt
+  def bid
+    respond_to do |format|
+      test = {:status => "ok", :test1 => 0, 
+        :test2 => 1}
+      format.json {render :json => test}
+    end
+  end
+
+  #Handle challenge
+  #Check if bid is in the diepool
+  #Use pusher to display results to everyone.
+  def challenge
+    return_data = {:diepool => @game.diepool}
+    temp_quantity = 0
+    @game.diepool.each do |die|
+      temp_quantity += 1 if game_params.value == die
+    end
+
+    return_data[:result] = temp_quantity == game_params.quantity ? true : false
+
+    Pusher.trigger('game_channel'+@game.id.to_s, 'challenge_event', return_data)
+    respond_to do |format|
+      format.json {render :json => return_data}
+    end
+  end
+
+  def lose_dice
+  end
+
+  def deal_dice
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_game
@@ -69,6 +108,7 @@ class GamesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
-      params.require(:game).permit(:name, :turn, :diepool, :completed)
+      params.require(:game).permit(:name, :turn, :max_users, :logged_in_users,
+       :diepool, :completed, :quantity, :value)
     end
 end

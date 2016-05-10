@@ -1,24 +1,40 @@
-<p id="notice"><%= notice %></p>
-
-<p>
-  <strong>Name:</strong>
-  <%= @game.name %>
-</p>
-
-<p>
-  <strong>Turn:</strong>
-  <%= @game.turn %>
-</p>
-
-<p>
-  <strong>Diepool:</strong>
-  <%= @game.diepool %>
-</p>
-
-<p>
-  <strong>Completed:</strong>
-  <%= @game.completed %>
-</p>
-
-<%= link_to 'Edit', edit_game_path(@game) %> |
-<%= link_to 'Back', games_path %>
+<% provide(:title, 'Landing') %>
+<div class="container" id="mainContainer">
+  <h1>Liar's Dice</h1>
+  <div class="row">
+    <div class="col-xs-12 col-md-8 well">
+      <div id="phaser-window">
+        <%= javascript_include_tag 'phaser.min.js', 'data-turbolinks-track' => true %>
+        <%= javascript_include_tag 'game', 'data-turbolinks-track' => true %>
+        <%= javascript_include_tag 'chatbox', 'data-turbolinks-track' => true %>
+        <%= javascript_include_tag 'engine', 'data-turbolinks-track' => true %>
+        <%= javascript_include_tag 'player', 'data-turbolinks-track' => true %>
+        <%= javascript_include_tag 'diepool', 'data-turbolinks-track' => true %>
+        <%= javascript_include_tag 'die', 'data-turbolinks-track' => true %>
+      </div>
+    </div>
+    <div id="chat-well" class="col-xs-12 col-md-4 well">
+      <h3>Chat</h3>
+      <div id="messages" class="col-md-12">
+        <div class="message">
+          <span class="name"></span>
+          <span class="chat-message"></span>
+        </div>
+      </div>
+      <div class="panel-footer">
+        <div class="input-group" id="user-input">
+          <input id="chatInput" type="text" class="form-control input-md" placeholder="Flame on..." required autofocus/>
+          <span class="input-group-btn">
+            <button class="btn btn-primary btn-md" id="chat-btn" type="submit" onclick = 'submitMessage()'>Send</button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="backgroundaudio">
+ <!-- <audio autoplay="" controls="" loop="" preload=""> -->
+ <!-- <source src="/assets/sfx/gamebg.ogg" type="audio/ogg"></source> -->
+ <!-- <source src="/assets/sfx/gamebg.mp3" type="audio/mpeg"></source> -->
+  <!-- Your browser does not support the audio element. -->
+ <!-- </audio> -->
+</div>

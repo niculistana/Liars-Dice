@@ -14,9 +14,14 @@
  *= require_self
  *= require bootstrap.min
  */
+@font-face {
+  font-family: "TradeWinds";
+  src: url('/assets/TradeWinds-Regular');
+}
 
 body {
 	padding-top: 50px;
+  font-size: 100%;
 }
 
 .border-form-div {
@@ -39,7 +44,7 @@ body {
 .border-form-div input[type="text"],
 .border-form-div input[type="email"],
 .border-form-div input[type="password"] {
-  font-size: 16px;
+  font-size: 1em;
   height: auto;
   margin-bottom: 15px;
   padding: 7px 9px;

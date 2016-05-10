@@ -6,6 +6,7 @@ var diceAssignment = {
     3: [15, 19]
 }
 
+//This object should only do the rendering
 function Player (timeLimit, playerName, playerID) {
     this.playerTurnTime = timeLimit;
     //Maybe bet function changes value of dice instead of keeping

@@ -25,7 +25,7 @@ class GameUsersController < ApplicationController
   # POST /game_users.json
   def create
     @game_user = GameUser.new(game_user_params)
-
+    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_add', game_user_params)
     respond_to do |format|
       if @game_user.save
         format.html { redirect_to @game_user, notice: 'Game user was successfully created.' }
@@ -54,6 +54,7 @@ class GameUsersController < ApplicationController
   # DELETE /game_users/1
   # DELETE /game_users/1.json
   def destroy
+    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_delete', game_user_params)
     @game_user.destroy
     respond_to do |format|
       format.html { redirect_to game_users_url, notice: 'Game user was successfully destroyed.' }
@@ -69,6 +70,6 @@ class GameUsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_user_params
-      params.require(:game_user).permit(:game_id, :user_id, :dice)
+      params.require(:game_user).permit(:game_id, :user_id, :dice, :is_ready)
     end
 end

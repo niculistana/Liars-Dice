@@ -3,15 +3,18 @@
 <head>
   <title>WebApp</title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'pusher.min.js', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
-<body>
-<%= render 'layouts/header' %>
-<%= render 'layouts/create_game_modal' %>
-<% if notice %><div class="alert alert-info"><%= notice %></div><% end %>
-<% if alert %><div class="alert alert-warning"><%= alert %></div><% end %>
-<%= yield %>
 
+<body>
+  <%= render 'layouts/header' %>
+  <%= render 'layouts/create_game_modal' %>
+
+  <% if notice %><div class="alert alert-info"><%= notice %></div><% end %>
+  <% if alert %><div class="alert alert-warning"><%= alert %></div><% end %>
+  
+  <%= yield %>
 </body>
 </html>

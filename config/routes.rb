@@ -1,17 +1,24 @@
 Rails.application.routes.draw do
-  resources :game_users
-  resources :games
-  resources :game_users
-  resources :games
-  devise_for :users
-  resources :users, only: [:index]
 
-  root                  "pages#landing"
-  get 'create' =>       "pages#create", as: :create
-  get 'join' =>         "pages#join", as: :join
-  get 'leaderboard' =>  "pages#leaderboard", as: :leaderboard
-  get 'spectate' =>     "pages#spectate", as: :spectate
-  get "play" => "pages#index", as: :play
+  devise_for :users
+  
+  resources :game_users
+  resources :games
+  resources :users, only: [:index, :pages]
+
+  root                      "pages#landing"
+  get 'join'             => "pages#join",         as: :join
+  get 'leaderboard'      => "pages#leaderboard",  as: :leaderboard
+  get 'about'            => "pages#about",        as: :about
+  get "session/name_id"  => "session#name_id"
+  get "session/user_id"  => "session#user_id"
+  get "session/user_username"  => "session#user_username"
+  post "chat/message"    => "chat#message"
+  post "games/bid"       => "games#bid"
+  post "games/challenge" => "games#challenge"
+  post "games/lose_dice" => "games#lose_dice"
+  post "games/deal_dice" => "games#deal_dice"
+  post "/"               => "games#create"
 
   #devise_scope :user do
   #  authenticated :user do
