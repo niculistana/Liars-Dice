@@ -66,6 +66,8 @@ $(document).ready(function(event){
         success: function(event) {
             gameId = event.id.toString();
             gameName = event.name;
+            console.log("In game.js");
+            console.log(gameId);
             channel = pusher.subscribe("game_channel"+gameId);
             channel.bind('challenge_event', function(data) {
                 console.log("I have made my move");

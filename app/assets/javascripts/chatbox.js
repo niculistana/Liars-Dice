@@ -8,14 +8,19 @@ function getTime() {
     return "(" +hours + ":" + minutes + ")";
 }
 
-var channel = pusher.subscribe("chat_channel");
-channel.bind('chat', function(data) {
+setTimeout(function(){
+    console.log(gameId);
+    channel = pusher.subscribe("chat_channel"+gameId);
+    channel.bind('chat', chat);
+}, 1000);
+
+function chat(data) {
     var name = $("<span>").addClass("name").text(data.name+getTime()+":");
     var message = $("<span>").addClass("chat-message").text(" "+data.message);
     var chatPost = $("<div>").addClass("message").append(name).append(message);
     $('#messages').append(chatPost);
     $('#messages').scrollTop($('#messages').scrollTop()+$('#messages').height());
-});
+}
 
 $(document).keypress(function(event){
     if(event.keyCode === 13) {

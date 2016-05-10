@@ -8,7 +8,8 @@ class ChatController < ApplicationController
     else
       username = "Guest"
     end
-    Pusher.trigger('chat_channel', 'chat', {name: username, 
+    puts session[:game_id]
+    Pusher.trigger('chat_channel'+session[:game_id].to_s, 'chat', {name: username, 
       message: params[:chatMessage]})
 
     head :ok
