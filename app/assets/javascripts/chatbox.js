@@ -8,12 +8,6 @@ function getTime() {
     return "(" +hours + ":" + minutes + ")";
 }
 
-setTimeout(function(){
-    console.log(gameId);
-    channel = pusher.subscribe("chat_channel"+gameId);
-    channel.bind('chat', chat);
-}, 1000);
-
 function chat(data) {
     var name = $("<span>").addClass("name").text(data.name+getTime()+":");
     var message = $("<span>").addClass("chat-message").text(" "+data.message);

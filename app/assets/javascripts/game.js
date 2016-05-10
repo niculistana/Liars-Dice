@@ -69,6 +69,8 @@ $(document).ready(function(event){
             console.log("In game.js");
             console.log(gameId);
             channel = pusher.subscribe("game_channel"+gameId);
+            channel = pusher.subscribe("chat_channel"+gameId);
+            channel.bind('chat', chat);
             channel.bind('challenge_event', function(data) {
                 console.log("I have made my move");
                 //render diepool
