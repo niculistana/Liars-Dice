@@ -98,6 +98,9 @@ function onGetNameIdSuccess(event) {
     });
     channel.bind("bid_event", function(event) {
         //render bid to everyone
+        $('#dieQuantity').text(event.quantity);
+        $('#dieValue').text(event.value);
+        //Display it for less subtlety
     });
     channel.bind("render_add", function(event) {
         console.log("I have rendered");
