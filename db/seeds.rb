@@ -11,7 +11,7 @@ u2 = User.create(email: "david@test.com", username:"MastahChau", wins: 24, passw
 u3 = User.create(email: "eric@test.com", username:"Cheneric", wins: 84,password:"ayyylmao", password_confirmation:"ayyylmao")
 u4 = User.create(email: "josh@test.com", username:"Majiccow",  wins: 42,password:"ayyylmao", password_confirmation:"ayyylmao")
 
-# g1 = Game.create(name: "Nicu's Game", turn: "nicu", max_users: 4, quantity: 9, value: 8, logged_in_users: 4, diepool: "1,2,3,4,5,6", completed: 0)
+g1 = Game.create(name: "Nicu's Game", turn: "nicu", max_users: 4, quantity: 9, state: 0, value: 8, logged_in_users: 4, diepool: "1,2,3,4,5,6", completed: 0)
 
 # GameUser.create(game_id: g1.id, user_id: u1.id, dice: "1,2,3,4,5")
 # GameUser.create(game_id: g1.id, user_id: u2.id, dice: "5,4,3,2,1")

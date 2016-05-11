@@ -1,10 +1,21 @@
 <% provide(:title, 'Join') %>
 <div class="container">
-<h1>Live Games</h1>
-<hr>
-  <div class="row">
-    <h4>Name Players 
-    <%= link_to "Start Lying", :games, class: "btn btn-success" %>
-    <!-- <button type="button" class="btn btn-success">Start Lying!</button> -->
+  <h1>Live Games</h1>
+  <div id="leaderboardBackground"> 
+    <table class="table table-hover table-responsive table- bordered">
+      <tr>
+        <th>Game Name</th>
+        <th>Players</th>
+        <th>Join</th>
+      </tr>
+      <%= Game.all.each do |game| %>
+        <%= if game[:logged_in_users].eq(game[:max_users]) %>
+        <tr>
+          <td><%= game.name %></td>
+          <td><%= game.logged_in_users %>/<%= game.max_users %> </td>
+          <td><%= link_to  "Join", game_path(game), :class => "btn btn-primary" %></td>
+        </tr>
+      <% end %>
+    </table>
   </div>
 </div>
