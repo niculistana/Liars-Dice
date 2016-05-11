@@ -191,19 +191,19 @@ function create() {
     gameControlsGroup = game.add.group();
     gameControlsGroup.position.x = game.world.centerX;
     gameControlsGroup.position.y = game.world.centerY+200;
-    decrementDiceAmountButton = game.make.button(-50, 30, 'square_buttons', function(){}, this, 2, 1, 0);
+    decrementDiceAmountButton = game.make.button(-50, 30, 'square_buttons', decrementQuantity, this, 2, 1, 0);
     decrementDiceAmountButton.scale.setTo(0.35, 0.35);
     window.rich = decrementDiceAmountButton;
 
-    incrementDiceAmountButton = game.make.button(-20, 30, 'square_buttons', function(){}, this, 2, 1, 0);
+    incrementDiceAmountButton = game.make.button(-20, 30, 'square_buttons', incrementQuantity, this, 2, 1, 0);
     incrementDiceAmountButton.scale.setTo(0.35, 0.35);
     window.rich = incrementDiceAmountButton;
 
-    decrementDiceValueButton = game.make.button(40, 30, 'square_buttons', function(){}, this, 2, 1, 0);
+    decrementDiceValueButton = game.make.button(40, 30, 'square_buttons', decrementValue, this, 2, 1, 0);
     decrementDiceValueButton.scale.setTo(0.35, 0.35);
     window.rich = decrementDiceValueButton;
 
-    incrementDiceValueButton = game.make.button(70, 30, 'square_buttons', function(){}, this, 2, 1, 0);
+    incrementDiceValueButton = game.make.button(70, 30, 'square_buttons', incrementValue, this, 2, 1, 0);
     incrementDiceValueButton.scale.setTo(0.35, 0.35);
     window.rich = incrementDiceValueButton;
 
@@ -288,6 +288,34 @@ function create() {
     // endGame();
 }
 
+function incrementValue() {
+    console.log("+1 value");
+    var update = parseInt($('#dieValue').text());
+    if(update < 6)
+        $('#dieValue').text(update+1);
+}
+
+function incrementQuantity() {
+    console.log("+1 quantity");
+    var update = parseInt($('#dieQuantity').text());
+    if(update < diePool.allObjects.length)
+        $('#dieQuantity').text(update+1);
+}
+
+function decrementValue() {
+    console.log("-1 value");
+    var update = parseInt($('#dieValue').text());
+    if(update > 1)
+        $('#dieValue').text(update-1);
+}
+
+function decrementQuantity() {
+    console.log("-1 quantity");
+    var update = parseInt($('#dieQuantity').text());
+    if(update > 1)
+        $('#dieQuantity').text(update-1);
+}
+
 function testMethod1() {
     // diePool.resetDiePool();
     var testAjax = {
@@ -321,8 +349,8 @@ function testMethod1() {
 
 function testMethod2() {
     // diePool.shuffleDice();
-    challenge();
-    // bid();
+    // challenge();
+    bid();
     testButtonText.text = "Challenge";
 }
 

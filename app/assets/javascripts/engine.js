@@ -40,12 +40,11 @@ function updateGlobalPool(game) {
 }
 
 //Behavior to bet
-//Get quantity and value from DOM
 function bid() {
     var bid_info = {
         game: {
-            quantity: 3,
-            value: 5
+            quantity: parseInt($('#dieQuantity').text()),
+            value: parseInt($('#dieValue').text())
         }
     };
     $.post('/games/'+gameId+'/bid', bid_info, function(event){
