@@ -27,4 +27,12 @@ class SessionController < ApplicationController
       format.json {render :json => id_message}
     end
   end
+
+  def user_quit_name
+    @user = User.find(params[:id])
+    respond_to do |format|
+      uname_message = {:status => "ok", :uname => @user.username}
+      format.json {render :json => uname_message}
+    end
+  end
 end

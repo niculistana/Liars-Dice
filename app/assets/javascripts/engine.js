@@ -71,7 +71,7 @@ function joinLobby () {
 }
 
 function leaveLobby () {
-    $.get('/session/user_id/', onSuccessLeave)
+    $.get('/session/user_id/', onSuccessLeave);
 }
 
 function onSuccessJoin (event) {
@@ -93,12 +93,29 @@ function onSuccessLeave(event) {
     var game_user_info = {
         _method: "DELETE",
         game_user : {
-            game_id: gameId,
+            // game_id: gameId,
             user_id: playerId
             // dice: playerDice
         }
     };
     $.post('/game_users/'+playerId, game_user_info);
+}
+
+function startGame() {
+    $.get('/session/name_id/', onSuccessStart);
+}
+
+function onSuccessStart(event) {
+    var gameId = event.id;
+    var gameName = event.name;
+    var game_start_info = {
+        _method: "PUT",
+        game: {
+            name: gameName,
+            state: 1
+        }
+    };
+    $.post('/games/'+gameId, game_start_info);
 }
 // end lobby methods
 

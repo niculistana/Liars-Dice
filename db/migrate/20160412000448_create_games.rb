@@ -8,7 +8,7 @@ class CreateGames < ActiveRecord::Migration
       t.integer :value
       t.integer :logged_in_users, :default => 1
       t.string :diepool
-      t.integer :completed, :default => 0
+      t.integer :state, :default => 0
 
       t.timestamps null: false
     end

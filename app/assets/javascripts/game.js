@@ -117,7 +117,8 @@ function onGetNameIdSuccess(event) {
     channel.bind("render_delete", function(event) {
         console.log("I have rendered");
         console.log(event);
-        $.get('/session/user_username/', function(event) {
+        var playerId = event.user_id;
+        $.get('/session/user_quit_name/'+playerId, function(event) {
             var playerUsername = event.uname;
             testButtonText.text = playerUsername + " left the game.";
             playerGroup.removeAll();
@@ -391,8 +392,9 @@ function testMethod2() {
 }
 
 function testMethod3() {
-    joinLobby();
+    // joinLobby();
     // readyButton();
+    startGame();
 }
 
 function testMethod4() {
