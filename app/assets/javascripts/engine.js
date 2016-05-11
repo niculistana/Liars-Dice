@@ -71,7 +71,7 @@ function joinLobby () {
 }
 
 function leaveLobby () {
-    $.get('/session/user_id/', onSuccessLeave)
+    $.get('/session/user_id/', onSuccessLeave);
 }
 
 function onSuccessJoin (event) {
@@ -93,7 +93,7 @@ function onSuccessLeave(event) {
     var game_user_info = {
         _method: "DELETE",
         game_user : {
-            game_id: gameId,
+            // game_id: gameId,
             user_id: playerId
             // dice: playerDice
         }
