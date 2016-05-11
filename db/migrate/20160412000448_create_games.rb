@@ -10,7 +10,8 @@ class CreateGames < ActiveRecord::Migration
       t.string :diepool
       t.integer :completed, :default => 0
       t.integer :round, :default => 1
-
+      t.integer :state, :default => 0
+      
       t.timestamps null: false
     end
   end

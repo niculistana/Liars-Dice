@@ -6,8 +6,11 @@ var state;
 var diePool;
 var playerPool;
 var channel;
+var channel2;
 var gameId = "";
 var gameName = "";
+var numPlayers = 0;
+
 var gameFileKeys = ['dollars', 'logo', 'dice1', 'dice2', 'dice3', 'dice4', 'dice5', 'dice6',
 'player1','player2','player3','player4','player5','player6','player7','player8'];
 var gameFiles = ['sprites/dollar_sign.png', 'sprites/liars_dice_logo.png',
@@ -59,60 +62,68 @@ function preload() {
 }
 
 $(document).ready(function(event){
-    $.ajax({
-        url: '/session/name_id',
-        type: 'GET',
-        dataType: 'json',
-        success: function(event) {
-            gameId = event.id.toString();
-            gameName = event.name;
-            channel = pusher.subscribe("game_channel"+gameId);
-            channel.bind('challenge_event', function(data) {
-                console.log("I have made my move");
-                //render diepool
-                if(!event.result) {
-                    //Challenger loses dice
-                } else {
-                    //Challengee loses dice
-                }
-            });
-            channel.bind("render_add", function(event) {
-                console.log("I have rendered");
-                console.log(event);
-                $.ajax({
-                    url: '/session/user_username/',
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(event) {
-                        //Make button unclickable so that user does
-                        //not join multiple times
-                        var playerUserName = event.uname;
-                        testButtonText.text = playerUserName + " joined the game.";
-                        playerPool.addPlayer(new Player("7:00", playerUserName, "1"));
-                        // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
-                        playerSpriteGroup.renderSprites("octagonal");
-                    }
-                });
-            });
-            channel.bind("render_delete", function(event) {
-                console.log("I have rendered");
-                console.log(event);
-                $.ajax({
-                    url: '/session/user_username/',
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(event) {
-                        var playerUserName = event.uname;
-                        testButtonText.text = playerUserName + " left the game.";
-                        playerGroup.removeAll();
-                        playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
-                        playerSpriteGroup.renderSprites("octagonal");
-                    }
-                });
-            });
-        }
-    });
+    $.get('/session/name_id', onGetNameIdSuccess);
 });
+
+function onGetNameIdSuccess(event) {
+    gameId = event.id.toString();
+    gameName = event.name;
+    console.log("game_channel"+gameId)
+    channel = pusher.subscribe("game_channel"+gameId);
+    channel2 = pusher.subscribe("chat_channel"+gameId);
+    channel2.bind('chat', chat);
+    channel.bind('challenge_event', function(data) {
+        //Convert diepool from the controller into diepool object
+        var diePoolController = data.diepool.split(",").map(Number);
+        var newObject = [];
+        for(var i = 0; i < diePoolController.length; i++) {
+            newObject.push(new Die(diePoolController[i]));
+        }
+        //Set diePool.allObjects = newObject
+        diePool.allObjects = newObject;
+
+        //render diepool
+        console.log(diePool.allObjects);
+
+        //Maybe remove a die
+        //Deal back die, with the loser getting the less die
+        if(data.result) {
+            //Challenger loses dice
+            console.log("Current player lost")
+        } else {
+            //Challengee loses dice
+            console.log("previous player lost")
+        }
+        //deal back dice
+    });
+    channel.bind("render_add", function(event) {
+        console.log("I have rendered");
+        console.log(event);
+        $.get('/session/recent_user/', function(event) {
+            //Make button unclickable so that user does
+            //not join multiple times
+            var playerId = event.user_id;
+            var playerUsername = event.uname;
+            var dice = event.dice;
+            testButtonText.text = playerUsername + " joined the game.";
+            playerPool.addPlayer(new Player(playerUsername, playerId));
+            // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
+            playerSpriteGroup.renderSprites("octagonal");
+        })
+    });
+    channel.bind("render_delete", function(event) {
+        console.log("I have rendered");
+        console.log(event);
+        var playerId = event.user_id;
+        $.get('/session/user_quit_name/'+playerId, function(event) {
+            var playerUsername = event.uname;
+            testButtonText.text = playerUsername + " left the game.";
+            playerGroup.removeAll();
+            playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
+            playerSpriteGroup.renderSprites("octagonal");
+        })
+    });
+}
 
 function create() {
     game.stage.backgroundColor = "#fff";
@@ -280,11 +291,11 @@ function create() {
 function testMethod1() {
     // diePool.resetDiePool();
     var testAjax = {
+        _method: 'PUT',
         game: {
-            name: gameName,
-            turn: "1",
+            turn: "Nicu",
             diepool: [],
-            completed: 1
+            completed: 1,
         }
     };
     //If used a lot, make into a function
@@ -292,8 +303,9 @@ function testMethod1() {
         testAjax.game.diepool.push(diePool.allObjects[die].id);
     }
     testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
+    testAjax.game.diepool = testAjax.game.diepool.substring(1, testAjax.game.diepool.length-1);
     $.ajax({
-        url: '/games/',
+        url: '/games/'+gameId,
         type: 'POST',
         dataType: 'json',
         data: testAjax,
@@ -308,13 +320,16 @@ function testMethod1() {
 }
 
 function testMethod2() {
-    diePool.shuffleDice();
-    testButtonText.text = "shuffleDice";
+    // diePool.shuffleDice();
+    challenge();
+    // bid();
+    testButtonText.text = "Challenge";
 }
 
 function testMethod3() {
-    joinLobby();
+    // joinLobby();
     // readyButton();
+    startGame();
 }
 
 function testMethod4() {
@@ -322,63 +337,6 @@ function testMethod4() {
     // playerPool.removePlayer(0);
     // playerSpriteGroup.renderSprites("octagonal");
 }
-
-// lobby methods
-function joinLobby () {
-    $.ajax({
-        url: '/session/user_id/',
-        type: 'GET',
-        dataType: 'json',
-        success: function(event) {
-            var playerId = event.uid;
-            // var playerDice = event.dice;
-            var game_user_info = {
-                game_user : {
-                    game_id: gameId,
-                    user_id: playerId
-                    // dice: playerDice
-                }
-            };
-            $.ajax({
-                url: '/game_users/',
-                type: 'POST',
-                dataType: 'json',
-                data: game_user_info,
-                success: function(event) {
-                    console.log(event);
-                }
-            });
-        }
-    });
-}
-
-function leaveLobby () {
-    $.ajax({
-        url: '/session/user_id/',
-        type: 'GET',
-        dataType: 'json',
-        success: function(event) {
-            var playerId = event.uid;
-            // var playerDice = event.dice;
-            var game_user_info = {
-                _method: "DELETE",
-                game_user : {
-                    game_id: gameId,
-                    user_id: playerId
-                    // dice: playerDice
-                }
-            };
-            //Player ID is not the same as database ID
-            $.ajax({
-                url: '/game_users/'+playerId,
-                type: 'POST',
-                dataType: 'json',
-                data: game_user_info
-            });
-        }
-    });
-}
-// end lobby methods
 
 function waitGame(){
     // if client connection is recieved

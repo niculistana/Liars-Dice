@@ -1,14 +1,13 @@
 // the client... the player
-var diceAssignment = {
-    0: [0, 4],
-    1: [5, 9],
-    2: [10, 14],
-    3: [15, 19]
-}
+// var diceAssignment = {
+//     0: [0, 4],
+//     1: [5, 9],
+//     2: [10, 14],
+//     3: [15, 19]
+// }
 
 //This object should only do the rendering
-function Player (timeLimit, playerName, playerID) {
-    this.playerTurnTime = timeLimit;
+function Player (playerName, playerID) {
     //Maybe bet function changes value of dice instead of keeping
     //track of diceHand separately
     this.playerDice = null;

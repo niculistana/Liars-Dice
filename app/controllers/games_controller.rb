@@ -1,5 +1,6 @@
 class GamesController < ApplicationController
-  before_action :set_game, only: [:show, :edit, :update, :destroy]
+  before_action :set_game, only: [:show, :edit, :update, 
+    :destroy, :bid, :challenge]
 
   # GET /games
   # GET /games.json
@@ -69,10 +70,18 @@ class GamesController < ApplicationController
   #If valid, save
   #If not, return with prompt
   def bid
-    respond_to do |format|
-      test = {:status => "ok", :test1 => 0, 
-        :test2 => 1}
-      format.json {render :json => test}
+
+    puts game_params[:quantity]
+    if game_params[:quantity].to_i > @game.quantity.to_i || 
+      game_params[:value].to_i > @game.value.to_i
+      @game.update(game_params)
+      #Do pusher
+      head :ok
+    else
+      respond_to do |format|
+        test = {:status => "ok", :test1 => 0, :test2 => 1}
+        format.json {render :json => test}
+      end
     end
   end
 
@@ -82,16 +91,19 @@ class GamesController < ApplicationController
   def challenge
     return_data = {:diepool => @game.diepool}
     temp_quantity = 0
-    @game.diepool.each do |die|
-      temp_quantity += 1 if game_params.value == die
+    @game.diepool.split(",").map do |str|
+      str.to_i
+    end.each do |die|
+      temp_quantity += 1 if @game.value == die
     end
 
-    return_data[:result] = temp_quantity == game_params.quantity ? true : false
+    return_data[:result] = temp_quantity == @game.quantity ? true : false
 
     Pusher.trigger('game_channel'+@game.id.to_s, 'challenge_event', return_data)
-    respond_to do |format|
-      format.json {render :json => return_data}
-    end
+    head :ok
+    # respond_to do |format|
+    #   format.json {render :json => return_data}
+    # end
   end
 
   def lose_dice
@@ -109,6 +121,6 @@ class GamesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
       params.require(:game).permit(:name, :turn, :max_users, :logged_in_users,
-       :diepool, :completed, :quantity, :value)
+       :diepool, :state, :quantity, :value)
     end
 end

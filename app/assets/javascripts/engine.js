@@ -39,61 +39,18 @@ function updateGlobalPool(game) {
   
 }
 
-//Behavior to see if user is ready to play
-function readyButton() {
-    readyOrNotReady(true);    
-}
-
-function notReadyButton() {
-    readyOrNotReady(false);
-}
-
-function readyOrNotReady(booleanSwitch) {
-    $.ajax({
-        url: '/session/user_id/',
-        type: 'GET',
-        dataType: 'json',
-        success: function(event) {
-            var userId = event.uid;
-            console.log(event);
-            var game_user_info = {
-                _method: 'PUT',
-                game_user : {
-                    game_id: parseInt(gameId),
-                    user_id: userId,
-                    is_ready: booleanSwitch
-                }
-            };
-            $.ajax({
-                url: '/game_users/'+userId,
-                type: 'POST',
-                dataType: 'json',
-                data: game_user_info,
-                success: function(event) {
-                    console.log(event);
-                }
-            });
-        }
-    });
-}
-
 //Behavior to bet
 //Get quantity and value from DOM
 function bid() {
     var bid_info = {
         game: {
-            quantity: 0,
-            value: 0
+            quantity: 3,
+            value: 5
         }
     };
-    $.ajax({
-        url: '/games/bid',
-        type: 'POST',
-        data: bid_info,
-        success: function(event) {
-            console.log(event);
-        }
-    });
+    $.post('/games/'+gameId+'/bid', bid_info, function(event){
+        //Handle if user fucked up
+    })
 }
 
 function challenge() {
@@ -103,15 +60,64 @@ function challenge() {
             challengee: "name2",
         }
     };
-    $.ajax({
-        url: '/games/challenge',
-        type: 'POST',
-        data: challenge_info,
-        success: function(event) {
-            console.log(event);
-        }
-    });
+    $.post('/games/'+gameId+'/challenge', challenge_info, function(event) {
+        console.log(event);
+    })
 }
+
+// lobby methods
+function joinLobby () {
+    $.get('/session/user_id/', onSuccessJoin);
+}
+
+function leaveLobby () {
+    $.get('/session/user_id/', onSuccessLeave);
+}
+
+function onSuccessJoin (event) {
+    var playerId = event.uid;
+    // var playerDice = event.dice;
+    var game_user_info = {
+        game_user : {
+            game_id: gameId,
+            user_id: playerId
+            // dice: playerDice
+        }
+    };
+    $.post('/game_users/', game_user_info);
+}
+
+function onSuccessLeave(event) {
+    var playerId = event.uid;
+    // var playerDice = event.dice;
+    var game_user_info = {
+        _method: "DELETE",
+        game_user : {
+            // game_id: gameId,
+            user_id: playerId
+            // dice: playerDice
+        }
+    };
+    $.post('/game_users/'+playerId, game_user_info);
+}
+
+function startGame() {
+    $.get('/session/name_id/', onSuccessStart);
+}
+
+function onSuccessStart(event) {
+    var gameId = event.id;
+    var gameName = event.name;
+    var game_start_info = {
+        _method: "PUT",
+        game: {
+            name: gameName,
+            state: 1
+        }
+    };
+    $.post('/games/'+gameId, game_start_info);
+}
+// end lobby methods
 
 //Behavior when player loses a challenge and then loses a dice
 function loseDice() {
@@ -135,7 +141,6 @@ function loseDice() {
         data: loseDiceAjax,
         success: function(response) {
             console.log("I have put");
-
         }
     });
     dieGroup.removeAll();

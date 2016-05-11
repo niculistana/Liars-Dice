@@ -1,5 +1,5 @@
 class GameUsersController < ApplicationController
-  before_action :set_game_user, only: [:show, :edit, :update, :destroy]
+  before_action :set_game_user, only: [:show, :edit, :update]
 
   # GET /game_users
   # GET /game_users.json
@@ -10,6 +10,8 @@ class GameUsersController < ApplicationController
   # GET /game_users/1
   # GET /game_users/1.json
   def show
+    @game_user = GameUser.find(params[:id])
+    @params = params
   end
 
   # GET /game_users/new
@@ -55,7 +57,7 @@ class GameUsersController < ApplicationController
   # DELETE /game_users/1.json
   def destroy
     Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_delete', game_user_params)
-    @game_user.destroy
+    GameUser.destroy(GameUser.where({user_id: game_user_params[:user_id]}))
     respond_to do |format|
       format.html { redirect_to game_users_url, notice: 'Game user was successfully destroyed.' }
       format.json { head :no_content }

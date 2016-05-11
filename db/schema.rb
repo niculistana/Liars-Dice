@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 20160412004700) do
     t.string   "diepool"
     t.integer  "completed",       default: 0
     t.integer  "round",           default: 1
+    t.integer  "state",           default: 0
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
   end
