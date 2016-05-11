@@ -75,11 +75,11 @@ class GamesController < ApplicationController
     if game_params[:quantity].to_i > @game.quantity.to_i || 
       game_params[:value].to_i > @game.value.to_i
       @game.update(game_params)
-      #Do pusher
+      Pusher.trigger('game_channel'+@game.id.to_s, 'bid_event', game_params)
       head :ok
     else
       respond_to do |format|
-        test = {:status => "ok", :test1 => 0, :test2 => 1}
+        test = {:status => "ok", :bad_response => "You did not bid higher"}
         format.json {render :json => test}
       end
     end
