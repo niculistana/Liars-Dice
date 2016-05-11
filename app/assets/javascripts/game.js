@@ -389,8 +389,9 @@ function testMethod2() {
 }
 
 function testMethod3() {
-    joinLobby();
+    // joinLobby();
     // readyButton();
+    startGame();
 }
 
 function testMethod4() {

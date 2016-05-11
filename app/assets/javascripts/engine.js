@@ -100,6 +100,23 @@ function onSuccessLeave(event) {
     };
     $.post('/game_users/'+playerId, game_user_info);
 }
+
+function startGame() {
+    $.get('/session/name_id/', onSuccessStart);
+}
+
+function onSuccessStart(event) {
+    var gameId = event.id;
+    var gameName = event.name;
+    var game_start_info = {
+        _method: "PUT",
+        game: {
+            name: gameName,
+            state: 1
+        }
+    };
+    $.post('/games/'+gameId, game_start_info);
+}
 // end lobby methods
 
 //Behavior when player loses a challenge and then loses a dice
