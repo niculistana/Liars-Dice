@@ -96,6 +96,9 @@ function onGetNameIdSuccess(event) {
         }
         //deal back dice
     });
+    channel.bind("bid_event", function(event) {
+        //render bid to everyone
+    });
     channel.bind("render_add", function(event) {
         console.log("I have rendered");
         console.log(event);
