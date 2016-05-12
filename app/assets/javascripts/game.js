@@ -98,6 +98,9 @@ function onGetNameIdSuccess(event) {
     });
     channel.bind("bid_event", function(event) {
         //render bid to everyone
+        $('#dieQuantity').text(event.quantity);
+        $('#dieValue').text(event.value);
+        //Display it for less subtlety
     });
     channel.bind("render_add", function(event) {
         console.log("I have rendered");
@@ -210,9 +213,9 @@ function create() {
     decrementDieValueButton.scale.setTo(0.35, 0.35);
     window.rich = decrementDieValueButton;
 
-    incrementDiceValueButton = game.make.button(70, 30, 'square_buttons', incrementDiceValue, this, 2, 1, 0);
-    incrementDiceValueButton.scale.setTo(0.35, 0.35);
-    window.rich = incrementDiceValueButton;
+    incrementDieValueButton = game.make.button(70, 30, 'square_buttons', incrementDieValue, this, 2, 1, 0);
+    incrementDieValueButton.scale.setTo(0.35, 0.35);
+    window.rich = incrementDieValueButton;
 
     challengeButton = game.make.button(-50, 60, 'rect_buttons', function(){}, this, 2, 1, 0);
     challengeButton.scale.setTo(0.25, 0.50);
@@ -225,7 +228,7 @@ function create() {
     gameControlsGroup.add(decrementDieQuantityButton);
     gameControlsGroup.add(incrementDieQuantityButton);
     gameControlsGroup.add(decrementDieValueButton);
-    gameControlsGroup.add(incrementDiceValueButton);
+    gameControlsGroup.add(incrementDieValueButton);
     gameControlsGroup.add(challengeButton);
     gameControlsGroup.add(makeBidButton);
     // end gameControlsGroup
@@ -295,6 +298,34 @@ function create() {
     // endGame();
 }
 
+function incrementDieValue() {
+    console.log("+1 value");
+    var update = parseInt($('#dieValue').text());
+    if(update < 6)
+        $('#dieValue').text(update+1);
+}
+
+function incrementDieQuantity() {
+    console.log("+1 quantity");
+    var update = parseInt($('#dieQuantity').text());
+    if(update < diePool.allObjects.length)
+        $('#dieQuantity').text(update+1);
+}
+
+function decrementDieValue() {
+    console.log("-1 value");
+    var update = parseInt($('#dieValue').text());
+    if(update > 1)
+        $('#dieValue').text(update-1);
+}
+
+function decrementDieQuantity() {
+    console.log("-1 quantity");
+    var update = parseInt($('#dieQuantity').text());
+    if(update > 1)
+        $('#dieQuantity').text(update-1);
+}
+
 function testMethod1() {
     // diePool.resetDiePool();
     // var testAjax = {
@@ -329,8 +360,8 @@ function testMethod1() {
 
 function testMethod2() {
     // diePool.shuffleDice();
-    challenge();
-    // bid();
+    // challenge();
+    bid();
     testButtonText.text = "Challenge";
 }
 
@@ -343,22 +374,6 @@ function testMethod4() {
     leaveLobby();
     // playerPool.removePlayer(0);
     // playerSpriteGroup.renderSprites("octagonal");
-}
-
-function decrementDieQuantity() {
-    $("#dieQuantity").text(parseInt($("#dieQuantity").text())-1);
-}
-
-function incrementDieQuantity() {
-    $("#dieQuantity").text(parseInt($("#dieQuantity").text())+1);
-}
-
-function decrementDieValue() {
-    $("#dieValue").text(parseInt($("#dieValue").text())-1);
-}
-
-function incrementDiceValue() {
-    $("#dieValue").text(parseInt($("#dieValue").text())+1);
 }
 
 function waitGame(){
