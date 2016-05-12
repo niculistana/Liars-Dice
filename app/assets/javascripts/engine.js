@@ -52,6 +52,35 @@ function bid() {
     });
 }
 
+/*** Bidding methods ***/
+function incrementDieValue() {
+    console.log("+1 value");
+    var update = parseInt($('#dieValue').text());
+    if(update < 6)
+        $('#dieValue').text(update+1);
+}
+
+function incrementDieQuantity() {
+    console.log("+1 quantity");
+    var update = parseInt($('#dieQuantity').text());
+    if(update < diePool.allObjects.length)
+        $('#dieQuantity').text(update+1);
+}
+
+function decrementDieValue() {
+    console.log("-1 value");
+    var update = parseInt($('#dieValue').text());
+    if(update > 1)
+        $('#dieValue').text(update-1);
+}
+
+function decrementDieQuantity() {
+    console.log("-1 quantity");
+    var update = parseInt($('#dieQuantity').text());
+    if(update > 1)
+        $('#dieQuantity').text(update-1);
+}
+
 function challenge() {
     var challenge_info = {
         game: {
@@ -63,6 +92,9 @@ function challenge() {
         console.log(event);
     });
 }
+
+/*** End bidding methods ***/
+
 
 /*** lobby methods ***/
 function joinLobby () {

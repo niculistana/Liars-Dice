@@ -292,11 +292,16 @@ function create() {
     incrementDieValueButton.scale.setTo(0.35, 0.35);
     window.rich = incrementDieValueButton;
 
-    challengeButton = game.make.button(-50, 60, 'rect_buttons', makeBid, this, 2, 1, 0);
+    //challengeButton = game.make.button(-50, 60, 'rect_buttons', makeBid, this, 2, 1, 0);
+    //challengeButton.scale.setTo(0.25, 0.50);
+    //window.rich = challengeButton;
+
+    //makeBidButton = game.make.button(40, 60, 'rect_buttons', challengeBid, this, 2, 1, 0);
+    challengeButton = game.make.button(-50, 60, 'rect_buttons', challenge, this, 2, 1, 0);
     challengeButton.scale.setTo(0.25, 0.50);
     window.rich = challengeButton;
 
-    makeBidButton = game.make.button(40, 60, 'rect_buttons', challengeBid, this, 2, 1, 0);
+    makeBidButton = game.make.button(40, 60, 'rect_buttons', bid, this, 2, 1, 0);
     makeBidButton.scale.setTo(0.25, 0.50);
     window.rich = makeBidButton;
 
@@ -373,63 +378,34 @@ function create() {
     // endGame();
 }
 
-/*** Bidding methods ***/
 
-function incrementDieValue() {
-    console.log("+1 value");
-    var update = parseInt($('#dieValue').text());
-    if(update < 6)
-        $('#dieValue').text(update+1);
-}
 
-function incrementDieQuantity() {
-    console.log("+1 quantity");
-    var update = parseInt($('#dieQuantity').text());
-    if(update < globalDiePool.allObjects.length)
-        $('#dieQuantity').text(update+1);
-}
+// function makeBid() {
+//     dieBidPool.resetDiePool();
+//     dieBidGroup.removeAll();
+//     dieValue = parseInt($("#dieValue").text());
+//     dieQuantity = parseInt($("#dieQuantity").text());
+//     for (var i = 0; i < dieQuantity; i++) {
+//         dieBidPool.addDie(new Die(Math.ceil(dieValue)));
+//     dieBidSpriteGroup.renderSprites("box");
 
-function decrementDieValue() {
-    console.log("-1 value");
-    var update = parseInt($('#dieValue').text());
-    if(update > 1)
-        $('#dieValue').text(update-1);
-}
+//     $.get('/session/user_id/', function(event){
+//         var playerId = event.uid;
+//         $.get('/session/recent_user_name/'+playerId, function(event) {
+//             var playerUsername = event.uname;
+//             testButtonText.text = playerUsername + " placed a bid: " + dieQuantity + " #" + dieValue + "'s";
+//         });
+//     });
+// }
 
-function decrementDieQuantity() {
-    console.log("-1 quantity");
-    var update = parseInt($('#dieQuantity').text());
-    if(update > 1)
-        $('#dieQuantity').text(update-1);
-}
-
-function makeBid() {
-    dieBidPool.resetDiePool();
-    dieBidGroup.removeAll();
-    dieValue = parseInt($("#dieValue").text());
-    dieQuantity = parseInt($("#dieQuantity").text());
-    for (var i = 0; i < dieQuantity; i++) {
-        dieBidPool.addDie(new Die(Math.ceil(dieValue)));
-    }
-    dieBidSpriteGroup.renderSprites("box");
-
-    $.get('/session/user_id/', function(event){
-        var playerId = event.uid;
-        $.get('/session/recent_user_name/'+playerId, function(event) {
-            var playerUsername = event.uname;
-            testButtonText.text = playerUsername + " placed a bid: " + dieQuantity + " #" + dieValue + "'s";
-        });
-    });
-}
-
-function challengeBid() {
-    $.get('/session/user_id/', function(event){
-        var playerId = event.uid;
-        $.get('/session/recent_user_name/'+playerId, function(event) {
-            var playerUsername = event.uname;
-            testButtonText.text = playerUsername + " challenges the bid!";
-        });
-    });
+// function challengeBid() {
+//     $.get('/session/user_id/', function(event){
+//         var playerId = event.uid;
+//         $.get('/session/recent_user_name/'+playerId, function(event) {
+//             var playerUsername = event.uname;
+//             testButtonText.text = playerUsername + " challenges the bid!";
+//         });
+//     });
 }
 /*** End bidding methods ***/
 
