@@ -90,7 +90,7 @@ class GamesController < ApplicationController
   #Check if bid is in the diepool
   #Use pusher to display results to everyone.
   def challenge
-    return_data = {:diepool => @game.diepool}
+    return_data = {:diepool => @game.diepool, :uname => game_params[:name]}
     temp_quantity = 0
     @game.diepool.split(",").map do |str|
       str.to_i

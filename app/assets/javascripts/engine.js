@@ -89,14 +89,20 @@ function decrementDieQuantity() {
 }
 
 function challenge() {
-    var challenge_info = {
-        game: {
-            challenger: "name",
-            challengee: "name2",
-        }
-    };
-    $.post('/games/'+gameId+'/challenge', challenge_info, function(event) {
-        console.log(event);
+    $.get('/session/user_id/', function(event){
+        var playerId = event.uid;
+        $.get('/session/recent_user_name/'+playerId, function(event) {
+            var playerUsername = event.uname;
+            var challenge_info = {
+                game: {
+                    name: playerUsername,
+                    challengee: "name2",
+                }
+            };
+            $.post('/games/'+gameId+'/challenge', challenge_info, function(event) {
+                console.log(event);
+            });
+        });
     });
 }
 

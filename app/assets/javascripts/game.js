@@ -76,7 +76,8 @@ function onGetNameIdSuccess(event) {
     channel2.bind('chat', chat);
     channel.bind('challenge_event', function(data) {
         //Convert diepool from the controller into diepool object
-        var diePoolController = data.globalDiepool.split(",").map(Number);
+        testButtonText.text = data.uname + " challenges the bid!";
+        var diePoolController = data.diepool.split(",").map(Number);
         var newObject = [];
         for(var i = 0; i < diePoolController.length; i++) {
             newObject.push(new Die(diePoolController[i]));
@@ -84,6 +85,7 @@ function onGetNameIdSuccess(event) {
         //Set globalDiePool.allObjects = newObject
         globalDiePool.allObjects = newObject;
 
+        //settimeout before rendering diepool?
         //render diepool
         console.log(globalDiePool.allObjects);
 
@@ -385,17 +387,6 @@ function create() {
         // continueGame();
     // endGame();
 }
-
-// function challengeBid() {
-//     $.get('/session/user_id/', function(event){
-//         var playerId = event.uid;
-//         $.get('/session/recent_user_name/'+playerId, function(event) {
-//             var playerUsername = event.uname;
-//             testButtonText.text = playerUsername + " challenges the bid!";
-//         });
-//     });
-//}
-/*** End bidding methods ***/
 
 function testMethod1() {
     // globalDiePool.resetDiePool();
