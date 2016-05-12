@@ -28,6 +28,15 @@ class SessionController < ApplicationController
     end
   end
 
+  def least_recent_user
+    @game_user = GameUser.where({game_id: session[:game_id]}).order(:updated_at).first
+    respond_to do |format|
+      id_message = {:status => "ok", :uid => @game_user.user_id, :uname => @game_user.user.username, :dice => @game_user.dice}
+      format.json {render :json => id_message}
+    end
+  end
+
+  # used for displaying user that left the game/lobby
   def recent_user_name
     @user = User.find(params[:id])
     respond_to do |format|

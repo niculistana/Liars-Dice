@@ -99,7 +99,9 @@ function onSuccessLeave(event) {
     };
     $.post('/game_users/'+playerId, game_user_info);
 }
+/*** end lobby methods ***/
 
+/*** game state methods ***/
 function startGame() {
     $.get('/session/name_id/', onSuccessStart);
 }
@@ -116,7 +118,46 @@ function onSuccessStart(event) {
     };
     $.post('/games/'+gameId, game_start_info);
 }
-/*** end lobby methods ***/ 
+
+function startRound() {
+    // backend:
+        // increment round count
+    // broadcast using pusher (render_round_start):
+        // broadcast new round count
+}
+
+function endRound() {
+    // broadcast using pusher(render_round_end):
+        // broadcast who lost a die this round
+        // move on to the next round
+}
+
+function startTurn() {
+    // switch turns to the next least recently updated person
+    // broadcast using pusher (render_turn_start)
+        // broadcast who's turn it is
+    // restart turn clock
+}
+
+function endTurn() {
+    // switch turns to the next least recently updated person
+    // broadcast using pusher (render_turn_end):
+        // broadcast who's upcoming turn it is
+}
+
+function endGame() {
+    // switch turns to the next least recently updated person
+}
+
+function onSuccessEnd() {
+    // backend:
+        // set state to 2 (finished)
+        // increment winner leaderboard
+    // broadcast using pusher (render_turn_end):
+        // broadcast the winner
+        // broadcast game over
+}
+/*** end game state methods ***/
 
 //Behavior when player loses a challenge and then loses a dice
 function loseDice() {
