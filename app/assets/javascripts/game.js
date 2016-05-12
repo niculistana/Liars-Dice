@@ -198,19 +198,19 @@ function create() {
     gameControlsGroup = game.add.group();
     gameControlsGroup.position.x = game.world.centerX;
     gameControlsGroup.position.y = game.world.centerY+200;
-    decrementDiceAmountButton = game.make.button(-50, 30, 'square_buttons', function(){}, this, 2, 1, 0);
-    decrementDiceAmountButton.scale.setTo(0.35, 0.35);
-    window.rich = decrementDiceAmountButton;
+    decrementDieQuantityButton = game.make.button(-50, 30, 'square_buttons', decrementDieQuantity, this, 2, 1, 0);
+    decrementDieQuantityButton.scale.setTo(0.35, 0.35);
+    window.rich = decrementDieQuantityButton;
 
-    incrementDiceAmountButton = game.make.button(-20, 30, 'square_buttons', function(){}, this, 2, 1, 0);
-    incrementDiceAmountButton.scale.setTo(0.35, 0.35);
-    window.rich = incrementDiceAmountButton;
+    incrementDieQuantityButton = game.make.button(-20, 30, 'square_buttons', incrementDieQuantity, this, 2, 1, 0);
+    incrementDieQuantityButton.scale.setTo(0.35, 0.35);
+    window.rich = incrementDieQuantityButton;
 
-    decrementDiceValueButton = game.make.button(40, 30, 'square_buttons', function(){}, this, 2, 1, 0);
-    decrementDiceValueButton.scale.setTo(0.35, 0.35);
-    window.rich = decrementDiceValueButton;
+    decrementDieValueButton = game.make.button(40, 30, 'square_buttons', decrementDieValue, this, 2, 1, 0);
+    decrementDieValueButton.scale.setTo(0.35, 0.35);
+    window.rich = decrementDieValueButton;
 
-    incrementDiceValueButton = game.make.button(70, 30, 'square_buttons', function(){}, this, 2, 1, 0);
+    incrementDiceValueButton = game.make.button(70, 30, 'square_buttons', incrementDiceValue, this, 2, 1, 0);
     incrementDiceValueButton.scale.setTo(0.35, 0.35);
     window.rich = incrementDiceValueButton;
 
@@ -222,9 +222,9 @@ function create() {
     makeBidButton.scale.setTo(0.25, 0.50);
     window.rich = makeBidButton;
 
-    gameControlsGroup.add(decrementDiceAmountButton);
-    gameControlsGroup.add(incrementDiceAmountButton);
-    gameControlsGroup.add(decrementDiceValueButton);
+    gameControlsGroup.add(decrementDieQuantityButton);
+    gameControlsGroup.add(incrementDieQuantityButton);
+    gameControlsGroup.add(decrementDieValueButton);
     gameControlsGroup.add(incrementDiceValueButton);
     gameControlsGroup.add(challengeButton);
     gameControlsGroup.add(makeBidButton);
@@ -343,6 +343,22 @@ function testMethod4() {
     leaveLobby();
     // playerPool.removePlayer(0);
     // playerSpriteGroup.renderSprites("octagonal");
+}
+
+function decrementDieQuantity() {
+    $("#dieQuantity").text(parseInt($("#dieQuantity").text())-1);
+}
+
+function incrementDieQuantity() {
+    $("#dieQuantity").text(parseInt($("#dieQuantity").text())+1);
+}
+
+function decrementDieValue() {
+    $("#dieValue").text(parseInt($("#dieValue").text())-1);
+}
+
+function incrementDiceValue() {
+    $("#dieValue").text(parseInt($("#dieValue").text())+1);
 }
 
 function waitGame(){
