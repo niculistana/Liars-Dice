@@ -283,7 +283,7 @@ function create() {
     // dieBidSpriteGroup
     // shows the dieBid group
     dieBidGroup = game.add.group();
-    dieBidSpriteGroup = new SpriteGroup("dice", dieBidGroup, dieBidPool, game.world.centerX+500, game.world.centerY);
+    dieBidSpriteGroup = new SpriteGroup("dice", dieBidGroup, dieBidPool, game.world.centerX+500, game.world.centerY+400);
     // dieBidSpriteGroup.renderSprites("box");
     dieBidGroup.scale.setTo(0.35,0.35);
     // end diceBidSpriteGroup
@@ -421,7 +421,7 @@ function testMethod1() {
     //         console.log(response);
     //     }
     // });
-    // startGame();
+    startGame();
     testButtonText.text = "startGame";
 }
 

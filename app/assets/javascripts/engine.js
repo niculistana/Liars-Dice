@@ -148,6 +148,7 @@ function onSuccessLeave(event) {
 
 /*** game state methods ***/
 function startGame() {
+    logo.alpha = 0
     $.get('/session/name_id/', onSuccessStart);
 }
 
