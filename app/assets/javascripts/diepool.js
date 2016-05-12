@@ -1,9 +1,10 @@
-function diePool (numPlayers) {
-  this.numPlayers = numPlayers;
+// a dice array api used by spritegroup to render sprites
+function diePool () {
+  this.numDice = 0;  // get currently logged-in users in db
   this.allObjects = [];
 
   // default number of dice per player is 5
-  this.generatePool = function() {
+  this.generatePool = function(numPlayers) {
     for (var i = 0; i < numPlayers*5; i++) {
       this.allObjects.push(new Die(Math.ceil(Math.random()*6)));
     }
@@ -11,6 +12,10 @@ function diePool (numPlayers) {
 
   this.setCurrentCurrentDie = function (index, die) {
     this.allObjects[index] = die;
+  };
+
+  this.addDie = function (die) {
+    this.allObjects.push(die);
   };
 
   this.removeDie = function (index) {
@@ -25,7 +30,6 @@ function diePool (numPlayers) {
 
   this.resetDiePool = function () {
     this.emptyDiePool();
-    this.generatePool();
   };
 
   this.shuffleDice = function () {

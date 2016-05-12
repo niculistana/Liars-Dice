@@ -49,7 +49,7 @@ function bid() {
     };
     $.post('/games/'+gameId+'/bid', bid_info, function(event){
         //Handle if user fucked up
-    })
+    });
 }
 
 function challenge() {
@@ -61,10 +61,10 @@ function challenge() {
     };
     $.post('/games/'+gameId+'/challenge', challenge_info, function(event) {
         console.log(event);
-    })
+    });
 }
 
-// lobby methods
+/*** lobby methods ***/
 function joinLobby () {
     $.get('/session/user_id/', onSuccessJoin);
 }
@@ -116,7 +116,7 @@ function onSuccessStart(event) {
     };
     $.post('/games/'+gameId, game_start_info);
 }
-// end lobby methods
+/*** end lobby methods ***/ 
 
 //Behavior when player loses a challenge and then loses a dice
 function loseDice() {

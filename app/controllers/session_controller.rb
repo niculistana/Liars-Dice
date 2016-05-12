@@ -28,7 +28,7 @@ class SessionController < ApplicationController
     end
   end
 
-  def user_quit_name
+  def recent_user_name
     @user = User.find(params[:id])
     respond_to do |format|
       uname_message = {:status => "ok", :uname => @user.username}

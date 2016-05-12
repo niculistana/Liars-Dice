@@ -3,13 +3,14 @@ var assetsLoaded = false;
 var logo;
 var text;
 var state;
-var diePool;
+var globalDiePool;
+var dieBidPool;
 var playerPool;
 var channel;
 var channel2;
 var gameId = "";
 var gameName = "";
-var numPlayers = 0;
+var numPlayers = 4;
 
 var gameFileKeys = ['dollars', 'logo', 'dice1', 'dice2', 'dice3', 'dice4', 'dice5', 'dice6',
 'player1','player2','player3','player4','player5','player6','player7','player8'];
@@ -55,9 +56,10 @@ function preload() {
     game.load.spritesheet('rect_buttons', 'sprites/uipack_fixed/new_ui/buttons/rect_buttons.png', 192, 49);
     game.load.spritesheet('square_buttons', 'sprites/uipack_fixed/new_ui/buttons/square_buttons.png', 51, 49);
     game.load.images(gameFileKeys, gameFiles);
-    diePool = new diePool(4);
-    diePool.generatePool();
-    playerPool = new playerPool(8);
+    globalDiePool = new diePool();
+    globalDiePool.generatePool(numPlayers);
+    dieBidPool = new diePool();
+    playerPool = new playerPool(numPlayers);
     // playerPool.generatePool();
 }
 
@@ -68,31 +70,31 @@ $(document).ready(function(event){
 function onGetNameIdSuccess(event) {
     gameId = event.id.toString();
     gameName = event.name;
-    console.log("game_channel"+gameId)
+    console.log("game_channel"+gameId);
     channel = pusher.subscribe("game_channel"+gameId);
     channel2 = pusher.subscribe("chat_channel"+gameId);
     channel2.bind('chat', chat);
     channel.bind('challenge_event', function(data) {
         //Convert diepool from the controller into diepool object
-        var diePoolController = data.diepool.split(",").map(Number);
+        var diePoolController = data.globalDiepool.split(",").map(Number);
         var newObject = [];
         for(var i = 0; i < diePoolController.length; i++) {
             newObject.push(new Die(diePoolController[i]));
         }
-        //Set diePool.allObjects = newObject
-        diePool.allObjects = newObject;
+        //Set globalDiePool.allObjects = newObject
+        globalDiePool.allObjects = newObject;
 
         //render diepool
-        console.log(diePool.allObjects);
+        console.log(globalDiePool.allObjects);
 
         //Maybe remove a die
         //Deal back die, with the loser getting the less die
         if(data.result) {
             //Challenger loses dice
-            console.log("Current player lost")
+            console.log("Current player lost");
         } else {
             //Challengee loses dice
-            console.log("previous player lost")
+            console.log("previous player lost");
         }
         //deal back dice
     });
@@ -115,19 +117,19 @@ function onGetNameIdSuccess(event) {
             playerPool.addPlayer(new Player(playerUsername, playerId));
             // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
             playerSpriteGroup.renderSprites("octagonal");
-        })
+        });
     });
     channel.bind("render_delete", function(event) {
         console.log("I have rendered");
         console.log(event);
         var playerId = event.user_id;
-        $.get('/session/user_quit_name/'+playerId, function(event) {
+        $.get('/session/recent_user_name/'+playerId, function(event) {
             var playerUsername = event.uname;
             testButtonText.text = playerUsername + " left the game.";
             playerGroup.removeAll();
             playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
             playerSpriteGroup.renderSprites("octagonal");
-        })
+        });
     });
     channel.bind("render_start", function(event) {
         var gameName = event.name;
@@ -189,10 +191,18 @@ function create() {
 
     // shows the die group
     dieGroup = game.add.group();
-    dieSpriteGroup = new SpriteGroup("dice", dieGroup, diePool, 6, 120, 1450);
+    dieSpriteGroup = new SpriteGroup("dice", dieGroup, globalDiePool, 120, 1450);
     // dieSpriteGroup.renderSprites("box");
     dieGroup.scale.setTo(0.35,0.35);
     // end diceSpriteGroup
+
+    // dieBidSpriteGroup
+    // shows the dieBid group
+    dieBidGroup = game.add.group();
+    dieBidSpriteGroup = new SpriteGroup("dice", dieBidGroup, dieBidPool, game.world.centerX+500, game.world.centerY);
+    // dieBidSpriteGroup.renderSprites("box");
+    dieBidGroup.scale.setTo(0.35,0.35);
+    // end diceBidSpriteGroup
 
     // gameControlsGroup
     graphics.lineStyle(5, 0x0000FF, 1);
@@ -217,7 +227,7 @@ function create() {
     incrementDieValueButton.scale.setTo(0.35, 0.35);
     window.rich = incrementDieValueButton;
 
-    challengeButton = game.make.button(-50, 60, 'rect_buttons', function(){}, this, 2, 1, 0);
+    challengeButton = game.make.button(-50, 60, 'rect_buttons', makeBid, this, 2, 1, 0);
     challengeButton.scale.setTo(0.25, 0.50);
     window.rich = challengeButton;
 
@@ -298,6 +308,8 @@ function create() {
     // endGame();
 }
 
+/*** Bidding methods ***/
+
 function incrementDieValue() {
     console.log("+1 value");
     var update = parseInt($('#dieValue').text());
@@ -308,7 +320,7 @@ function incrementDieValue() {
 function incrementDieQuantity() {
     console.log("+1 quantity");
     var update = parseInt($('#dieQuantity').text());
-    if(update < diePool.allObjects.length)
+    if(update < globalDiePool.allObjects.length)
         $('#dieQuantity').text(update+1);
 }
 
@@ -326,8 +338,29 @@ function decrementDieQuantity() {
         $('#dieQuantity').text(update-1);
 }
 
+function makeBid() {
+    dieBidPool.resetDiePool();
+    dieBidGroup.removeAll();
+    dieValue = parseInt($("#dieValue").text());
+    dieQuantity = parseInt($("#dieQuantity").text());
+    for (var i = 0; i < dieQuantity; i++) {
+        dieBidPool.addDie(new Die(Math.ceil(dieValue)));
+    }
+    dieBidSpriteGroup.renderSprites("box");
+
+    $.get('/session/user_id/', function(event){
+        var playerId = event.uid;
+        $.get('/session/recent_user_name/'+playerId, function(event) {
+            var playerUsername = event.uname;
+            testButtonText.text = playerUsername + " placed a bid: " + dieQuantity + " #" + dieValue + "'s";
+        });
+    });
+}
+/*** End bidding methods ***/
+
 function testMethod1() {
-    // diePool.resetDiePool();
+    // globalDiePool.resetDiePool();
+    // globalDiePool.generatePool(numPlayers);
     // var testAjax = {
     //     _method: 'PUT',
     //     game: {
@@ -337,11 +370,11 @@ function testMethod1() {
     //     }
     // };
     // //If used a lot, make into a function
-    // for(var die in diePool.allObjects) {
-    //     testAjax.game.diepool.push(diePool.allObjects[die].id);
+    // for(var die in globalDiePool.allObjects) {
+    //     testAjax.game.globalDiepool.push(globalDiePool.allObjects[die].id);
     // }
     // testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
-    // testAjax.game.diepool = testAjax.game.diepool.substring(1, testAjax.game.diepool.length-1);
+    // testAjax.game.diepool = testAjax.game.globalDiepool.substring(1, testAjax.game.globalDiepool.length-1);
     // $.ajax({
     //     url: '/games/'+gameId,
     //     type: 'POST',
@@ -352,17 +385,18 @@ function testMethod1() {
     //         console.log(response);
     //     }
     // });
-    // dieSpriteGroup.renderSprites("box");
-    // testButtonText.text = "renderSprites";
-    // console.log(diePool.allObjects.length);
-    startGame();
+    // startGame();
+    testButtonText.text = "startGame";
 }
 
 function testMethod2() {
-    // diePool.shuffleDice();
+    // globalDiePool.shuffleDice();
     // challenge();
-    bid();
-    testButtonText.text = "Challenge";
+    // bid();
+    // testButtonText.text = "Challenge";
+    dieBidPool.resetDiePool();
+    dieBidGroup.removeAll();
+    dieBidSpriteGroup.renderSprites("box");
 }
 
 function testMethod3() {
@@ -379,7 +413,7 @@ function testMethod4() {
 function waitGame(){
     // if client connection is recieved
     players.push(new Player("2:00", playerNames[numPlayers], numPlayers));
-    players[numPlayers].getDice(diePool.allObjects);
+    players[numPlayers].getDice(globalDiePool.allObjects);
     playerText.text += players[numPlayers].playerNameText;
     numPlayers++;
     logo.alpha = 1;
@@ -405,8 +439,8 @@ function continueGame() {
     state = "Continue";
     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
     diePoolText.text = "Die pool\n";
-    for (var die in diePool.allObjects) {
-        diePoolText.text += " " + diePool.allObjects[die].value.toString();
+    for (var die in globalDiePool.allObjects) {
+        diePoolText.text += " " + globalDiePool.allObjects[die].value.toString();
     }
     // update diePool depending on engine(game) rules...
     // use diePool API
