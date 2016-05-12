@@ -8,7 +8,6 @@ Rails.application.routes.draw do
 
   root                      "pages#landing"
   get 'join'             => "pages#join",         as: :join
-  get 'leaderboard'      => "pages#leaderboard",  as: :leaderboard
   get 'about'            => "pages#about",        as: :about
   get "session/name_id"  => "session#name_id"
   get "session/user_id"  => "session#user_id"
