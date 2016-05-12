@@ -406,7 +406,7 @@ function create() {
 //             testButtonText.text = playerUsername + " challenges the bid!";
 //         });
 //     });
-}
+//}
 /*** End bidding methods ***/
 
 function testMethod1() {
