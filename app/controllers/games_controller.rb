@@ -1,6 +1,6 @@
 class GamesController < ApplicationController
   before_action :set_game, only: [:show, :edit, :update, 
-    :destroy, :bid, :challenge]
+    :destroy, :bid, :challenge, :join]
 
   # GET /games
   # GET /games.json
@@ -64,6 +64,19 @@ class GamesController < ApplicationController
       format.html { redirect_to games_url, notice: 'Game was successfully destroyed.' }
       format.json { head :no_content }
     end
+  end
+
+  #join function to add users as they join the game
+  #increment logged_in_users
+  #if logged in == max, don't let anymore in, change game state to 1
+  def join
+    increment = {:logged_in_users => @game.logged_in_users+=1}
+    @game.update(increment);
+
+    if @game.logged_in_users == @game.max_users
+      @game.update({:state => 1});
+    end
+    head :ok
   end
 
   #Save bid into the database

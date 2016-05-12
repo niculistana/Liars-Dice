@@ -70,6 +70,8 @@ $(document).ready(function(event){
 function onGetNameIdSuccess(event) {
     gameId = event.id.toString();
     gameName = event.name;
+    $.post('/games/join/'+gameId, {logged_in_users: 1});
+    joinLobby();
     console.log("game_channel"+gameId);
     channel = pusher.subscribe("game_channel"+gameId);
     channel2 = pusher.subscribe("chat_channel"+gameId);

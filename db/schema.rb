@@ -31,7 +31,7 @@ ActiveRecord::Schema.define(version: 20160412004700) do
     t.integer  "max_users"
     t.integer  "quantity"
     t.integer  "value"
-    t.integer  "logged_in_users", default: 1
+    t.integer  "logged_in_users", default: 0
     t.string   "diepool"
     t.integer  "completed",       default: 0
     t.integer  "round",           default: 1

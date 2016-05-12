@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get 'about'            => "pages#about",        as: :about
   get "session/name_id"  => "session#name_id"
   get "session/user_id"  => "session#user_id"
+  post "games/join/:id" => "games#join"
   # get "session/user_username"  => "session#user_username"
   get "session/recent_user"  => "session#recent_user"
   get "session/least_recent_user"  => "session#least_recent_user"
