@@ -102,7 +102,20 @@ function onGetNameIdSuccess(event) {
         //render bid to everyone
         $('#dieQuantity').text(event.quantity);
         $('#dieValue').text(event.value);
-        //Display it for less subtlety
+
+        dieBidPool.resetDiePool();
+        dieBidGroup.removeAll();
+        dieValue = parseInt($("#dieValue").text());
+        dieQuantity = parseInt($("#dieQuantity").text());
+        for (var i = 0; i < dieQuantity; i++) 
+            dieBidPool.addDie(new Die(Math.ceil(dieValue)));
+        dieBidSpriteGroup.renderSprites("box");
+
+        dieQuantity = event.quantity;
+        dieValue = event.value;
+        var playerUsername = event.name;
+        testButtonText.text = playerUsername + " placed a bid: " + 
+        dieQuantity + " #" + dieValue + "'s";
     });
     channel.bind("render_add", function(event) {
         console.log("I have rendered");
@@ -291,12 +304,7 @@ function create() {
     incrementDieValueButton = game.make.button(70, 30, 'square_buttons', incrementDieValue, this, 2, 1, 0);
     incrementDieValueButton.scale.setTo(0.35, 0.35);
     window.rich = incrementDieValueButton;
-
-    //challengeButton = game.make.button(-50, 60, 'rect_buttons', makeBid, this, 2, 1, 0);
-    //challengeButton.scale.setTo(0.25, 0.50);
-    //window.rich = challengeButton;
-
-    //makeBidButton = game.make.button(40, 60, 'rect_buttons', challengeBid, this, 2, 1, 0);
+ 
     challengeButton = game.make.button(-50, 60, 'rect_buttons', challenge, this, 2, 1, 0);
     challengeButton.scale.setTo(0.25, 0.50);
     window.rich = challengeButton;
@@ -377,26 +385,6 @@ function create() {
         // continueGame();
     // endGame();
 }
-
-
-
-// function makeBid() {
-//     dieBidPool.resetDiePool();
-//     dieBidGroup.removeAll();
-//     dieValue = parseInt($("#dieValue").text());
-//     dieQuantity = parseInt($("#dieQuantity").text());
-//     for (var i = 0; i < dieQuantity; i++) {
-//         dieBidPool.addDie(new Die(Math.ceil(dieValue)));
-//     dieBidSpriteGroup.renderSprites("box");
-
-//     $.get('/session/user_id/', function(event){
-//         var playerId = event.uid;
-//         $.get('/session/recent_user_name/'+playerId, function(event) {
-//             var playerUsername = event.uname;
-//             testButtonText.text = playerUsername + " placed a bid: " + dieQuantity + " #" + dieValue + "'s";
-//         });
-//     });
-// }
 
 // function challengeBid() {
 //     $.get('/session/user_id/', function(event){

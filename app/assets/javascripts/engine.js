@@ -41,14 +41,21 @@ function updateGlobalPool(game) {
 
 //Behavior to bet
 function bid() {
-    var bid_info = {
-        game: {
-            quantity: parseInt($('#dieQuantity').text()),
-            value: parseInt($('#dieValue').text())
-        }
-    };
-    $.post('/games/'+gameId+'/bid', bid_info, function(event){
-        //Handle if user fucked up
+    $.get('/session/user_id/', function(event){
+        var playerId = event.uid;
+        $.get('/session/recent_user_name/'+playerId, function(event) {
+            var playerUsername = event.uname;
+            var bid_info = {
+                game: {
+                    quantity: parseInt($('#dieQuantity').text()),
+                    value: parseInt($('#dieValue').text()),
+                    name: playerUsername
+                }
+            };
+            $.post('/games/'+gameId+'/bid', bid_info, function(event){
+                //Handle if user fucked up
+            });
+        });
     });
 }
 
@@ -63,7 +70,7 @@ function incrementDieValue() {
 function incrementDieQuantity() {
     console.log("+1 quantity");
     var update = parseInt($('#dieQuantity').text());
-    if(update < diePool.allObjects.length)
+    if(update < globalDiePool.allObjects.length)
         $('#dieQuantity').text(update+1);
 }
 
