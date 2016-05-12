@@ -115,6 +115,7 @@ function onGetNameIdSuccess(event) {
             var dice = event.dice;
             testButtonText.text = playerUsername + " joined the game.";
             playerPool.addPlayer(new Player(playerUsername, playerId));
+            console.log(playerPool.allObjects);
             // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
             playerSpriteGroup.renderSprites("octagonal");
         });
@@ -131,9 +132,73 @@ function onGetNameIdSuccess(event) {
             playerSpriteGroup.renderSprites("octagonal");
         });
     });
-    channel.bind("render_start", function(event) {
+
+    channel.bind("render_game_start", function(event) {
         var gameName = event.name;
         testButtonText.text = gameName + " has started, enjoy!";
+    });
+
+    channel.bind("render_round_start", function(event) {
+        // do event broadcasting stuff here
+        // disable others from performing actions by disabling ui
+        // broadcast least recently updated player to be their turn
+        testButtonText.text = "It's Listana's turn to bid.";
+        var turnTime = 3, seconds;
+        setInterval(function () {
+            seconds = parseInt(turnTime % 60, 10);
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            $(".turnSeconds").text(seconds);
+
+            if (--turnTime < 0) {
+                turnTime = 0;
+                testButtonText.text = "Time is up! " +  playerUsername + " lost a die.";
+            }
+        }, 1000);
+    });
+
+    channel.bind("render_round_end", function(event) {
+        // do event broadcasting stuff here
+        // increment round number here
+        testButtonText.text = "Round # 2 ended. Starting round # 3.";
+    });
+
+    channel.bind("render_turn_start", function(event) {
+        // do event broadcasting stuff here
+        // disable others from performing actions by disabling ui
+        // broadcast least recently updated player to be their turn
+        $.get('/session/least_recent_user/', function(event) {
+            var playerId = event.user_id;
+            var playerUsername = event.uname;
+            var dice = event.dice;
+            testButtonText.text = "It's " + playerUsername + "'s' turn to bid or challenge.";
+
+            var turnTime = 3, seconds;
+            setInterval(function () {
+                seconds = parseInt(turnTime % 60, 10);
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                $(".turnSeconds").text(seconds);
+
+                if (--turnTime < 0) {
+                    turnTime = 0;
+                    testButtonText.text = "Time is up! " +  playerUsername + " lost a die.";
+                    endTurn();
+                }
+            }, 1000);
+        });
+    });
+
+    channel.bind("render_turn_end", function(event) {
+        // do event broadcasting stuff here
+        // render next player in queue
+        testButtonText.text = "Next turn: MastaChau.";
+    });
+
+    channel.bind("render_game_end", function(event) {
+        // do event broadcasting stuff here
+        // render next player in queue
+        testButtonText.text = "Game ayyLmao is over! The winner is: Listana! Congratulations :)";
     });
 }
 
@@ -231,7 +296,7 @@ function create() {
     challengeButton.scale.setTo(0.25, 0.50);
     window.rich = challengeButton;
 
-    makeBidButton = game.make.button(40, 60, 'rect_buttons', function(){}, this, 2, 1, 0);
+    makeBidButton = game.make.button(40, 60, 'rect_buttons', challengeBid, this, 2, 1, 0);
     makeBidButton.scale.setTo(0.25, 0.50);
     window.rich = makeBidButton;
 
@@ -356,6 +421,16 @@ function makeBid() {
         });
     });
 }
+
+function challengeBid() {
+    $.get('/session/user_id/', function(event){
+        var playerId = event.uid;
+        $.get('/session/recent_user_name/'+playerId, function(event) {
+            var playerUsername = event.uname;
+            testButtonText.text = playerUsername + " challenges the bid!";
+        });
+    });
+}
 /*** End bidding methods ***/
 
 function testMethod1() {
@@ -393,10 +468,9 @@ function testMethod2() {
     // globalDiePool.shuffleDice();
     // challenge();
     // bid();
-    // testButtonText.text = "Challenge";
-    dieBidPool.resetDiePool();
-    dieBidGroup.removeAll();
-    dieBidSpriteGroup.renderSprites("box");
+    // // testButtonText.text = "Challenge";
+    // startTurn();
+    startRound();
 }
 
 function testMethod3() {
@@ -410,65 +484,69 @@ function testMethod4() {
     // playerSpriteGroup.renderSprites("octagonal");
 }
 
-function waitGame(){
-    // if client connection is recieved
-    players.push(new Player("2:00", playerNames[numPlayers], numPlayers));
-    players[numPlayers].getDice(globalDiePool.allObjects);
-    playerText.text += players[numPlayers].playerNameText;
-    numPlayers++;
-    logo.alpha = 1;
-    state = "Wait";
-    debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
-    // numPlayersTimeout = setTimeout("waitGame()", 3000);
-}
+/*** deprecated methods***/
 
-function startGame() {
-    // probably do some threading here to load assets faster?
-    // clearTimeout(numPlayersTimeout);
-    // once done, update engine(game).assetsLoaded == true
-    // mine a directory and load every single asset from that directory
-    logo.alpha = 0;
-    state = "Start";
-    debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
-    assetsLoadedTimeout = setTimeout("startGame()", 5000);
-    assetsLoaded = true;
-}
+// function waitGame(){
+//     // if client connection is recieved
+//     players.push(new Player("2:00", playerNames[numPlayers], numPlayers));
+//     players[numPlayers].getDice(globalDiePool.allObjects);
+//     playerText.text += players[numPlayers].playerNameText;
+//     numPlayers++;
+//     logo.alpha = 1;
+//     state = "Wait";
+//     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
+//     // numPlayersTimeout = setTimeout("waitGame()", 3000);
+// }
 
-function continueGame() {
-    // clearTimeout(assetsLoadedTimeout);
-    state = "Continue";
-    debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
-    diePoolText.text = "Die pool\n";
-    for (var die in globalDiePool.allObjects) {
-        diePoolText.text += " " + globalDiePool.allObjects[die].value.toString();
-    }
-    // update diePool depending on engine(game) rules...
-    // use diePool API
-    // hasWinnerTimeout = setTimeout("continueGame()", 3000);
-}
+// function startGame() {
+//     // probably do some threading here to load assets faster?
+//     // clearTimeout(numPlayersTimeout);
+//     // once done, update engine(game).assetsLoaded == true
+//     // mine a directory and load every single asset from that directory
+//     logo.alpha = 0;
+//     state = "Start";
+//     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
+//     assetsLoadedTimeout = setTimeout("startGame()", 5000);
+//     assetsLoaded = true;
+// }
 
-function endGame() {
-    // reset flags
-    clearTimeout(hasWinnerTimeout);
-    numPlayers = 0;
-    assetsLoaded = false;
-    hasWinner = false;
-    state = "End";
-    diePoolText.text = "";
-    players = [];
-    playerText.text = "";
-    debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
+// function continueGame() {
+//     // clearTimeout(assetsLoadedTimeout);
+//     state = "Continue";
+//     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
+//     diePoolText.text = "Die pool\n";
+//     for (var die in globalDiePool.allObjects) {
+//         diePoolText.text += " " + globalDiePool.allObjects[die].value.toString();
+//     }
+//     // update diePool depending on engine(game) rules...
+//     // use diePool API
+//     // hasWinnerTimeout = setTimeout("continueGame()", 3000);
+// }
 
-    emitter = game.add.emitter(game.world.centerX, 250, 200);
-    emitter.makeParticles('dollars');
-    emitter.setRotation(0, 0);
-    emitter.setAlpha(0.3, 0.8);
-    emitter.setScale(0.5, 1);
-    emitter.gravity = 0;
-    emitter.start(false, 4000, 20);
+// function endGame() {
+//     // reset flags
+//     clearTimeout(hasWinnerTimeout);
+//     numPlayers = 0;
+//     assetsLoaded = false;
+//     hasWinner = false;
+//     state = "End";
+//     diePoolText.text = "";
+//     players = [];
+//     playerText.text = "";
+//     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
 
-    setTimeout(function(){
-        emitter.destroy();
-        waitGame();
-    }, 3000);
-}
+//     emitter = game.add.emitter(game.world.centerX, 250, 200);
+//     emitter.makeParticles('dollars');
+//     emitter.setRotation(0, 0);
+//     emitter.setAlpha(0.3, 0.8);
+//     emitter.setScale(0.5, 1);
+//     emitter.gravity = 0;
+//     emitter.start(false, 4000, 20);
+
+//     setTimeout(function(){
+//         emitter.destroy();
+//         waitGame();
+//     }, 3000);
+// }
+
+/*** end deprecated methods***/
