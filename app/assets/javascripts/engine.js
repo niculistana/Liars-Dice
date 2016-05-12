@@ -52,6 +52,34 @@ function bid() {
     })
 }
 
+function incrementValue() {
+    console.log("+1 value");
+    var update = parseInt($('#dieValue').text());
+    if(update < 6)
+        $('#dieValue').text(update+1);
+}
+
+function incrementQuantity() {
+    console.log("+1 quantity");
+    var update = parseInt($('#dieQuantity').text());
+    if(update < diePool.allObjects.length)
+        $('#dieQuantity').text(update+1);
+}
+
+function decrementValue() {
+    console.log("-1 value");
+    var update = parseInt($('#dieValue').text());
+    if(update > 1)
+        $('#dieValue').text(update-1);
+}
+
+function decrementQuantity() {
+    console.log("-1 quantity");
+    var update = parseInt($('#dieQuantity').text());
+    if(update > 1)
+        $('#dieQuantity').text(update-1);
+}
+
 function challenge() {
     var challenge_info = {
         game: {

@@ -213,11 +213,11 @@ function create() {
     incrementDiceValueButton.scale.setTo(0.35, 0.35);
     window.rich = incrementDiceValueButton;
 
-    challengeButton = game.make.button(-50, 60, 'rect_buttons', function(){}, this, 2, 1, 0);
+    challengeButton = game.make.button(-50, 60, 'rect_buttons', challenge, this, 2, 1, 0);
     challengeButton.scale.setTo(0.25, 0.50);
     window.rich = challengeButton;
 
-    makeBidButton = game.make.button(40, 60, 'rect_buttons', function(){}, this, 2, 1, 0);
+    makeBidButton = game.make.button(40, 60, 'rect_buttons', bid, this, 2, 1, 0);
     makeBidButton.scale.setTo(0.25, 0.50);
     window.rich = makeBidButton;
 
@@ -292,34 +292,6 @@ function create() {
     // loop until engine(game).hasWinner == true
         // continueGame();
     // endGame();
-}
-
-function incrementValue() {
-    console.log("+1 value");
-    var update = parseInt($('#dieValue').text());
-    if(update < 6)
-        $('#dieValue').text(update+1);
-}
-
-function incrementQuantity() {
-    console.log("+1 quantity");
-    var update = parseInt($('#dieQuantity').text());
-    if(update < diePool.allObjects.length)
-        $('#dieQuantity').text(update+1);
-}
-
-function decrementValue() {
-    console.log("-1 value");
-    var update = parseInt($('#dieValue').text());
-    if(update > 1)
-        $('#dieValue').text(update-1);
-}
-
-function decrementQuantity() {
-    console.log("-1 quantity");
-    var update = parseInt($('#dieQuantity').text());
-    if(update > 1)
-        $('#dieQuantity').text(update-1);
 }
 
 function testMethod1() {
