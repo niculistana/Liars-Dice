@@ -126,6 +126,10 @@ function onGetNameIdSuccess(event) {
             playerSpriteGroup.renderSprites("octagonal");
         })
     });
+    channel.bind("render_start", function(event) {
+        var gameName = event.name;
+        testButtonText.text = gameName + " has started, enjoy!";
+    });
 }
 
 function create() {
@@ -355,33 +359,34 @@ function create() {
 
 function testMethod1() {
     // diePool.resetDiePool();
-    var testAjax = {
-        _method: 'PUT',
-        game: {
-            turn: "Nicu",
-            diepool: [],
-            completed: 1,
-        }
-    };
-    //If used a lot, make into a function
-    for(var die in diePool.allObjects) {
-        testAjax.game.diepool.push(diePool.allObjects[die].id);
-    }
-    testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
-    testAjax.game.diepool = testAjax.game.diepool.substring(1, testAjax.game.diepool.length-1);
-    $.ajax({
-        url: '/games/'+gameId,
-        type: 'POST',
-        dataType: 'json',
-        data: testAjax,
-        success: function(response) {
-            console.log("POST");
-            console.log(response);
-        }
-    });
-    dieSpriteGroup.renderSprites("box");
-    testButtonText.text = "renderSprites";
+    // var testAjax = {
+    //     _method: 'PUT',
+    //     game: {
+    //         turn: "Nicu",
+    //         diepool: [],
+    //         completed: 1,
+    //     }
+    // };
+    // //If used a lot, make into a function
+    // for(var die in diePool.allObjects) {
+    //     testAjax.game.diepool.push(diePool.allObjects[die].id);
+    // }
+    // testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
+    // testAjax.game.diepool = testAjax.game.diepool.substring(1, testAjax.game.diepool.length-1);
+    // $.ajax({
+    //     url: '/games/'+gameId,
+    //     type: 'POST',
+    //     dataType: 'json',
+    //     data: testAjax,
+    //     success: function(response) {
+    //         console.log("POST");
+    //         console.log(response);
+    //     }
+    // });
+    // dieSpriteGroup.renderSprites("box");
+    // testButtonText.text = "renderSprites";
     // console.log(diePool.allObjects.length);
+    startGame();
 }
 
 function testMethod2() {
@@ -392,9 +397,8 @@ function testMethod2() {
 }
 
 function testMethod3() {
-    // joinLobby();
+    joinLobby();
     // readyButton();
-    startGame();
 }
 
 function testMethod4() {

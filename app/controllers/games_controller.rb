@@ -13,6 +13,7 @@ class GamesController < ApplicationController
   def show
     session[:game_id] = @game.id
     session[:game_name] = @game.name
+    session[:game_num_players] = @game.logged_in_users
   end
 
   # GET /games/new
@@ -44,6 +45,7 @@ class GamesController < ApplicationController
   # PATCH/PUT /games/1
   # PATCH/PUT /games/1.json
   def update
+    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_start', game_params)
     respond_to do |format|
       if @game.update(game_params)
         format.html { redirect_to @game, notice: 'Game was successfully updated.' }
