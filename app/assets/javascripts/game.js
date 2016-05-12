@@ -55,6 +55,8 @@ function preload() {
     game.load.path = "assets/";
     game.load.spritesheet('rect_buttons', 'sprites/uipack_fixed/new_ui/buttons/rect_buttons.png', 192, 49);
     game.load.spritesheet('square_buttons', 'sprites/uipack_fixed/new_ui/buttons/square_buttons.png', 51, 49);
+    game.load.spritesheet('square_buttons_plus', 'sprites/uipack_fixed/new_ui/buttons/square_buttons_plus.png', 51, 49);
+    game.load.spritesheet('square_buttons_minus', 'sprites/uipack_fixed/new_ui/buttons/square_buttons_minus.png', 51, 49);
     game.load.images(gameFileKeys, gameFiles);
     globalDiePool = new diePool();
     globalDiePool.generatePool(numPlayers);
@@ -293,24 +295,26 @@ function create() {
     gameControlsGroup = game.add.group();
     gameControlsGroup.position.x = game.world.centerX;
     gameControlsGroup.position.y = game.world.centerY+200;
-    decrementDieQuantityButton = game.make.button(-50, 30, 'square_buttons', decrementDieQuantity, this, 2, 1, 0);
+    decrementDieQuantityButton = game.make.button(-50, 30, 'square_buttons_minus', decrementDieQuantity, this, 2, 1, 0);
     decrementDieQuantityButton.scale.setTo(0.35, 0.35);
     window.rich = decrementDieQuantityButton;
 
-    incrementDieQuantityButton = game.make.button(-20, 30, 'square_buttons', incrementDieQuantity, this, 2, 1, 0);
+    incrementDieQuantityButton = game.make.button(-20, 30, 'square_buttons_plus', incrementDieQuantity, this, 2, 1, 0);
     incrementDieQuantityButton.scale.setTo(0.35, 0.35);
     window.rich = incrementDieQuantityButton;
 
-    decrementDieValueButton = game.make.button(40, 30, 'square_buttons', decrementDieValue, this, 2, 1, 0);
+    decrementDieValueButton = game.make.button(40, 30, 'square_buttons_minus', decrementDieValue, this, 2, 1, 0);
     decrementDieValueButton.scale.setTo(0.35, 0.35);
     window.rich = decrementDieValueButton;
 
-    incrementDieValueButton = game.make.button(70, 30, 'square_buttons', incrementDieValue, this, 2, 1, 0);
+    incrementDieValueButton = game.make.button(70, 30, 'square_buttons_plus', incrementDieValue, this, 2, 1, 0);
+
     incrementDieValueButton.scale.setTo(0.35, 0.35);
     window.rich = incrementDieValueButton;
  
     challengeButton = game.make.button(-50, 60, 'rect_buttons', challenge, this, 2, 1, 0);
     challengeButton.scale.setTo(0.25, 0.50);
+
     window.rich = challengeButton;
 
     makeBidButton = game.make.button(40, 60, 'rect_buttons', bid, this, 2, 1, 0);
