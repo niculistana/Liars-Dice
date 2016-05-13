@@ -71,7 +71,9 @@ class GamesController < ApplicationController
   #if logged in == max, don't let anymore in, change game state to 1
   def join
     increment = {:logged_in_users => @game.logged_in_users+=1}
-    @game.update(increment);
+    if @game.logged_in_users < @game.max_users
+      @game.update(increment);
+    end
 
     if @game.logged_in_users == @game.max_users
       @game.update({:state => 1});

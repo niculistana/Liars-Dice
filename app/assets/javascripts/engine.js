@@ -98,6 +98,7 @@ function challenge() {
                 game: {
                     name: playerUsername,
                     challengee: "name2",
+                    uid: playerId
                 }
             };
             $.post('/games/'+gameId+'/challenge', challenge_info, function(event) {

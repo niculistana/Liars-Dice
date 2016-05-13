@@ -163,17 +163,18 @@ function onGetNameIdSuccess(event) {
         testButtonText.text = "Round " + gameRound + " has started. Bid amount and value is reset. Get ready!";
     });
 
+    var deleteInterval;
     channel.bind("render_turn_start", function(event) {
         var gameTurn = event.turn;
         testButtonText.text = "It's " + gameTurn + "'s turn to bid or challenge.";
         var turnTime = 40, seconds;
-        setInterval(function () {
+        var deleteInterval = setInterval(function () {
             seconds = parseInt(turnTime % 60, 10);
             seconds = seconds < 10 ? "0" + seconds : seconds;
 
             $(".turnSeconds").text(seconds);
-
             if (--turnTime < 0) {
+                clearInterval(deleteInterval);
                 turnTime = 0;
                 testButtonText.text = "Time is up! " +  gameTurn + " lost a die.";
             }
