@@ -122,9 +122,12 @@ class GamesController < ApplicationController
   end
 
   def lose_dice
+    #subtract 1 dice from the player who made the bid if they lied
+    #else subtract 1 dice from the player who challenged them
   end
 
   def deal_dice
+    #distribute dice to each game user
   end
 
   private
