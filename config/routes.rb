@@ -21,6 +21,9 @@ Rails.application.routes.draw do
   post "games/:id/challenge" => "games#challenge"
   post "games/lose_dice" => "games#lose_dice"
   post "games/deal_dice" => "games#deal_dice"
+  post "games/:id/start_game" => "games#start_game"
+  post "games/:id/start_round" => "games#start_round"
+  post "games/:id/start_turn" => "games#start_turn"
   post "/"               => "games#create"
 
   #devise_scope :user do

@@ -1,6 +1,6 @@
 class GamesController < ApplicationController
   before_action :set_game, only: [:show, :edit, :update, 
-    :destroy, :bid, :challenge, :join]
+    :destroy, :bid, :challenge, :start_game, :start_round, :start_turn, :join]
 
   # GET /games
   # GET /games.json
@@ -28,6 +28,7 @@ class GamesController < ApplicationController
   # POST /games.json
   def create
     @game = Game.new(game_params)
+    @game.owner = current_user.username
     session[:game_id] = @game.id
     session[:game_name] = @game.name
     respond_to do |format|
@@ -44,11 +45,6 @@ class GamesController < ApplicationController
   # PATCH/PUT /games/1
   # PATCH/PUT /games/1.json
   def update
-    if @game.state == 0
-      Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_game_start', game_params)
-    elsif @game.state == 1
-      Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_round_start', game_params)
-    end
     respond_to do |format|
       if @game.update(game_params)
         format.html { redirect_to @game, notice: 'Game was successfully updated.' }
@@ -134,6 +130,24 @@ class GamesController < ApplicationController
     #distribute dice to each game user
   end
 
+  def start_game
+    @game.update(game_params)
+    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_game_start', game_params)
+    head :ok
+  end
+
+  def start_round
+    @game.update(game_params)
+    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_round_start', game_params)
+    head :ok
+  end
+
+  def start_turn
+    @game.update(game_params)
+    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_turn_start', game_params)
+    head :ok
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_game
@@ -142,7 +156,7 @@ class GamesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
-      params.require(:game).permit(:name, :turn, :round, :max_users, :logged_in_users,
+      params.require(:game).permit(:name, :owner, :turn, :round, :max_users, :logged_in_users,
        :diepool, :state, :quantity, :value)
     end
 end

@@ -27,11 +27,12 @@ ActiveRecord::Schema.define(version: 20160412004700) do
 
   create_table "games", force: :cascade do |t|
     t.string   "name"
+    t.string   "owner"
     t.string   "turn"
     t.integer  "round",           default: 0
     t.integer  "max_users"
-    t.integer  "quantity"
-    t.integer  "value"
+    t.integer  "quantity",        default: 0
+    t.integer  "value",           default: 0
     t.integer  "logged_in_users", default: 0
     t.string   "diepool"
     t.integer  "completed",       default: 0

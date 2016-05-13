@@ -157,15 +157,13 @@ function onSuccessStartGame(event) {
     var gameId = event.id;
     var gameName = event.name;
     var game_start_info = {
-        _method: "PUT",
         game: {
             name: gameName,
             round: 0,
             state: 1
         }
     };
-    $.post('/games/'+gameId, game_start_info);
-    startRound();
+    $.post('/games/'+gameId+'/start_game', game_start_info);
 }
 
 function startRound() {
@@ -177,19 +175,14 @@ function onSuccessStartRound(event) {
     $.get('/games/'+gameId+'.json', function(event) {
         var roundCount = event.round;
         roundCount+=1;
-        $.get('/session/least_recent_user/', function(event) {
-            var nextUserName = event.uname;
-            var round_start_info = {
-                _method: "PUT",
-                game: {
-                    turn: nextUserName,
-                    round: roundCount,
-                    quantity: 0,
-                    value: 0
-                }
-            };
-            $.post('/games/'+gameId, round_start_info);
-        });
+        var round_start_info = {
+            game: {
+                round: roundCount,
+                quantity: 0,
+                value: 0
+            }
+        };
+        $.post('/games/'+gameId+'/start_round', round_start_info);
     });
 }
 
@@ -200,10 +193,24 @@ function endRound() {
 }
 
 function startTurn() {
+    $.get('/session/name_id/', onSuccessStartTurn);
     // switch turns to the next least recently updated person
     // broadcast using pusher (render_turn_start)
         // broadcast who's turn it is
     // restart turn clock
+}
+
+function onSuccessStartTurn(event) {
+    var gameId = event.id;
+    $.get('/session/least_recent_user/', function(event) {
+        var nextUserName = event.uname;
+        var turn_start_info = {
+            game: {
+                turn: nextUserName
+            }
+        };
+        $.post('/games/'+gameId+'/start_turn/', turn_start_info);
+    });
 }
 
 function endTurn() {
@@ -216,7 +223,7 @@ function endGame() {
     // switch turns to the next least recently updated person
 }
 
-function onSuccessEnd() {
+function onSuccessEndGame() {
     // backend:
         // set state to 2 (finished)
         // increment winner leaderboard

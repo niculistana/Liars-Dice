@@ -160,60 +160,36 @@ function onGetNameIdSuccess(event) {
 
     channel.bind("render_round_start", function(event) {
         var gameRound = event.round;
-        var gameTurn = event.turn;
-        console.log(event);
-        testButtonText.text = "Round " + gameRound + " has started. It's " + gameTurn + "'s turn.";
+        testButtonText.text = "Round " + gameRound + " has started. Bid amount and value is reset. Get ready!";
     });
 
-    // channel.bind("render_round_start", function(event) {
-    //     // do event broadcasting stuff here
-    //     // disable others from performing actions by disabling ui
-    //     // broadcast least recently updated player to be their turn
-    //     testButtonText.text = "It's Listana's turn to bid.";
-    //     var turnTime = 3, seconds;
-    //     setInterval(function () {
-    //         seconds = parseInt(turnTime % 60, 10);
-    //         seconds = seconds < 10 ? "0" + seconds : seconds;
+    channel.bind("render_turn_start", function(event) {
+        var gameTurn = event.turn;
+        testButtonText.text = "It's " + gameTurn + "'s turn to bid or challenge.";
+        var turnTime = 40, seconds;
+        setInterval(function () {
+            seconds = parseInt(turnTime % 60, 10);
+            seconds = seconds < 10 ? "0" + seconds : seconds;
 
-    //         $(".turnSeconds").text(seconds);
+            $(".turnSeconds").text(seconds);
 
-    //         if (--turnTime < 0) {
-    //             turnTime = 0;
-    //             testButtonText.text = "Time is up! " +  playerUsername + " lost a die.";
-    //         }
-    //     }, 1000);
-    // });
+            if (--turnTime < 0) {
+                turnTime = 0;
+                testButtonText.text = "Time is up! " +  gameTurn + " lost a die.";
+            }
+        }, 1000);
+    });
+
+    channel.bind("render_game_end", function(event) {
+        // do event broadcasting stuff here
+        // render next player in queue
+        testButtonText.text = "Game ayyLmao is over! The winner is: Listana! Congratulations :)";
+    });
 
     channel.bind("render_round_end", function(event) {
         // do event broadcasting stuff here
         // increment round number here
         testButtonText.text = "Round # 2 ended. Starting round # 3.";
-    });
-
-    channel.bind("render_turn_start", function(event) {
-        // do event broadcasting stuff here
-        // disable others from performing actions by disabling ui
-        // broadcast least recently updated player to be their turn
-        $.get('/session/least_recent_user/', function(event) {
-            var playerId = event.user_id;
-            var playerUsername = event.uname;
-            var dice = event.dice;
-            testButtonText.text = "It's " + playerUsername + "'s' turn to bid or challenge.";
-
-            var turnTime = 3, seconds;
-            setInterval(function () {
-                seconds = parseInt(turnTime % 60, 10);
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                $(".turnSeconds").text(seconds);
-
-                if (--turnTime < 0) {
-                    turnTime = 0;
-                    testButtonText.text = "Time is up! " +  playerUsername + " lost a die.";
-                    endTurn();
-                }
-            }, 1000);
-        });
     });
 
     channel.bind("render_turn_end", function(event) {
@@ -222,11 +198,6 @@ function onGetNameIdSuccess(event) {
         testButtonText.text = "Next turn: MastaChau.";
     });
 
-    channel.bind("render_game_end", function(event) {
-        // do event broadcasting stuff here
-        // render next player in queue
-        testButtonText.text = "Game ayyLmao is over! The winner is: Listana! Congratulations :)";
-    });
 }
 
 function create() {
@@ -433,21 +404,22 @@ function testMethod1() {
 }
 
 function testMethod2() {
+    startRound();
     // globalDiePool.shuffleDice();
     // challenge();
     // bid();
     // // testButtonText.text = "Challenge";
-    // startTurn();
-    startRound();
+    // startRound();
 }
 
 function testMethod3() {
-    joinLobby();
+    startTurn();
+    // joinLobby();
     // readyButton();
 }
 
 function testMethod4() {
-    leaveLobby();
+    // leaveLobby();
     // playerPool.removePlayer(0);
     // playerSpriteGroup.renderSprites("octagonal");
 }

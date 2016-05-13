@@ -2,11 +2,12 @@ class CreateGames < ActiveRecord::Migration
   def change
     create_table :games do |t|
       t.string :name
+      t.string :owner
       t.string :turn
       t.integer :round
       t.integer :max_users
-      t.integer :quantity
-      t.integer :value
+      t.integer :quantity, :default => 0
+      t.integer :value, :default => 0
       t.integer :logged_in_users, :default => 0
       t.string :diepool
       t.integer :completed, :default => 0
