@@ -126,18 +126,21 @@ function onGetNameIdSuccess(event) {
     channel.bind("render_add", function(event) {
         console.log("I have rendered");
         console.log(event);
-        $.get('/session/recent_user/', function(event) {
-            //Make button unclickable so that user does
-            //not join multiple times
-            var playerId = event.user_id;
-            var playerUsername = event.uname;
-            var dice = event.dice;
-            testButtonText.text = playerUsername + " joined the game.";
-            playerPool.addPlayer(new Player(playerUsername, playerId));
-            console.log(playerPool.allObjects);
-            // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
-            playerSpriteGroup.renderSprites("octagonal");
-        });
+        if event.logged_in_users
+        for(var player = 0; player<event.logged_in_users; player++) {
+            playerPool.addPlayer(new Player("", player));
+        }
+        playerSpriteGroup.renderSprites("octagonal");
+        // $.get('/session/recent_user/', function(event) {
+        //     var playerId = event.user_id;
+        //     var playerUsername = event.uname;
+        //     var dice = event.dice;
+        //     testButtonText.text = playerUsername + " joined the game.";
+        //     playerPool.addPlayer(new Player(playerUsername, playerId));
+        //     console.log(playerPool.allObjects);
+        //     // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
+        //     playerSpriteGroup.renderSprites("octagonal");
+        // });
     });
     channel.bind("render_delete", function(event) {
         console.log("I have rendered");

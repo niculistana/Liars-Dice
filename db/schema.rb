@@ -17,9 +17,10 @@ ActiveRecord::Schema.define(version: 20160412004700) do
     t.integer  "game_id"
     t.integer  "user_id"
     t.string   "dice"
-    t.boolean  "is_ready",   default: false
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.integer  "dice_quantity", default: 5
+    t.boolean  "is_ready",      default: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
   end
 
   add_index "game_users", ["game_id"], name: "index_game_users_on_game_id"

@@ -20,6 +20,8 @@ class GamesController < ApplicationController
     @game = Game.new
   end
 
+
+
   # GET /games/1/edit
   def edit
   end
@@ -78,6 +80,7 @@ class GamesController < ApplicationController
 
     if @game.logged_in_users == @game.max_users
       @game.update({:state => 1});
+      Pusher.trigger('game_channel'+@game.id.to_s, 'render_add', {:logged_in_users => @game.logged_in_users})
     end
     head :ok
   end
@@ -129,12 +132,35 @@ class GamesController < ApplicationController
     #else subtract 1 dice from the player who challenged them
   end
 
-  def deal_dice
+  def deal_dice(die_pool)
     #distribute dice to each game user
+    #for each player, take there make dice from the die die_pool
+    #for these add amount of dice to game_user
+
+  end
+
+  def shuffle_dice
+    array = []
+    len = @game.diepool.split(",").length
+    (1..len).each do |t|
+      array.push(rand(1..6))
+    end
+    @game.update(array.join(","))
+    array
+  end
+
+  def generate_dice
+    array = []
+    (1..@game.max_users*5).each do |t|
+      array.push(rand(1..6))
+    end
+    @game.update(array.join(","))
+    array
   end
 
   def start_game
     @game.update(game_params)
+    deal_dice(self.generate_dice)
     Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_game_start', game_params)
     head :ok
   end
