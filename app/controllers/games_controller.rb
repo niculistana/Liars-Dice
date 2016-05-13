@@ -44,7 +44,11 @@ class GamesController < ApplicationController
   # PATCH/PUT /games/1
   # PATCH/PUT /games/1.json
   def update
-    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_game_start', game_params)
+    if @game.state == 0
+      Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_game_start', game_params)
+    elsif @game.state == 1
+      Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_round_start', game_params)
+    end
     respond_to do |format|
       if @game.update(game_params)
         format.html { redirect_to @game, notice: 'Game was successfully updated.' }
@@ -93,7 +97,7 @@ class GamesController < ApplicationController
       head :ok
     else
       respond_to do |format|
-        test = {:status => "ok", :bad_response => "You did not bid higher"}
+        test = {:status => "ok", :bad_response => "Your bid was not higher than the recent bid."}
         format.json {render :json => test}
       end
     end
@@ -138,7 +142,7 @@ class GamesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
-      params.require(:game).permit(:name, :turn, :max_users, :logged_in_users,
+      params.require(:game).permit(:name, :turn, :round, :max_users, :logged_in_users,
        :diepool, :state, :quantity, :value)
     end
 end

@@ -154,27 +154,35 @@ function onGetNameIdSuccess(event) {
 
     channel.bind("render_game_start", function(event) {
         var gameName = event.name;
+        console.log(event);
         testButtonText.text = gameName + " has started, enjoy!";
     });
 
     channel.bind("render_round_start", function(event) {
-        // do event broadcasting stuff here
-        // disable others from performing actions by disabling ui
-        // broadcast least recently updated player to be their turn
-        testButtonText.text = "It's Listana's turn to bid.";
-        var turnTime = 3, seconds;
-        setInterval(function () {
-            seconds = parseInt(turnTime % 60, 10);
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-
-            $(".turnSeconds").text(seconds);
-
-            if (--turnTime < 0) {
-                turnTime = 0;
-                testButtonText.text = "Time is up! " +  playerUsername + " lost a die.";
-            }
-        }, 1000);
+        var gameRound = event.round;
+        var gameTurn = event.turn;
+        console.log(event);
+        testButtonText.text = "Round " + gameRound + " has started. It's " + gameTurn + "'s turn.";
     });
+
+    // channel.bind("render_round_start", function(event) {
+    //     // do event broadcasting stuff here
+    //     // disable others from performing actions by disabling ui
+    //     // broadcast least recently updated player to be their turn
+    //     testButtonText.text = "It's Listana's turn to bid.";
+    //     var turnTime = 3, seconds;
+    //     setInterval(function () {
+    //         seconds = parseInt(turnTime % 60, 10);
+    //         seconds = seconds < 10 ? "0" + seconds : seconds;
+
+    //         $(".turnSeconds").text(seconds);
+
+    //         if (--turnTime < 0) {
+    //             turnTime = 0;
+    //             testButtonText.text = "Time is up! " +  playerUsername + " lost a die.";
+    //         }
+    //     }, 1000);
+    // });
 
     channel.bind("render_round_end", function(event) {
         // do event broadcasting stuff here
@@ -422,7 +430,6 @@ function testMethod1() {
     //     }
     // });
     startGame();
-    testButtonText.text = "startGame";
 }
 
 function testMethod2() {

@@ -54,6 +54,7 @@ function bid() {
             };
             $.post('/games/'+gameId+'/bid', bid_info, function(event){
                 //Handle if user fucked up
+                testButtonText.text = event.bad_response; 
             });
         });
     });
@@ -148,28 +149,48 @@ function onSuccessLeave(event) {
 
 /*** game state methods ***/
 function startGame() {
-    logo.alpha = 0
-    $.get('/session/name_id/', onSuccessStart);
+    logo.alpha = 0;
+    $.get('/session/name_id/', onSuccessStartGame);
 }
 
-function onSuccessStart(event) {
+function onSuccessStartGame(event) {
     var gameId = event.id;
     var gameName = event.name;
     var game_start_info = {
         _method: "PUT",
         game: {
             name: gameName,
+            round: 0,
             state: 1
         }
     };
     $.post('/games/'+gameId, game_start_info);
+    startRound();
 }
 
 function startRound() {
-    // backend:
-        // increment round count
-    // broadcast using pusher (render_round_start):
-        // broadcast new round count
+    $.get('/session/name_id/', onSuccessStartRound);
+}
+
+function onSuccessStartRound(event) {
+    var gameId = event.id;
+    $.get('/games/'+gameId+'.json', function(event) {
+        var roundCount = event.round;
+        roundCount+=1;
+        $.get('/session/least_recent_user/', function(event) {
+            var nextUserName = event.uname;
+            var round_start_info = {
+                _method: "PUT",
+                game: {
+                    turn: nextUserName,
+                    round: roundCount,
+                    quantity: 0,
+                    value: 0
+                }
+            };
+            $.post('/games/'+gameId, round_start_info);
+        });
+    });
 }
 
 function endRound() {
