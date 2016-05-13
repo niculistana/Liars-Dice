@@ -73,6 +73,7 @@ class GamesController < ApplicationController
     increment = {:logged_in_users => @game.logged_in_users+=1}
     if @game.logged_in_users < @game.max_users
       @game.update(increment);
+      redirect_to @game
     end
 
     if @game.logged_in_users == @game.max_users

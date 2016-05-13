@@ -12,7 +12,7 @@
         <tr>
           <td><%= game.name %></td>
           <td><%= game.logged_in_users %>/<%= game.max_users %> </td>
-          <td><%= link_to  "Join", game_path(game), :class => "btn btn-primary" %></td>
+          <td><%= link_to  "Join", {:controller => :games, :action => :join, :id => game.id}, :class => "btn btn-primary" %></td>
         </tr>
       <% end %>
     </table>
