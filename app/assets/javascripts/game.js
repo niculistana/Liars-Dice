@@ -156,6 +156,7 @@ function onGetNameIdSuccess(event) {
     });
 
     channel.bind("render_game_start", function(event) {
+        logo.alpha = 0;
         var gameName = event.name;
         console.log(event);
         testButtonText.text = gameName + " has started, enjoy!";
