@@ -64,6 +64,14 @@ class GameUsersController < ApplicationController
     end
   end
 
+  def show_dice
+    game_user = GameUser.where({user_id: game_user_params[:user_id], 
+      game_id: game_user_params[:game_id]}).first()
+    respond_to do |format|
+      format.json {render :json => {:hand => game_user.dice}}
+    end
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_game_user

@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   post "games/:id/start_game" => "games#start_game"
   post "games/:id/start_round" => "games#start_round"
   post "games/:id/start_turn" => "games#start_turn"
+  post "game_users/show_dice" => "game_users#show_dice"
   post "/"               => "games#create"
 
   #devise_scope :user do

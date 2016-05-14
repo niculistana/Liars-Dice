@@ -164,6 +164,21 @@ function onSuccessStartGame(event) {
         }
     };
     $.post('/games/'+gameId+'/start_game', game_start_info);
+    $.get('/session/user_id/', onSuccessGetDice);
+}
+
+function onSuccessGetDice(event) {
+    var playerId = event.uid;
+    var game_user_info = {
+        game_user : {
+            game_id: gameId,
+            user_id: playerId
+        }
+    };
+    $.post('/game_users/show_dice/', game_user_info, function(event){
+        //Render dice
+        console.log(event.hand)
+    });
 }
 
 function startRound() {

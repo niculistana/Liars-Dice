@@ -136,11 +136,11 @@ class GamesController < ApplicationController
     #distribute dice to each game user
     #for each player, take there make dice from the die die_pool
     #for these add amount of dice to game_user
-    users = GameUser.all
+    users = GameUser.all.where(game_id: session[:game_id])
     users.each do |user|
-      new_dice = die_pool[0..user.dice_quantity]
+      new_dice = die_pool[0...user.dice_quantity]
       user.update({:dice => new_dice.join(",")})
-      die_pool.slice(0..user.dice_quantity)
+      die_pool.slice!(0...user.dice_quantity)
     end
   end
 

@@ -131,6 +131,7 @@ function onGetNameIdSuccess(event) {
             playerPool.addPlayer(new Player("", player));
         }
         playerSpriteGroup.renderSprites("octagonal");
+        startGame();
         // $.get('/session/recent_user/', function(event) {
         //     var playerId = event.user_id;
         //     var playerUsername = event.uname;
