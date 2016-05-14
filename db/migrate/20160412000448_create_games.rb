@@ -3,6 +3,7 @@ class CreateGames < ActiveRecord::Migration
     create_table :games do |t|
       t.string :name
       t.string :owner
+      t.integer :prev_player_id
       t.string :turn
       t.integer :round
       t.integer :max_users
