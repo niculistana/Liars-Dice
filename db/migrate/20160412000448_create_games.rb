@@ -4,7 +4,7 @@ class CreateGames < ActiveRecord::Migration
       t.string :name
       t.string :owner
       t.integer :prev_player_id
-      t.string :turn
+      t.integer :turn
       t.integer :round
       t.integer :max_users
       t.integer :quantity, :default => 0

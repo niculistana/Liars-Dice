@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 20160412004700) do
     t.string   "name"
     t.string   "owner"
     t.integer  "prev_player_id"
-    t.string   "turn"
+    t.integer  "turn"
     t.integer  "round",           default: 0
     t.integer  "max_users"
     t.integer  "quantity",        default: 0

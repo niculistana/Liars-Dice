@@ -1,6 +1,7 @@
 class GamesController < ApplicationController
   before_action :set_game, only: [:show, :edit, :update, 
-    :destroy, :bid, :challenge, :start_game, :start_round, :start_turn, :join]
+    :destroy, :bid, :challenge, :start_game, :start_round, :start_turn, :join,
+    :set_turn]
 
   # GET /games
   # GET /games.json
@@ -192,6 +193,16 @@ class GamesController < ApplicationController
     @game.update(game_params)
     Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_round_start', game_params)
     head :ok
+  end
+
+  def set_turn(arr, current_turn)
+    if arr.length == 1
+      return -1
+    elsif arr.index(current_turn) == arr.index(arr.last)
+      return arr.first
+    else
+      return arr[arr.index(current_turn)+1] 
+    end
   end
 
   def start_turn
