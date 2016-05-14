@@ -49,7 +49,8 @@ function bid() {
                 game: {
                     quantity: parseInt($('#dieQuantity').text()),
                     value: parseInt($('#dieValue').text()),
-                    name: playerUsername
+                    name: playerUsername, 
+                    prev_player_id: playerId
                 }
             };
             $.post('/games/'+gameId+'/bid', bid_info, function(event){
@@ -97,7 +98,6 @@ function challenge() {
             var challenge_info = {
                 game: {
                     name: playerUsername,
-                    challengee: "name2",
                     uid: playerId
                 }
             };
@@ -177,6 +177,7 @@ function onSuccessGetDice(event) {
     };
     $.post('/game_users/show_dice/', game_user_info, function(event){
         //Render dice
+
         console.log(event.hand)
     });
 }

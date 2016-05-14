@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20160412004700) do
   create_table "games", force: :cascade do |t|
     t.string   "name"
     t.string   "owner"
+    t.integer  "prev_player_id"
     t.string   "turn"
     t.integer  "round",           default: 0
     t.integer  "max_users"

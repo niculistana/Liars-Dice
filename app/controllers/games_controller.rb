@@ -108,17 +108,32 @@ class GamesController < ApplicationController
   #Handle challenge
   #Check if bid is in the diepool
   #Use pusher to display results to everyone.
+  #if true, that means challenger lost
+  #if false, that means challengee lost (previous player)
   def challenge
-    #return_data = {:diepool => @game.diepool, :uname => game_params[:name], :uid => game_params[:uid]}
-    return_data = {:diepool => @game.diepool, :uname => game_params[:name]}
-    temp_quantity = 0
+    return_data = {:diepool => @game.diepool, :uname => game_params[:name], 
+      :uid => game_params[:uid]}
+    total_quantity = 0
     @game.diepool.split(",").map do |str|
       str.to_i
     end.each do |die|
-      temp_quantity += 1 if @game.value == die
+      total_quantity += 1 if @game.value == die
     end
 
-    return_data[:result] = temp_quantity == @game.quantity ? true : false
+    return_data[:result] = total_quantity >= @game.quantity ? true : false
+
+    if return_data[:result]
+      game_user = GameUser.all.where("user_id = ? AND game_id = ?", 
+        game_params[:uid], @game.id).first()
+      new_quantity = game_user.dice_quantity - 1
+      game_user.update({dice_quantity: new_quantity})
+    else
+      game_user = GameUser.all.where("user_id = ? AND game_id = ?", 
+        @game.prev_player_id, @game.id).first()
+      new_quantity = game_user.dice_quantity - 1
+      game_user.update({dice_quantity: new_quantity})
+    end
+    lose_dice
 
     Pusher.trigger('game_channel'+@game.id.to_s, 'challenge_event', return_data)
     head :ok
@@ -130,6 +145,9 @@ class GamesController < ApplicationController
   def lose_dice
     #subtract 1 dice from the player who made the bid if they lied
     #else subtract 1 dice from the player who challenged them
+    die_pool = @game.diepool[0...-2]
+    #@game.update({diepool: die_pool})
+    shuffle_dice(die_pool)
   end
 
   def deal_dice(die_pool)
@@ -144,9 +162,9 @@ class GamesController < ApplicationController
     end
   end
 
-  def shuffle_dice
+  def shuffle_dice(diepool)
     die_array = []
-    len = @game.diepool.split(",").length
+    len = diepool.split(",").length
     (1..len).each do |t|
       die_array.push(rand(1..6))
     end
@@ -191,6 +209,6 @@ class GamesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
       params.require(:game).permit(:name, :owner, :turn, :round, :max_users, :logged_in_users,
-       :diepool, :state, :quantity, :value)
+       :diepool, :state, :quantity, :value, :prev_player_id, :uid)
     end
 end
