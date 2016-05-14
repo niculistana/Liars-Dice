@@ -1,6 +1,8 @@
 class GamesController < ApplicationController
   before_action :set_game, only: [:show, :edit, :update, 
-    :destroy, :bid, :challenge, :start_game, :start_round, :start_turn, :join]
+    :destroy, :bid, :challenge, :start_game, :end_game, :start_round, :end_round, :start_turn, :end_turn, :join]
+  # before_action :generate_queue, only: [:start_game]
+  # before_action :switch_turns, only: [:start_turn]
 
   # GET /games
   # GET /games.json
@@ -19,8 +21,6 @@ class GamesController < ApplicationController
   def new
     @game = Game.new
   end
-
-
 
   # GET /games/1/edit
   def edit
@@ -182,6 +182,12 @@ class GamesController < ApplicationController
     head :ok
   end
 
+  def end_turn
+    @game.update(game_params)
+    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_turn_end', game_params)
+    head :ok
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_game
@@ -192,5 +198,12 @@ class GamesController < ApplicationController
     def game_params
       params.require(:game).permit(:name, :owner, :turn, :round, :max_users, :logged_in_users,
        :diepool, :state, :quantity, :value)
+    end
+
+    def switch_turns
+      @queue = Array.new(@game.logged_in_users)
+      @queue.fill(99)
+      puts @queue
+      # @queue.push(@queue.shift)
     end
 end

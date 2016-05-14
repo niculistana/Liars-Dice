@@ -167,21 +167,27 @@ function onGetNameIdSuccess(event) {
     });
 
     var deleteInterval;
+    var turnTime;
     channel.bind("render_turn_start", function(event) {
         var gameTurn = event.turn;
-        testButtonText.text = "It's " + gameTurn + "'s turn to bid or challenge.";
-        var turnTime = 40, seconds;
-        var deleteInterval = setInterval(function () {
-            seconds = parseInt(turnTime % 60, 10);
-            seconds = seconds < 10 ? "0" + seconds : seconds;
+        console.log(gameTurn.charAt(0));
+        $.get('/game_users/'+gameTurn.charAt(0)+'/user_username', function(event){
+            playerUsername = event.uname;
+            testButtonText.text = "It's " + playerUsername + "'s turn to bid or challenge.";
+            turnTime = 40;
+            var seconds;
+            var deleteInterval = setInterval(function () {
+                seconds = parseInt(turnTime % 60, 10);
+                seconds = seconds < 10 ? "0" + seconds : seconds;
 
-            $(".turnSeconds").text(seconds);
-            if (--turnTime < 0) {
-                clearInterval(deleteInterval);
-                turnTime = 0;
-                testButtonText.text = "Time is up! " +  gameTurn + " lost a die.";
-            }
-        }, 1000);
+                $(".turnSeconds").text(seconds);
+                if (--turnTime < 0) {
+                    clearInterval(deleteInterval);
+                    turnTime = 0;
+                    testButtonText.text = "Time is up! " +  playerUsername + " lost a die.";
+                }
+            }, 1000);
+        });
     });
 
     channel.bind("render_game_end", function(event) {
@@ -197,9 +203,16 @@ function onGetNameIdSuccess(event) {
     });
 
     channel.bind("render_turn_end", function(event) {
-        // do event broadcasting stuff here
-        // render next player in queue
-        testButtonText.text = "Next turn: MastaChau.";
+        var gameTurn = event.turn;
+        $.get('/game_users/'+gameTurn.charAt(0)+'/user_username', function(event){
+            clearInterval(deleteInterval);
+            testButtonText.text = event.uname + "'s turn ended.";
+        });
+        setTimeout(function(){
+            $.get('/game_users/'+gameTurn.charAt(2)+'/user_username', function(event){
+                testButtonText.text = "Next turn: " + event.uname + ". Get ready!";
+            });
+        }, 1000);
     });
 
 }
@@ -423,6 +436,7 @@ function testMethod3() {
 }
 
 function testMethod4() {
+    endTurn();
     // leaveLobby();
     // playerPool.removePlayer(0);
     // playerSpriteGroup.renderSprites("octagonal");

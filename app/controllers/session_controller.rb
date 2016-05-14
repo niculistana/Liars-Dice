@@ -13,6 +13,15 @@ class SessionController < ApplicationController
     end
   end
 
+  # used for turn queue
+  def game_user_ids
+    turn_ids = GameUser.where({game_id: session[:game_id]}).pluck(:user_id).join(",")
+    respond_to do |format|
+      turn_message = {:status => "ok", :turn => turn_ids}
+      format.json {render :json => turn_message}
+    end
+  end
+
   # def user_username
   #   respond_to do |format|
   #     uname_message = {:status => "ok", :uname => current_user.username}
