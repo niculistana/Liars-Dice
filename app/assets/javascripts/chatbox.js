@@ -9,8 +9,8 @@ function getTime() {
 }
 
 function chat(data) {
-    var name = $("<span>").addClass("name").text(data.name+getTime()+":");
-    var message = $("<span>").addClass("chat-message").text(" "+data.message);
+    var name = $("<span>").addClass("name").text(data.name);
+    var message = $("<span>").addClass("chat-message").text(getTime()+": "+data.message);
     var chatPost = $("<div>").addClass("message").append(name).append(message);
     $('#messages').append(chatPost);
     $('#messages').scrollTop($('#messages').scrollTop()+$('#messages').height());
