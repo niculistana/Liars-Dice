@@ -151,7 +151,7 @@ class GamesController < ApplicationController
       die_array.push(rand(1..6))
     end
     @game.update(:diepool => die_array.join(","))
-    array
+    die_array
   end
 
   def generate_dice
@@ -160,7 +160,7 @@ class GamesController < ApplicationController
       die_array.push(rand(1..6))
     end
     @game.update({:diepool => die_array.join(",")})
-    array
+    die_array
   end
 
   def start_game
