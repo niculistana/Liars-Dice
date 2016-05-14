@@ -147,7 +147,7 @@ class GamesController < ApplicationController
     #else subtract 1 dice from the player who challenged them
     die_pool = @game.diepool[0...-2]
     #@game.update({diepool: die_pool})
-    shuffle_dice(die_pool)
+    deal_dice(shuffle_dice(die_pool))
   end
 
   def deal_dice(die_pool)
