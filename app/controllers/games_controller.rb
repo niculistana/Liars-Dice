@@ -30,7 +30,7 @@ class GamesController < ApplicationController
   # POST /games.json
   def create
     @game = Game.new(game_params)
-    @game.owner = current_user.username
+    #@game.owner = current_user.username
     session[:game_id] = @game.id
     session[:game_name] = @game.name
     respond_to do |format|
@@ -136,25 +136,30 @@ class GamesController < ApplicationController
     #distribute dice to each game user
     #for each player, take there make dice from the die die_pool
     #for these add amount of dice to game_user
-
+    users = GameUser.all
+    users.each do |user|
+      new_dice = die_pool[0..user.dice_quantity]
+      user.update({:dice => new_dice.join(",")})
+      die_pool.slice(0..user.dice_quantity)
+    end
   end
 
   def shuffle_dice
-    array = []
+    die_array = []
     len = @game.diepool.split(",").length
     (1..len).each do |t|
-      array.push(rand(1..6))
+      die_array.push(rand(1..6))
     end
-    @game.update(array.join(","))
+    @game.update(:diepool => die_array.join(","))
     array
   end
 
   def generate_dice
-    array = []
-    (1..@game.max_users*5).each do |t|
-      array.push(rand(1..6))
+    die_array = []
+    (1..@game.logged_in_users*5).each do |t|
+      die_array.push(rand(1..6))
     end
-    @game.update(array.join(","))
+    @game.update({:diepool => die_array.join(",")})
     array
   end
 

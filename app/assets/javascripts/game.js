@@ -73,7 +73,7 @@ function onGetNameIdSuccess(event) {
     gameId = event.id.toString();
     gameName = event.name;
     $.post('/games/join/'+gameId, {logged_in_users: 1});
-    // joinLobby();
+    joinLobby();
     console.log("game_channel"+gameId);
     channel = pusher.subscribe("game_channel"+gameId);
     channel2 = pusher.subscribe("chat_channel"+gameId);
@@ -126,7 +126,7 @@ function onGetNameIdSuccess(event) {
     channel.bind("render_add", function(event) {
         console.log("I have rendered");
         console.log(event);
-        if event.logged_in_users
+        //if event.logged_in_users
         for(var player = 0; player<event.logged_in_users; player++) {
             playerPool.addPlayer(new Player("", player));
         }
