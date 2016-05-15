@@ -133,6 +133,7 @@ class GamesController < ApplicationController
         @game.prev_player_id, @game.id).first()
       new_quantity = game_user.dice_quantity - 1
       game_user.update({dice_quantity: new_quantity})
+      return_data[:prev_player => User.find(game_user.user_id).username]
     end
     lose_dice
 

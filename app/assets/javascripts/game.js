@@ -98,12 +98,14 @@ function onGetNameIdSuccess(event) {
         //Render who won or lost
         if(data.result) {
             //Challenger loses dice
+            testButtonText.text = data.uname + " lost the challenge!";
             console.log("Current player lost");
         } else {
             //Challengee loses dice
+            testButtonText.text = data.prev_player + " lost the challenge!";
             console.log("previous player lost");
         }
-        //deal back dice
+        //Call start round to render new dice and start new round
     });
     channel.bind("bid_event", function(event) {
         //render bid to everyone
