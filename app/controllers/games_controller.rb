@@ -93,10 +93,15 @@ class GamesController < ApplicationController
   def bid
 
     puts game_params[:quantity]
+    return_params = {
+      :quantity => game_params[:quantity],
+      :value => game_params[:value],
+      :name => User.find(game_params[:prev_player_id]).username
+    }
     if game_params[:quantity].to_i > @game.quantity.to_i || 
       game_params[:value].to_i > @game.value.to_i
       @game.update(game_params)
-      Pusher.trigger('game_channel'+@game.id.to_s, 'bid_event', game_params)
+      Pusher.trigger('game_channel'+@game.id.to_s, 'bid_event', return_params)
       head :ok
     else
       respond_to do |format|
@@ -112,7 +117,7 @@ class GamesController < ApplicationController
   #if true, that means challenger lost
   #if false, that means challengee lost (previous player)
   def challenge
-    return_data = {:diepool => @game.diepool, :uname => game_params[:name], 
+    return_data = {:diepool => @game.diepool, :uname => game_params[:uname], 
       :uid => game_params[:uid]}
     total_quantity = 0
     @game.diepool.split(",").map do |str|
@@ -133,10 +138,11 @@ class GamesController < ApplicationController
         @game.prev_player_id, @game.id).first()
       new_quantity = game_user.dice_quantity - 1
       game_user.update({dice_quantity: new_quantity})
-      return_data[:prev_player => User.find(game_user.user_id).username]
+      return_data[:uname] = User.find(game_user.user_id).username
     end
     lose_dice
 
+    puts return_data
     Pusher.trigger('game_channel'+@game.id.to_s, 'challenge_event', return_data)
     head :ok
     # respond_to do |format|
@@ -234,7 +240,7 @@ class GamesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
       params.require(:game).permit(:name, :owner, :turn, :round, :max_users, :logged_in_users,
-       :diepool, :state, :quantity, :value, :prev_player_id, :uid)
+       :diepool, :state, :quantity, :value, :prev_player_id, :uid, :uname)
     end
 
     def switch_turns

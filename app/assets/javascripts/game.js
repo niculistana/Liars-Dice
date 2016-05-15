@@ -1,8 +1,6 @@
 var game = new Phaser.Game(740, 600, Phaser.AUTO, 'phaser-window', { preload: preload, create: create });
-var assetsLoaded = false;
 var logo;
 var text;
-var state;
 var globalDiePool;
 var playerStash;
 var dieBidPool;
@@ -11,7 +9,6 @@ var channel;
 var channel2;
 var gameId = "";
 var gameName = "";
-var numPlayers = 4;
 
 var gameFileKeys = ['dollars', 'logo', 'dice1', 'dice2', 'dice3', 'dice4', 'dice5', 'dice6',
 'player1','player2','player3','player4','player5','player6','player7','player8'];
@@ -44,11 +41,6 @@ var gameControlsGroup;
 var gameMenuGroup;
 var playerDiceGroup;
 
-// timeouts for scenes
-var numPlayersTimeout;
-var assetsLoadedTimeout;
-var hasWinnerTimeout;
-
 function preload() {
     //For production, we change the url to intense-temple
     game.load.baseURL = "http://localhost:3000/";
@@ -60,11 +52,10 @@ function preload() {
     game.load.spritesheet('square_buttons_minus', 'sprites/uipack_fixed/new_ui/buttons/square_buttons_minus.png', 51, 49);
     game.load.images(gameFileKeys, gameFiles);
     globalDiePool = new diePool();
-    globalDiePool.generatePool(numPlayers);
+    globalDiePool.generatePool(4);
     playerStash = new diePool();
     dieBidPool = new diePool();
-    playerPool = new playerPool(numPlayers);
-    // playerPool.generatePool();
+    playerPool = new playerPool(4);
 }
 
 $(document).ready(function(event){
@@ -102,7 +93,7 @@ function onGetNameIdSuccess(event) {
             console.log("Current player lost");
         } else {
             //Challengee loses dice
-            testButtonText.text = data.prev_player + " lost the challenge!";
+            testButtonText.text = data.uname + " lost the challenge!";
             console.log("previous player lost");
         }
         //Call start round to render new dice and start new round
@@ -135,17 +126,8 @@ function onGetNameIdSuccess(event) {
         }
         playerSpriteGroup.renderSprites("octagonal");
         startGame();
-        // $.get('/session/recent_user/', function(event) {
-        //     var playerId = event.user_id;
-        //     var playerUsername = event.uname;
-        //     var dice = event.dice;
-        //     testButtonText.text = playerUsername + " joined the game.";
-        //     playerPool.addPlayer(new Player(playerUsername, playerId));
-        //     console.log(playerPool.allObjects);
-        //     // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
-        //     playerSpriteGroup.renderSprites("octagonal");
-        // });
     });
+
     channel.bind("render_delete", function(event) {
         console.log("I have rendered");
         console.log(event);
@@ -397,32 +379,6 @@ function create() {
 }
 
 function testMethod1() {
-    // globalDiePool.resetDiePool();
-    // globalDiePool.generatePool(numPlayers);
-    // var testAjax = {
-    //     _method: 'PUT',
-    //     game: {
-    //         turn: "Nicu",
-    //         diepool: [],
-    //         completed: 1,
-    //     }
-    // };
-    // //If used a lot, make into a function
-    // for(var die in globalDiePool.allObjects) {
-    //     testAjax.game.globalDiepool.push(globalDiePool.allObjects[die].id);
-    // }
-    // testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
-    // testAjax.game.diepool = testAjax.game.globalDiepool.substring(1, testAjax.game.globalDiepool.length-1);
-    // $.ajax({
-    //     url: '/games/'+gameId,
-    //     type: 'POST',
-    //     dataType: 'json',
-    //     data: testAjax,
-    //     success: function(response) {
-    //         console.log("POST");
-    //         console.log(response);
-    //     }
-    // });
     startGame();
 }
 

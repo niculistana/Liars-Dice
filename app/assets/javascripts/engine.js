@@ -8,7 +8,6 @@ function bid() {
                 game: {
                     quantity: parseInt($('#dieQuantity').text()),
                     value: parseInt($('#dieValue').text()),
-                    name: playerUsername, 
                     prev_player_id: playerId
                 }
             };
@@ -56,7 +55,7 @@ function challenge() {
             var playerUsername = event.uname;
             var challenge_info = {
                 game: {
-                    name: playerUsername,
+                    uname: playerUsername,
                     uid: playerId
                 }
             };
@@ -239,32 +238,3 @@ function onSuccessEndGame() {
         // broadcast game over
 }
 /*** end game state methods ***/
-
-//Behavior when player loses a challenge and then loses a dice
-function loseDice() {
-    diePool.removeDie(0);
-    var loseDiceAjax = {
-        _method: 'PUT',
-        game: {
-            name: gameName,
-            turn: "1",
-            diepool: [],
-            completed: 1
-        }
-    };
-    for(var die in diePool.allObjects) {
-        loseDiceAjax.game.diepool.push(diePool.allObjects[die].id);
-    }
-    loseDiceAjax.game.diepool = JSON.stringify(loseDiceAjax.game.diepool);
-    $.ajax({
-        url: '/games/'+gameId,
-        type: 'POST',
-        data: loseDiceAjax,
-        success: function(response) {
-            console.log("I have put");
-        }
-    });
-    dieGroup.removeAll();
-    dieSpriteGroup.renderSprites("box");
-    testButtonText.text = "removeDie";
-}
