@@ -426,7 +426,7 @@ function testMethod2() {
 }
 
 function testMethod3() {
-    // startTurn();
+    startTurn();
     // joinLobby();
     // readyButton();
 }

@@ -29,7 +29,8 @@ class GamesController < ApplicationController
   # POST /games.json
   def create
     @game = Game.new(game_params)
-    #@game.owner = current_user.username
+    @game.owner = current_user.id
+    @game.turn = current_user.id
     session[:game_id] = @game.id
     session[:game_name] = @game.name
     respond_to do |format|
