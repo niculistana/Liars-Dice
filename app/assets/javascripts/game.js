@@ -163,12 +163,14 @@ function onGetNameIdSuccess(event) {
         $(".overLayTopLeft").removeClass("hidden");
         $(".overLayTopRight").removeClass("hidden");
         testButtonText.text = gameName + " has started, enjoy!";
-        //startRound();
+        startRound();
     });
 
     channel.bind("render_round_start", function(event) {
+        globalDiePool.allObjects = event.diepool.split(",");
         var gameRound = event.round;
         testButtonText.text = "Round " + gameRound + " has started. Bid amount and value is reset. Get ready!";
+        //startTurn();
     });
 
     var deleteInterval;
