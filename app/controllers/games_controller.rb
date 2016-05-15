@@ -1,7 +1,7 @@
 class GamesController < ApplicationController
-  before_action :set_game, only: [:show, :edit, :update, 
-    :destroy, :bid, :challenge, :start_game, :start_round, :start_turn, :join,
-    :set_turn]
+    before_action :set_game, only: [:show, :edit, :update,
+    :destroy, :bid, :challenge, :start_game, :end_game, :start_round, :end_round, :start_turn, :end_turn, :join]
+    before_action :set_turn, only: [:start_turn]
 
   # GET /games
   # GET /games.json
@@ -20,8 +20,6 @@ class GamesController < ApplicationController
   def new
     @game = Game.new
   end
-
-
 
   # GET /games/1/edit
   def edit
@@ -190,24 +188,20 @@ class GamesController < ApplicationController
   end
 
   def start_round
-    @game.update(game_params)
-    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_round_start', game_params)
-    head :ok
-  end
-
-  def set_turn(arr, current_turn)
-    if arr.length == 1
-      return -1
-    elsif arr.index(current_turn) == arr.index(arr.last)
-      return arr.first
-    else
-      return arr[arr.index(current_turn)+1] 
-    end
+    # @game.update(game_params)
+    # Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_round_start', game_params)
+    # head :ok
   end
 
   def start_turn
-    @game.update(game_params)
+    @game.update({:turn => @turn})
     Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_turn_start', game_params)
+    head :ok
+  end
+
+  def end_turn
+    @game.update(game_params)
+    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_turn_end', game_params)
     head :ok
   end
 
@@ -217,9 +211,28 @@ class GamesController < ApplicationController
       @game = Game.find(params[:id])
     end
 
+    def set_turn
+      game_user_ids = GameUser.where("game_id = ? AND dice_quantity > ?", session[:game_id], 0).pluck("user_id").sort
+      current_turn = @game.turn
+      if game_user_ids.length == 1
+        @turn = -1
+      elsif game_user_ids.index(current_turn) == game_user_ids.index(game_user_ids.last)
+        @turn = game_user_ids.first
+      else
+        @turn = game_user_ids[game_user_ids.index(current_turn)+1] 
+      end
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
       params.require(:game).permit(:name, :owner, :turn, :round, :max_users, :logged_in_users,
        :diepool, :state, :quantity, :value, :prev_player_id, :uid)
+    end
+
+    def switch_turns
+      @queue = Array.new(@game.logged_in_users)
+      @queue.fill(99)
+      puts @queue
+      # @queue.push(@queue.shift)
     end
 end

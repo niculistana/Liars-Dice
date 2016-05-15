@@ -218,11 +218,11 @@ function startTurn() {
 
 function onSuccessStartTurn(event) {
     var gameId = event.id;
-    $.get('/session/least_recent_user/', function(event) {
-        var nextUserName = event.uname;
+    $.get('/session/game_turn_id/', function(event) {
+        var turnId = event.turn;
         var turn_start_info = {
             game: {
-                turn: nextUserName
+                turn: turnId
             }
         };
         $.post('/games/'+gameId+'/start_turn/', turn_start_info);
@@ -230,6 +230,7 @@ function onSuccessStartTurn(event) {
 }
 
 function endTurn() {
+    $.get('/session/name_id/', onSuccessEndTurn);
     // switch turns to the next least recently updated person
     // broadcast using pusher (render_turn_end):
         // broadcast who's upcoming turn it is
@@ -237,6 +238,23 @@ function endTurn() {
 
 function endGame() {
     // switch turns to the next least recently updated person
+}
+
+function onSuccessEndTurn(event) {
+    var gameId = event.id;
+    $.get('/session/game_user_ids/', function(event) {
+        var turnIds = event.turn;
+        newTurn = turnIds.substring(2,turnIds.length) + "," + turnIds.charAt(0);
+        var turn_end_info = {
+            game: {
+                turn: newTurn
+            }
+        };
+        $.post('/games/'+gameId+'/end_turn/', turn_end_info);
+    });
+    // broadcast using pusher (render_turn_end):
+        // broadcast the winner
+        // broadcast game over
 }
 
 function onSuccessEndGame() {

@@ -14,6 +14,16 @@ class GameUsersController < ApplicationController
     @params = params
   end
 
+  # /game_users/1/user_username
+  def user_username
+    @game_user = GameUser.where({game_id: session[:game_id], user_id: params[:id]}).first
+    @user = @game_user.user
+    respond_to do |format|
+      uname_message = {:status => "ok", :uname => @user.username}
+      format.json {render :json => uname_message}
+    end
+  end
+
   # GET /game_users/new
   def new
     @game_user = GameUser.new
