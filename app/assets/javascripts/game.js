@@ -159,7 +159,8 @@ function onGetNameIdSuccess(event) {
     channel.bind("render_game_start", function(event) {
         logo.alpha = 0;
         var gameName = event.name;
-        console.log(event);
+        $(".overLayTopLeft").removeClass("hidden");
+        $(".overLayTopRight").removeClass("hidden");
         testButtonText.text = gameName + " has started, enjoy!";
     });
 
@@ -432,7 +433,7 @@ function testMethod2() {
 }
 
 function testMethod3() {
-    startTurn();
+    // startTurn();
     // joinLobby();
     // readyButton();
 }
