@@ -1,4 +1,5 @@
 <div class="hero-unit" id ="gameRules">
+<br>
   <h1>How to Play</h1>
   <ul>
     <li>Liars dice is a game of deception.</li>
@@ -12,4 +13,17 @@
     <li>For example, a player betting 2 3’s can be followed up with a bid of 2 5’s or 3 2’s.</li>
     <li>After each challenge takes place the next round begins until only one player has dice left.</li>
   </ul>
+  <br>
+  <%= link_to "Home Page", "/", :class => "btn btn-success btn-lg" %>
+  <button class="btn btn-success text-center hidden" onclick="deleteButton()">Enjoy!</button>
 </div>
+
+<script> 
+function deleteButton () {
+  $('#gameRules').click(function(){
+    $(this).remove('#gameRules');
+  });
+
+
+}; 
+</script>
