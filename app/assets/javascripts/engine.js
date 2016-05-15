@@ -90,8 +90,17 @@ function onSuccessJoin (event) {
         }
     };
     $.post('/game_users/', game_user_info, function(event){
-        if(event.fail != true)
+        if(event.response != "fail" && event.response != "disconnect")
             $.post('/games/join/'+gameId, {logged_in_users: 1});
+        else if (event.response === "disconnect") {
+            //Re-render on disconnect and coming back
+            $.get('/session/user_id/', onSuccessGetDice);
+            for(var player = 0; player<event.users_len; player++) {
+                playerPool.addPlayer(new Player("", player));
+            }
+            logo.alpha = 0;
+            playerSpriteGroup.renderSprites("octagonal");
+        }
     });
 }
 
@@ -126,7 +135,6 @@ function onSuccessStartGame(event) {
         }
     };
     $.post('/games/'+gameId+'/start_game', game_start_info);
-    $.get('/session/user_id/', onSuccessGetDice);
 }
 
 function onSuccessGetDice(event) {
@@ -147,6 +155,7 @@ function onSuccessGetDice(event) {
 }
 
 function startRound() {
+    $.get('/session/user_id/', onSuccessGetDice);
     $.get('/session/name_id/', onSuccessStartRound);
 }
 

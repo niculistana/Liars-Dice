@@ -169,6 +169,7 @@ class GamesController < ApplicationController
     (1..len).each do |t|
       die_array.push(rand(1..6))
     end
+    #update round here
     @game.update(:diepool => die_array.join(","))
     die_array
   end
