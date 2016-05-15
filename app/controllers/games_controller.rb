@@ -142,7 +142,6 @@ class GamesController < ApplicationController
     end
     lose_dice
 
-    puts return_data
     Pusher.trigger('game_channel'+@game.id.to_s, 'challenge_event', return_data)
     head :ok
     # respond_to do |format|
