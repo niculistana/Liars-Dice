@@ -136,8 +136,10 @@ function onSuccessGetDice(event) {
     };
     $.post('/game_users/show_dice/', game_user_info, function(event){
         //Render dice
-
-        console.log(event.hand)
+        var hand = event.hand.split(",");
+        playerStash.allObjects = hand;
+        dieStashGroup.renderSprites("box");
+        console.log(event.hand);
     });
 }
 
