@@ -60,7 +60,7 @@ function preload() {
     game.load.spritesheet('square_buttons_minus', 'sprites/uipack_fixed/new_ui/buttons/square_buttons_minus.png', 51, 49);
     game.load.images(gameFileKeys, gameFiles);
     globalDiePool = new diePool();
-    //globalDiePool.generatePool(numPlayers);
+    globalDiePool.generatePool(numPlayers);
     playerStash = new diePool();
     dieBidPool = new diePool();
     playerPool = new playerPool(numPlayers);
@@ -164,6 +164,7 @@ function onGetNameIdSuccess(event) {
         $(".overLayTopLeft").removeClass("hidden");
         $(".overLayTopRight").removeClass("hidden");
         testButtonText.text = gameName + " has started, enjoy!";
+        //startRound();
     });
 
     channel.bind("render_round_start", function(event) {

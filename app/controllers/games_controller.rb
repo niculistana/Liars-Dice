@@ -189,9 +189,11 @@ class GamesController < ApplicationController
   end
 
   def start_round
-    # @game.update(game_params)
-    # Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_round_start', game_params)
-    # head :ok
+    @game.update(game_params)
+    diepool = @game.diepool.split(",")
+    game_params[:diepool] = diepool
+    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_round_start', game_params)
+    head :ok
   end
 
   def start_turn
