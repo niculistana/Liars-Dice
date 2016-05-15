@@ -31,8 +31,8 @@ function SpriteGroup (spriteName, spriteGroup, objectPool, spriteOriginPosX, spr
       spritePosX = spriteOriginPosX;
       spritePosY = spriteOriginPosY;
       for (var i in objectPool.allObjects) {
-        if (objectPool.allObjects[i].id > 0) {
-          spriteFileName = spriteName + objectPool.allObjects[i].id;
+        if (objectPool.allObjects[i] > 0) {
+          spriteFileName = spriteName + objectPool.allObjects[i];
           this.lastSprite = game.add.sprite(spritePosX, spritePosY, spriteFileName);
           spriteGroup.add(this.lastSprite);
           spritePosX+=100;

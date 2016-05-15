@@ -84,7 +84,7 @@ function onGetNameIdSuccess(event) {
         var diePoolController = data.diepool.split(",").map(Number);
         var newObject = [];
         for(var i = 0; i < diePoolController.length; i++) {
-            newObject.push(new Die(diePoolController[i]));
+            newObject.push(diePoolController[i]);
         }
         //Set globalDiePool.allObjects = newObject
         globalDiePool.allObjects = newObject;
@@ -109,12 +109,12 @@ function onGetNameIdSuccess(event) {
         $('#dieQuantity').text(event.quantity);
         $('#dieValue').text(event.value);
 
-        dieBidPool.resetDiePool();
+        dieBidPool.emptyDiePool();
         dieBidGroup.removeAll();
         dieValue = parseInt($("#dieValue").text());
         dieQuantity = parseInt($("#dieQuantity").text());
         for (var i = 0; i < dieQuantity; i++) 
-            dieBidPool.addDie(new Die(Math.ceil(dieValue)));
+            dieBidPool.addDie(Math.ceil(dieValue));
         dieBidSpriteGroup.renderSprites("box");
 
         dieQuantity = event.quantity;

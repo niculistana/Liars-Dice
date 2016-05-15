@@ -295,14 +295,3 @@ function loseDice() {
     dieSpriteGroup.renderSprites("box");
     testButtonText.text = "removeDie";
 }
-
-//Behavior to reveal dice
-function revealDice() {
-
-}
-
-//Keep a count of how many dice each player should get
-//Then make a post to the server about each player's dice
-function dealDice() {
-    
-}
