@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   devise_for :users
   
   resources :game_users
-  resources :games
+  resources :games, only: [:show]
   resources :users, only: [:index, :pages]
 
   root                      "pages#landing"
