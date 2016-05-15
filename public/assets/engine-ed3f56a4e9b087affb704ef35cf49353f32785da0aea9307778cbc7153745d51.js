@@ -1,3 +1,44 @@
+// var numPlayers = 0;
+// var players = [];
+// var assetsLoaded = false;
+// var hasWinner = false;
+
+// loop until engine(game).numPlayers = 4
+function isRoomFull() {
+    if (numPlayers === 4) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// once done, update engine(game).assetsLoaded == true
+function isLoaded() {
+    if (assetsLoaded) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// loop until engine(game).hasWinner == true
+function isContinue() {
+    if (hasWinner) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function isRoomReady() {
+
+}
+
+// update diePool depending on engine(game) rules...
+function updateGlobalPool(game) {
+  
+}
+
 //Behavior to bet
 function bid() {
     $.get('/session/user_id/', function(event){
@@ -253,4 +294,15 @@ function loseDice() {
     dieGroup.removeAll();
     dieSpriteGroup.renderSprites("box");
     testButtonText.text = "removeDie";
+}
+
+//Behavior to reveal dice
+function revealDice() {
+
+}
+
+//Keep a count of how many dice each player should get
+//Then make a post to the server about each player's dice
+function dealDice() {
+    
 }

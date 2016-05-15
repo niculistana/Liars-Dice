@@ -1,7 +1,7 @@
 # Be sure to restart your server when you modify this file.
 
 # Version of your assets, change this if you want to expire all your assets.
-Rails.application.config.assets.version = '1.0'
+Rails.application.config.assets.version = '1.1'
 
 # Add additional assets to the asset load path
 # Rails.application.config.assets.paths << Emoji.images_path
@@ -9,6 +9,6 @@ Rails.application.config.assets.version = '1.0'
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
 Rails.application.config.assets.precompile += %w( bootstrap.min.js pusher.min.js
-phaser.min.js bootstrap.min.css game.js chatbox.js diepool.js die.js player.js 
+phaser.min.js bootstrap.min.css game.js chatbox.js diepool.js player.js 
 engine.js spritegroup.js)
 
