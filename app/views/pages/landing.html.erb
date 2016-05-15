@@ -4,7 +4,11 @@
   <img src="/assets/sprites/piratedice.png" class="center-block" alt="Pirate Dice" id="landingImage">
   <h1>LIARS DICE<h1/>
   <div class="row">
-    <%= link_to "Create", "#", data: {toggle: "modal", target: "#myModal"}, class: "btn btn-danger btn-lg" %>
+    <% if user_signed_in? %>
+      <%= link_to "Create", "#", data: {toggle: "modal", target: "#myModal"}, class: "btn btn-danger btn-lg" %>
+    <% else %>
+      <%= link_to "Create", new_user_session_path, class: "btn btn-danger btn-lg" %>
+    <% end%>
     <%= link_to "Join", :join , class: "btn btn-primary btn-lg" %>
   </div>
   <div class="row">
