@@ -93,9 +93,9 @@ function onGetNameIdSuccess(event) {
         //settimeout before rendering diepool?
         //render diepool
         console.log(globalDiePool.allObjects);
+        dieSpriteGroup.renderSprites("box");
 
-        //Maybe remove a die
-        //Deal back die, with the loser getting the less die
+        //Render who won or lost
         if(data.result) {
             //Challenger loses dice
             console.log("Current player lost");
@@ -277,9 +277,9 @@ function create() {
     graphics.drawRect(-360, 190, 300, 100);
 
     // shows the die group
+    //Put in top middle?
     dieGroup = game.add.group();
-    dieSpriteGroup = new SpriteGroup("dice", dieGroup, globalDiePool, 120, 1450);
-    // dieSpriteGroup.renderSprites("box");
+    dieSpriteGroup = new SpriteGroup("dice", dieGroup, globalDiePool, game.world.centerX+500, game.world.centerY+900);
     dieGroup.scale.setTo(0.35,0.35);
     // end diceSpriteGroup
 
