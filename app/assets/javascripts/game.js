@@ -70,6 +70,7 @@ function onGetNameIdSuccess(event) {
     channel = pusher.subscribe("game_channel"+gameId);
     channel2 = pusher.subscribe("chat_channel"+gameId);
     channel2.bind('chat', chat);
+    channel2.bind("chat_add", playerAdd);
 
     channel.bind('challenge_event', function(data) {
         //Convert diepool from the controller into diepool object
