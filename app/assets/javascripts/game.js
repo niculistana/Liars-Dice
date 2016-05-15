@@ -84,7 +84,7 @@ function onGetNameIdSuccess(event) {
         var diePoolController = data.diepool.split(",").map(Number);
         var newObject = [];
         for(var i = 0; i < diePoolController.length; i++) {
-            newObject.push(new Die(diePoolController[i]));
+            newObject.push(diePoolController[i]);
         }
         //Set globalDiePool.allObjects = newObject
         globalDiePool.allObjects = newObject;
@@ -109,12 +109,12 @@ function onGetNameIdSuccess(event) {
         $('#dieQuantity').text(event.quantity);
         $('#dieValue').text(event.value);
 
-        dieBidPool.resetDiePool();
+        dieBidPool.emptyDiePool();
         dieBidGroup.removeAll();
         dieValue = parseInt($("#dieValue").text());
         dieQuantity = parseInt($("#dieQuantity").text());
         for (var i = 0; i < dieQuantity; i++) 
-            dieBidPool.addDie(new Die(Math.ceil(dieValue)));
+            dieBidPool.addDie(Math.ceil(dieValue));
         dieBidSpriteGroup.renderSprites("box");
 
         dieQuantity = event.quantity;
@@ -383,13 +383,6 @@ function create() {
     // sceneButtonGroup.add(button7);
     // sceneButtonGroup.add(button8);
     // End scene UI testButtonGroup
-
-    // loop until engine(game).numPlayers = 4
-        // waitGame();
-    // startGame();
-    // loop until engine(game).hasWinner == true
-        // continueGame();
-    // endGame();
 }
 
 function testMethod1() {
@@ -443,70 +436,3 @@ function testMethod4() {
     // playerPool.removePlayer(0);
     // playerSpriteGroup.renderSprites("octagonal");
 }
-
-/*** deprecated methods***/
-
-// function waitGame(){
-//     // if client connection is recieved
-//     players.push(new Player("2:00", playerNames[numPlayers], numPlayers));
-//     players[numPlayers].getDice(globalDiePool.allObjects);
-//     playerText.text += players[numPlayers].playerNameText;
-//     numPlayers++;
-//     logo.alpha = 1;
-//     state = "Wait";
-//     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
-//     // numPlayersTimeout = setTimeout("waitGame()", 3000);
-// }
-
-// function startGame() {
-//     // probably do some threading here to load assets faster?
-//     // clearTimeout(numPlayersTimeout);
-//     // once done, update engine(game).assetsLoaded == true
-//     // mine a directory and load every single asset from that directory
-//     logo.alpha = 0;
-//     state = "Start";
-//     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
-//     assetsLoadedTimeout = setTimeout("startGame()", 5000);
-//     assetsLoaded = true;
-// }
-
-// function continueGame() {
-//     // clearTimeout(assetsLoadedTimeout);
-//     state = "Continue";
-//     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
-//     diePoolText.text = "Die pool\n";
-//     for (var die in globalDiePool.allObjects) {
-//         diePoolText.text += " " + globalDiePool.allObjects[die].value.toString();
-//     }
-//     // update diePool depending on engine(game) rules...
-//     // use diePool API
-//     // hasWinnerTimeout = setTimeout("continueGame()", 3000);
-// }
-
-// function endGame() {
-//     // reset flags
-//     clearTimeout(hasWinnerTimeout);
-//     numPlayers = 0;
-//     assetsLoaded = false;
-//     hasWinner = false;
-//     state = "End";
-//     diePoolText.text = "";
-//     players = [];
-//     playerText.text = "";
-//     debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
-
-//     emitter = game.add.emitter(game.world.centerX, 250, 200);
-//     emitter.makeParticles('dollars');
-//     emitter.setRotation(0, 0);
-//     emitter.setAlpha(0.3, 0.8);
-//     emitter.setScale(0.5, 1);
-//     emitter.gravity = 0;
-//     emitter.start(false, 4000, 20);
-
-//     setTimeout(function(){
-//         emitter.destroy();
-//         waitGame();
-//     }, 3000);
-// }
-
-/*** end deprecated methods***/
