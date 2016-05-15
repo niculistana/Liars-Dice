@@ -1,6 +1,7 @@
 class GamesController < ApplicationController
     before_action :set_game, only: [:show, :edit, :update,
-    :destroy, :bid, :challenge, :start_game, :end_game, :start_round, :end_round, :start_turn, :end_turn, :join]
+    :destroy, :bid, :challenge, :start_game, :end_game, :start_round, :end_round, 
+    :start_turn, :end_turn, :join]
     before_action :set_turn, only: [:start_turn]
 
   # GET /games
@@ -190,9 +191,11 @@ class GamesController < ApplicationController
 
   def start_round
     @game.update(game_params)
-    diepool = @game.diepool.split(",")
-    game_params[:diepool] = diepool
-    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_round_start', game_params)
+    response_hash = {
+      :diepool => @game.diepool,
+      :round => game_params[:round]
+    }
+    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_round_start', response_hash)
     head :ok
   end
 

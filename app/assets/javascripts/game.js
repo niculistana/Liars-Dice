@@ -74,7 +74,6 @@ $(document).ready(function(event){
 function onGetNameIdSuccess(event) {
     gameId = event.id.toString();
     gameName = event.name;
-    $.post('/games/join/'+gameId, {logged_in_users: 1});
     joinLobby();
     console.log("game_channel"+gameId);
     channel = pusher.subscribe("game_channel"+gameId);
@@ -164,12 +163,14 @@ function onGetNameIdSuccess(event) {
         $(".overLayTopLeft").removeClass("hidden");
         $(".overLayTopRight").removeClass("hidden");
         testButtonText.text = gameName + " has started, enjoy!";
-        //startRound();
+        startRound();
     });
 
     channel.bind("render_round_start", function(event) {
+        globalDiePool.allObjects = event.diepool.split(",");
         var gameRound = event.round;
         testButtonText.text = "Round " + gameRound + " has started. Bid amount and value is reset. Get ready!";
+        //startTurn();
     });
 
     var deleteInterval;

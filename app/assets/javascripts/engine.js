@@ -89,7 +89,10 @@ function onSuccessJoin (event) {
             // dice: playerDice
         }
     };
-    $.post('/game_users/', game_user_info);
+    $.post('/game_users/', game_user_info, function(event){
+        if(event.fail != true)
+            $.post('/games/join/'+gameId, {logged_in_users: 1});
+    });
 }
 
 function onSuccessLeave(event) {
