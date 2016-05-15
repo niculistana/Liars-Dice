@@ -1,8 +1,7 @@
 class GamesController < ApplicationController
-  before_action :set_game, only: [:show, :edit, :update, 
+    before_action :set_game, only: [:show, :edit, :update,
     :destroy, :bid, :challenge, :start_game, :end_game, :start_round, :end_round, :start_turn, :end_turn, :join]
-  # before_action :generate_queue, only: [:start_game]
-  # before_action :switch_turns, only: [:start_turn]
+    before_action :set_turn, only: [:start_turn]
 
   # GET /games
   # GET /games.json
@@ -108,17 +107,32 @@ class GamesController < ApplicationController
   #Handle challenge
   #Check if bid is in the diepool
   #Use pusher to display results to everyone.
+  #if true, that means challenger lost
+  #if false, that means challengee lost (previous player)
   def challenge
-    #return_data = {:diepool => @game.diepool, :uname => game_params[:name], :uid => game_params[:uid]}
-    return_data = {:diepool => @game.diepool, :uname => game_params[:name]}
-    temp_quantity = 0
+    return_data = {:diepool => @game.diepool, :uname => game_params[:name], 
+      :uid => game_params[:uid]}
+    total_quantity = 0
     @game.diepool.split(",").map do |str|
       str.to_i
     end.each do |die|
-      temp_quantity += 1 if @game.value == die
+      total_quantity += 1 if @game.value == die
     end
 
-    return_data[:result] = temp_quantity == @game.quantity ? true : false
+    return_data[:result] = total_quantity >= @game.quantity ? true : false
+
+    if return_data[:result]
+      game_user = GameUser.all.where("user_id = ? AND game_id = ?", 
+        game_params[:uid], @game.id).first()
+      new_quantity = game_user.dice_quantity - 1
+      game_user.update({dice_quantity: new_quantity})
+    else
+      game_user = GameUser.all.where("user_id = ? AND game_id = ?", 
+        @game.prev_player_id, @game.id).first()
+      new_quantity = game_user.dice_quantity - 1
+      game_user.update({dice_quantity: new_quantity})
+    end
+    lose_dice
 
     Pusher.trigger('game_channel'+@game.id.to_s, 'challenge_event', return_data)
     head :ok
@@ -130,23 +144,26 @@ class GamesController < ApplicationController
   def lose_dice
     #subtract 1 dice from the player who made the bid if they lied
     #else subtract 1 dice from the player who challenged them
+    die_pool = @game.diepool[0...-2]
+    #@game.update({diepool: die_pool})
+    deal_dice(shuffle_dice(die_pool))
   end
 
   def deal_dice(die_pool)
     #distribute dice to each game user
     #for each player, take there make dice from the die die_pool
     #for these add amount of dice to game_user
-    users = GameUser.all
+    users = GameUser.all.where(game_id: session[:game_id])
     users.each do |user|
-      new_dice = die_pool[0..user.dice_quantity]
+      new_dice = die_pool[0...user.dice_quantity]
       user.update({:dice => new_dice.join(",")})
-      die_pool.slice(0..user.dice_quantity)
+      die_pool.slice!(0...user.dice_quantity)
     end
   end
 
-  def shuffle_dice
+  def shuffle_dice(diepool)
     die_array = []
-    len = @game.diepool.split(",").length
+    len = diepool.split(",").length
     (1..len).each do |t|
       die_array.push(rand(1..6))
     end
@@ -171,13 +188,13 @@ class GamesController < ApplicationController
   end
 
   def start_round
-    @game.update(game_params)
-    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_round_start', game_params)
-    head :ok
+    # @game.update(game_params)
+    # Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_round_start', game_params)
+    # head :ok
   end
 
   def start_turn
-    @game.update(game_params)
+    @game.update({:turn => @turn})
     Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_turn_start', game_params)
     head :ok
   end
@@ -194,10 +211,22 @@ class GamesController < ApplicationController
       @game = Game.find(params[:id])
     end
 
+    def set_turn
+      game_user_ids = GameUser.where("game_id = ? AND dice_quantity > ?", session[:game_id], 0).pluck("user_id").sort
+      current_turn = @game.turn
+      if game_user_ids.length == 1
+        @turn = -1
+      elsif game_user_ids.index(current_turn) == game_user_ids.index(game_user_ids.last)
+        @turn = game_user_ids.first
+      else
+        @turn = game_user_ids[game_user_ids.index(current_turn)+1] 
+      end
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
       params.require(:game).permit(:name, :owner, :turn, :round, :max_users, :logged_in_users,
-       :diepool, :state, :quantity, :value)
+       :diepool, :state, :quantity, :value, :prev_player_id, :uid)
     end
 
     def switch_turns

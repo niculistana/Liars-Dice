@@ -131,6 +131,7 @@ function onGetNameIdSuccess(event) {
             playerPool.addPlayer(new Player("", player));
         }
         playerSpriteGroup.renderSprites("octagonal");
+        startGame();
         // $.get('/session/recent_user/', function(event) {
         //     var playerId = event.user_id;
         //     var playerUsername = event.uname;
@@ -156,6 +157,7 @@ function onGetNameIdSuccess(event) {
     });
 
     channel.bind("render_game_start", function(event) {
+        logo.alpha = 0;
         var gameName = event.name;
         console.log(event);
         testButtonText.text = gameName + " has started, enjoy!";
@@ -169,9 +171,9 @@ function onGetNameIdSuccess(event) {
     var deleteInterval;
     var turnTime;
     channel.bind("render_turn_start", function(event) {
-        var gameTurn = event.turn;
-        console.log(gameTurn.charAt(0));
-        $.get('/game_users/'+gameTurn.charAt(0)+'/user_username', function(event){
+        var gameTurnId = event.turn;
+        console.log(event);
+        $.get('/game_users/'+gameTurnId+'/user_username', function(event){
             playerUsername = event.uname;
             testButtonText.text = "It's " + playerUsername + "'s turn to bid or challenge.";
             turnTime = 40;
@@ -203,13 +205,13 @@ function onGetNameIdSuccess(event) {
     });
 
     channel.bind("render_turn_end", function(event) {
-        var gameTurn = event.turn;
-        $.get('/game_users/'+gameTurn.charAt(0)+'/user_username', function(event){
+        var gameTurnId = event.turn;
+        $.get('/game_users/'+gameTurnId.charAt(0)+'/user_username', function(event){
             clearInterval(deleteInterval);
             testButtonText.text = event.uname + "'s turn ended.";
         });
         setTimeout(function(){
-            $.get('/game_users/'+gameTurn.charAt(2)+'/user_username', function(event){
+            $.get('/game_users/'+gameTurnId.charAt(2)+'/user_username', function(event){
                 testButtonText.text = "Next turn: " + event.uname + ". Get ready!";
             });
         }, 1000);

@@ -49,7 +49,8 @@ function bid() {
                 game: {
                     quantity: parseInt($('#dieQuantity').text()),
                     value: parseInt($('#dieValue').text()),
-                    name: playerUsername
+                    name: playerUsername, 
+                    prev_player_id: playerId
                 }
             };
             $.post('/games/'+gameId+'/bid', bid_info, function(event){
@@ -97,7 +98,6 @@ function challenge() {
             var challenge_info = {
                 game: {
                     name: playerUsername,
-                    challengee: "name2",
                     uid: playerId
                 }
             };
@@ -150,7 +150,6 @@ function onSuccessLeave(event) {
 
 /*** game state methods ***/
 function startGame() {
-    logo.alpha = 0;
     $.get('/session/name_id/', onSuccessStartGame);
 }
 
@@ -165,6 +164,22 @@ function onSuccessStartGame(event) {
         }
     };
     $.post('/games/'+gameId+'/start_game', game_start_info);
+    $.get('/session/user_id/', onSuccessGetDice);
+}
+
+function onSuccessGetDice(event) {
+    var playerId = event.uid;
+    var game_user_info = {
+        game_user : {
+            game_id: gameId,
+            user_id: playerId
+        }
+    };
+    $.post('/game_users/show_dice/', game_user_info, function(event){
+        //Render dice
+
+        console.log(event.hand)
+    });
 }
 
 function startRound() {
@@ -203,11 +218,11 @@ function startTurn() {
 
 function onSuccessStartTurn(event) {
     var gameId = event.id;
-    $.get('/session/game_user_ids/', function(event) {
-        var turnIds = event.turn;
+    $.get('/session/game_turn_id/', function(event) {
+        var turnId = event.turn;
         var turn_start_info = {
             game: {
-                turn: turnIds
+                turn: turnId
             }
         };
         $.post('/games/'+gameId+'/start_turn/', turn_start_info);

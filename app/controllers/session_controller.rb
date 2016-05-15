@@ -22,6 +22,15 @@ class SessionController < ApplicationController
     end
   end
 
+  # current user's turn
+  def game_turn_id
+    turn_id = Game.find(session[:game_id]).turn
+    respond_to do |format|
+      turn_message = {:status => "ok", :turn => turn_id}
+      format.json {render :json => turn_message}
+    end
+  end
+
   # def user_username
   #   respond_to do |format|
   #     uname_message = {:status => "ok", :uname => current_user.username}
