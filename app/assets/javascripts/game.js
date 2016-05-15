@@ -70,6 +70,8 @@ function onGetNameIdSuccess(event) {
     channel = pusher.subscribe("game_channel"+gameId);
     channel2 = pusher.subscribe("chat_channel"+gameId);
     channel2.bind('chat', chat);
+    channel2.bind("chat_add", playerAdd);
+
     channel.bind('challenge_event', function(data) {
         //Convert diepool from the controller into diepool object
         testButtonText.text = data.uname + " challenges the bid!";
@@ -97,7 +99,14 @@ function onGetNameIdSuccess(event) {
             console.log("previous player lost");
         }
         //Call start round to render new dice and start new round
+        setTimeout(function(){
+            globalDieGroup.removeAll();
+            stashGroup.removeAll();
+            dieBidGroup.removeAll();
+            startRound();
+        }, 3000);
     });
+
     channel.bind("bid_event", function(event) {
         //render bid to everyone
         $('#dieQuantity').text(event.quantity);
@@ -262,9 +271,9 @@ function create() {
 
     // shows the die group
     //Put in top middle?
-    dieGroup = game.add.group();
-    dieSpriteGroup = new SpriteGroup("dice", dieGroup, globalDiePool, game.world.centerX+500, game.world.centerY+900);
-    dieGroup.scale.setTo(0.35,0.35);
+    globalDieGroup = game.add.group();
+    dieSpriteGroup = new SpriteGroup("dice", globalDieGroup, globalDiePool, game.world.centerX+500, game.world.centerY+900);
+    globalDieGroup.scale.setTo(0.35,0.35);
     // end diceSpriteGroup
 
     // dieBidSpriteGroup

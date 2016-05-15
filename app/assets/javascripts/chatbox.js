@@ -16,6 +16,14 @@ function chat(data) {
     $('#messages').scrollTop($('#messages').scrollTop()+$('#messages').height());
 }
 
+function playerAdd(data) {
+    var name = $("<span>").addClass("name").text(data.name);
+    var message = $("<span>").addClass("chat-message").text(" has joined the game");
+    var chatPost = $("<div>").addClass("message").append(name).append(message);
+    $('#messages').append(chatPost);
+    $('#messages').scrollTop($('#messages').scrollTop()+$('#messages').height());
+}
+
 $(document).keypress(function(event){
     if(event.keyCode === 13) {
         submitMessage();
