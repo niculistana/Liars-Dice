@@ -122,3 +122,23 @@ body {
     font-size: 1em;
   }
 }
+
+#gameRules {
+  color: yellow;
+  font-size: 1.9em;
+  min-width: 500px;
+  max-width: 800px;
+  background-color: #7D1935;
+  margin-left: auto;
+  margin-right: auto;
+  -webkit-border-radius: 5px;
+     -moz-border-radius: 5px;
+          border-radius: 5px;
+          li {
+          padding-top: 3px;
+          padding-bottom: 3px;
+          }
+  h1 {
+    padding-top: 10px;
+  }
+}
