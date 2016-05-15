@@ -17,9 +17,10 @@ ActiveRecord::Schema.define(version: 20160412004700) do
     t.integer  "game_id"
     t.integer  "user_id"
     t.string   "dice"
-    t.boolean  "is_ready",   default: false
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.integer  "dice_quantity", default: 5
+    t.boolean  "is_ready",      default: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
   end
 
   add_index "game_users", ["game_id"], name: "index_game_users_on_game_id"
@@ -27,13 +28,17 @@ ActiveRecord::Schema.define(version: 20160412004700) do
 
   create_table "games", force: :cascade do |t|
     t.string   "name"
-    t.string   "turn"
+    t.string   "owner"
+    t.integer  "prev_player_id"
+    t.integer  "turn"
+    t.integer  "round",           default: 0
     t.integer  "max_users"
-    t.integer  "quantity"
-    t.integer  "value"
-    t.integer  "logged_in_users", default: 1
+    t.integer  "quantity",        default: 0
+    t.integer  "value",           default: 0
+    t.integer  "logged_in_users", default: 0
     t.string   "diepool"
     t.integer  "completed",       default: 0
+    t.integer  "state",           default: 0
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
   end

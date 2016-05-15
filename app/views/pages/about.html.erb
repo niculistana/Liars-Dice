@@ -1,0 +1,29 @@
+<div class="hero-unit" id ="gameRules">
+<br>
+  <h1>How to Play</h1>
+  <ul>
+    <li>Liars dice is a game of deception.</li>
+    <li>Each player starts with five dice in their “stash”</li>
+    <li>All of the combined stashes make up the pool of dice</li>
+    <li>Players take turns placing their bid of how many dice are in the collective pool, only looking at their stash.</li>
+    <li>After a player bids other, players can challenge the players bid by calling them a liar.</li>
+    <li>if the player is a liar then he loses one dice, otherwise the player challenging them loses a dice.</li>
+    <li>If no one challenges the player then it is the next players turn to place a bid.</li>
+    <li>Each bid after the first must increase in number of dice, value of dice, or both.</li>
+    <li>For example, a player betting 2 3’s can be followed up with a bid of 2 5’s or 3 2’s.</li>
+    <li>After each challenge takes place the next round begins until only one player has dice left.</li>
+  </ul>
+  <br>
+  <%= link_to "Home Page", "/", :class => "btn btn-success btn-lg" %>
+  <button class="btn btn-success text-center hidden" onclick="deleteButton()">Enjoy!</button>
+</div>
+
+<script> 
+function deleteButton () {
+  $('#gameRules').click(function(){
+    $(this).remove('#gameRules');
+  });
+
+
+}; 
+</script>

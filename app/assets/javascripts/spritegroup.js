@@ -1,7 +1,6 @@
-function SpriteGroup (spriteName, spriteGroup, objectPool, numSprite, spriteOriginPosX, spriteOriginPosY) {
+function SpriteGroup (spriteName, spriteGroup, objectPool, spriteOriginPosX, spriteOriginPosY) {
   this.spriteName = spriteName;
   this.spriteGroup = spriteGroup;
-  this.numSprite = numSprite;
   this.spriteOriginPosX = spriteOriginPosX;
   this.spriteOriginPosY = spriteOriginPosY;
   this.lastSprite;
@@ -29,12 +28,14 @@ function SpriteGroup (spriteName, spriteGroup, objectPool, numSprite, spriteOrig
 
     // renders in a box like fashion
     if (shape == "box") {
+      spritePosX = spriteOriginPosX;
+      spritePosY = spriteOriginPosY;
       for (var i in objectPool.allObjects) {
-        if (objectPool.allObjects[i].id > 0) {
-          spriteFileName = spriteName + objectPool.allObjects[i].id;
+        if (objectPool.allObjects[i] > 0) {
+          spriteFileName = spriteName + objectPool.allObjects[i];
           this.lastSprite = game.add.sprite(spritePosX, spritePosY, spriteFileName);
           spriteGroup.add(this.lastSprite);
-          spritePosX += 100;
+          spritePosX+=100;
           if (i % 5 === 4) {
             spritePosY+= 100;
             spritePosX = spriteOriginPosX;

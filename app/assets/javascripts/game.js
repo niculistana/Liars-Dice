@@ -3,11 +3,16 @@ var assetsLoaded = false;
 var logo;
 var text;
 var state;
-var diePool;
+var globalDiePool;
+var playerStash;
+var dieBidPool;
 var playerPool;
 var channel;
+var channel2;
 var gameId = "";
 var gameName = "";
+var numPlayers = 4;
+
 var gameFileKeys = ['dollars', 'logo', 'dice1', 'dice2', 'dice3', 'dice4', 'dice5', 'dice6',
 'player1','player2','player3','player4','player5','player6','player7','player8'];
 var gameFiles = ['sprites/dollar_sign.png', 'sprites/liars_dice_logo.png',
@@ -51,68 +56,172 @@ function preload() {
     game.load.path = "assets/";
     game.load.spritesheet('rect_buttons', 'sprites/uipack_fixed/new_ui/buttons/rect_buttons.png', 192, 49);
     game.load.spritesheet('square_buttons', 'sprites/uipack_fixed/new_ui/buttons/square_buttons.png', 51, 49);
+    game.load.spritesheet('square_buttons_plus', 'sprites/uipack_fixed/new_ui/buttons/square_buttons_plus.png', 51, 49);
+    game.load.spritesheet('square_buttons_minus', 'sprites/uipack_fixed/new_ui/buttons/square_buttons_minus.png', 51, 49);
     game.load.images(gameFileKeys, gameFiles);
-    diePool = new diePool(4);
-    diePool.generatePool();
-    playerPool = new playerPool(8);
+    globalDiePool = new diePool();
+    globalDiePool.generatePool(numPlayers);
+    playerStash = new diePool();
+    dieBidPool = new diePool();
+    playerPool = new playerPool(numPlayers);
     // playerPool.generatePool();
 }
 
 $(document).ready(function(event){
-    $.ajax({
-        url: '/session/name_id',
-        type: 'GET',
-        dataType: 'json',
-        success: function(event) {
-            gameId = event.id.toString();
-            gameName = event.name;
-            channel = pusher.subscribe("game_channel"+gameId);
-            channel.bind('challenge_event', function(data) {
-                console.log("I have made my move");
-                //render diepool
-                if(!event.result) {
-                    //Challenger loses dice
-                } else {
-                    //Challengee loses dice
-                }
-            });
-            channel.bind("render_add", function(event) {
-                console.log("I have rendered");
-                console.log(event);
-                $.ajax({
-                    url: '/session/user_username/',
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(event) {
-                        //Make button unclickable so that user does
-                        //not join multiple times
-                        var playerUserName = event.uname;
-                        testButtonText.text = playerUserName + " joined the game.";
-                        playerPool.addPlayer(new Player("7:00", playerUserName, "1"));
-                        // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
-                        playerSpriteGroup.renderSprites("octagonal");
-                    }
-                });
-            });
-            channel.bind("render_delete", function(event) {
-                console.log("I have rendered");
-                console.log(event);
-                $.ajax({
-                    url: '/session/user_username/',
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(event) {
-                        var playerUserName = event.uname;
-                        testButtonText.text = playerUserName + " left the game.";
-                        playerGroup.removeAll();
-                        playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUserName));
-                        playerSpriteGroup.renderSprites("octagonal");
-                    }
-                });
-            });
-        }
-    });
+    $.get('/session/name_id', onGetNameIdSuccess);
 });
+
+function onGetNameIdSuccess(event) {
+    gameId = event.id.toString();
+    gameName = event.name;
+    $.post('/games/join/'+gameId, {logged_in_users: 1});
+    joinLobby();
+    console.log("game_channel"+gameId);
+    channel = pusher.subscribe("game_channel"+gameId);
+    channel2 = pusher.subscribe("chat_channel"+gameId);
+    channel2.bind('chat', chat);
+    channel.bind('challenge_event', function(data) {
+        //Convert diepool from the controller into diepool object
+        testButtonText.text = data.uname + " challenges the bid!";
+        var diePoolController = data.diepool.split(",").map(Number);
+        var newObject = [];
+        for(var i = 0; i < diePoolController.length; i++) {
+            newObject.push(diePoolController[i]);
+        }
+        //Set globalDiePool.allObjects = newObject
+        globalDiePool.allObjects = newObject;
+
+        //settimeout before rendering diepool?
+        //render diepool
+        console.log(globalDiePool.allObjects);
+
+        //Maybe remove a die
+        //Deal back die, with the loser getting the less die
+        if(data.result) {
+            //Challenger loses dice
+            console.log("Current player lost");
+        } else {
+            //Challengee loses dice
+            console.log("previous player lost");
+        }
+        //deal back dice
+    });
+    channel.bind("bid_event", function(event) {
+        //render bid to everyone
+        $('#dieQuantity').text(event.quantity);
+        $('#dieValue').text(event.value);
+
+        dieBidPool.emptyDiePool();
+        dieBidGroup.removeAll();
+        dieValue = parseInt($("#dieValue").text());
+        dieQuantity = parseInt($("#dieQuantity").text());
+        for (var i = 0; i < dieQuantity; i++) 
+            dieBidPool.addDie(Math.ceil(dieValue));
+        dieBidSpriteGroup.renderSprites("box");
+
+        dieQuantity = event.quantity;
+        dieValue = event.value;
+        var playerUsername = event.name;
+        testButtonText.text = playerUsername + " placed a bid: " + 
+        dieQuantity + " #" + dieValue + "'s";
+    });
+    channel.bind("render_add", function(event) {
+        console.log("I have rendered");
+        console.log(event);
+        //if event.logged_in_users
+        for(var player = 0; player<event.logged_in_users; player++) {
+            playerPool.addPlayer(new Player("", player));
+        }
+        playerSpriteGroup.renderSprites("octagonal");
+        startGame();
+        // $.get('/session/recent_user/', function(event) {
+        //     var playerId = event.user_id;
+        //     var playerUsername = event.uname;
+        //     var dice = event.dice;
+        //     testButtonText.text = playerUsername + " joined the game.";
+        //     playerPool.addPlayer(new Player(playerUsername, playerId));
+        //     console.log(playerPool.allObjects);
+        //     // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
+        //     playerSpriteGroup.renderSprites("octagonal");
+        // });
+    });
+    channel.bind("render_delete", function(event) {
+        console.log("I have rendered");
+        console.log(event);
+        var playerId = event.user_id;
+        $.get('/session/recent_user_name/'+playerId, function(event) {
+            var playerUsername = event.uname;
+            testButtonText.text = playerUsername + " left the game.";
+            playerGroup.removeAll();
+            playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
+            playerSpriteGroup.renderSprites("octagonal");
+        });
+    });
+
+    channel.bind("render_game_start", function(event) {
+        logo.alpha = 0;
+        var gameName = event.name;
+        $(".overLayTopLeft").removeClass("hidden");
+        $(".overLayTopRight").removeClass("hidden");
+        testButtonText.text = gameName + " has started, enjoy!";
+        //startRound();
+    });
+
+    channel.bind("render_round_start", function(event) {
+        var gameRound = event.round;
+        testButtonText.text = "Round " + gameRound + " has started. Bid amount and value is reset. Get ready!";
+    });
+
+    var deleteInterval;
+    var turnTime;
+    channel.bind("render_turn_start", function(event) {
+        var gameTurnId = event.turn;
+        console.log(event);
+        $.get('/game_users/'+gameTurnId+'/user_username', function(event){
+            playerUsername = event.uname;
+            testButtonText.text = "It's " + playerUsername + "'s turn to bid or challenge.";
+            turnTime = 40;
+            var seconds;
+            var deleteInterval = setInterval(function () {
+                seconds = parseInt(turnTime % 60, 10);
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                $(".turnSeconds").text(seconds);
+                if (--turnTime < 0) {
+                    clearInterval(deleteInterval);
+                    turnTime = 0;
+                    testButtonText.text = "Time is up! " +  playerUsername + " lost a die.";
+                }
+            }, 1000);
+        });
+    });
+
+    channel.bind("render_game_end", function(event) {
+        // do event broadcasting stuff here
+        // render next player in queue
+        testButtonText.text = "Game ayyLmao is over! The winner is: Listana! Congratulations :)";
+    });
+
+    channel.bind("render_round_end", function(event) {
+        // do event broadcasting stuff here
+        // increment round number here
+        testButtonText.text = "Round # 2 ended. Starting round # 3.";
+    });
+
+    channel.bind("render_turn_end", function(event) {
+        var gameTurnId = event.turn;
+        $.get('/game_users/'+gameTurnId.charAt(0)+'/user_username', function(event){
+            clearInterval(deleteInterval);
+            testButtonText.text = event.uname + "'s turn ended.";
+        });
+        setTimeout(function(){
+            $.get('/game_users/'+gameTurnId.charAt(2)+'/user_username', function(event){
+                testButtonText.text = "Next turn: " + event.uname + ". Get ready!";
+            });
+        }, 1000);
+    });
+
+}
 
 function create() {
     game.stage.backgroundColor = "#fff";
@@ -137,58 +246,6 @@ function create() {
     graphics = game.add.graphics(game.world.centerX, game.world.centerY);
 
     //*** top-ui ***
-    // gameRoundGroup
-    // graphics.lineStyle(5, 0x0000FF, 1);
-    // graphics.drawRect(-360, -290, 140, 50);
-    gameRoundGroup = game.add.group();
-    gameRoundGroup.position.x = game.world.centerX-340;
-    gameRoundGroup.position.y = game.world.centerY-280;
-
-    gameRoundTitleText = "Round #: 6";
-    style = { font: "20px Arial", fill: "#000", align: "left" };
-    gameRoundTitleText = game.add.text(0, 0, gameRoundTitleText, style);
-    gameRoundGroup.add(gameRoundTitleText);
-    // end gameRoundGroup
-
-    // gameNameGroup
-    // graphics.lineStyle(5, 0x0000FF, 1);
-    // graphics.drawRect(-220, -290, 160, 50);
-    gameNameGroup = game.add.group();
-    gameNameGroup.position.x = game.world.centerX-180;
-    gameNameGroup.position.y = game.world.centerY-280;
-
-    gameRoundTitleText = "Cool Kids";
-    style = { font: "20px Arial", fill: "#000", align: "left" };
-    gameRoundTitleText = game.add.text(0, 0, gameRoundTitleText, style);
-    gameNameGroup.add(gameRoundTitleText);
-    // end gameNameGroup
-    
-    // gameTimeGroup
-    // graphics.lineStyle(5, 0x0000FF, 1);
-    // graphics.drawRect(-60, -290, 160, 50);
-    gameTimeGroup = game.add.group();
-    gameTimeGroup.position.x = game.world.centerX;
-    gameTimeGroup.position.y = game.world.centerY-280;
-
-    gameTimeValueText = "0:59";
-    style = { font: "20px Arial", fill: "#000", align: "left" };
-    gameTimeValueText = game.add.text(0, 0, gameTimeValueText, style);
-    gameTimeGroup.add(gameTimeValueText);
-    // end gameTimeGroup
-
-    // gameModeGroup
-    // graphics.lineStyle(5, 0x0000FF, 1);
-    // graphics.drawRect(100, -290, 210, 50);
-    gameModeGroup = game.add.group();
-    gameModeGroup.position.x = game.world.centerX+180;
-    gameModeGroup.position.y = game.world.centerY-280;
-
-    gameModeValueText = "Classic";
-    style = { font: "20px Arial", fill: "#000", align: "left" };
-    gameModeValueText = game.add.text(0, 0, gameModeValueText, style);
-    gameModeGroup.add(gameModeValueText);
-    // end gameModeGroup
-
     // playerProfileGroup
     // graphics.lineStyle(5, 0x0000FF, 1);
     // graphics.drawRect(310, -290, 50, 50);
@@ -220,10 +277,22 @@ function create() {
 
     // shows the die group
     dieGroup = game.add.group();
-    dieSpriteGroup = new SpriteGroup("dice", dieGroup, diePool, 6, 120, 1450);
+    dieSpriteGroup = new SpriteGroup("dice", dieGroup, globalDiePool, 120, 1450);
     // dieSpriteGroup.renderSprites("box");
     dieGroup.scale.setTo(0.35,0.35);
     // end diceSpriteGroup
+
+    // dieBidSpriteGroup
+    // shows the dieBid group
+    dieBidGroup = game.add.group();
+    dieBidSpriteGroup = new SpriteGroup("dice", dieBidGroup, dieBidPool, game.world.centerX+500, game.world.centerY+400);
+    // dieBidSpriteGroup.renderSprites("box");
+    dieBidGroup.scale.setTo(0.35,0.35);
+    // end diceBidSpriteGroup
+
+    stashGroup = game.add.group();
+    dieStashGroup = new SpriteGroup("dice", stashGroup, playerStash, game.world.centerX-275, game.world.centerY+750);
+    stashGroup.scale.setTo(0.50,0.50);
 
     // gameControlsGroup
     graphics.lineStyle(5, 0x0000FF, 1);
@@ -232,44 +301,36 @@ function create() {
     gameControlsGroup = game.add.group();
     gameControlsGroup.position.x = game.world.centerX;
     gameControlsGroup.position.y = game.world.centerY+200;
-    decrementDiceAmountButton = game.make.button(-50, 30, 'square_buttons', function(){}, this, 2, 1, 0);
-    decrementDiceAmountButton.scale.setTo(0.35, 0.35);
-    window.rich = decrementDiceAmountButton;
+    decrementDieQuantityButton = game.make.button(-50, 30, 'square_buttons_minus', decrementDieQuantity, this, 2, 1, 0);
+    decrementDieQuantityButton.scale.setTo(0.35, 0.35);
+    window.rich = decrementDieQuantityButton;
 
-    incrementDiceAmountButton = game.make.button(-20, 30, 'square_buttons', function(){}, this, 2, 1, 0);
-    incrementDiceAmountButton.scale.setTo(0.35, 0.35);
-    window.rich = incrementDiceAmountButton;
+    incrementDieQuantityButton = game.make.button(-20, 30, 'square_buttons_plus', incrementDieQuantity, this, 2, 1, 0);
+    incrementDieQuantityButton.scale.setTo(0.35, 0.35);
+    window.rich = incrementDieQuantityButton;
 
-    decrementDiceValueButton = game.make.button(40, 30, 'square_buttons', function(){}, this, 2, 1, 0);
-    decrementDiceValueButton.scale.setTo(0.35, 0.35);
-    window.rich = decrementDiceValueButton;
+    decrementDieValueButton = game.make.button(40, 30, 'square_buttons_minus', decrementDieValue, this, 2, 1, 0);
+    decrementDieValueButton.scale.setTo(0.35, 0.35);
+    window.rich = decrementDieValueButton;
 
-    incrementDiceValueButton = game.make.button(70, 30, 'square_buttons', function(){}, this, 2, 1, 0);
-    incrementDiceValueButton.scale.setTo(0.35, 0.35);
-    window.rich = incrementDiceValueButton;
+    incrementDieValueButton = game.make.button(70, 30, 'square_buttons_plus', incrementDieValue, this, 2, 1, 0);
 
-    challengeButton = game.make.button(-50, 60, 'rect_buttons', function(){}, this, 2, 1, 0);
+    incrementDieValueButton.scale.setTo(0.35, 0.35);
+    window.rich = incrementDieValueButton;
+ 
+    challengeButton = game.make.button(-50, 60, 'rect_buttons', challenge, this, 2, 1, 0);
     challengeButton.scale.setTo(0.25, 0.50);
+
     window.rich = challengeButton;
 
-    makeBidButton = game.make.button(40, 60, 'rect_buttons', function(){}, this, 2, 1, 0);
+    makeBidButton = game.make.button(40, 60, 'rect_buttons', bid, this, 2, 1, 0);
     makeBidButton.scale.setTo(0.25, 0.50);
     window.rich = makeBidButton;
 
-    diceAmountText = "3";
-    style = { font: "30px Arial", fill: "#000", align: "left" };
-    diceAmountTextElement = game.add.text(-35, -5, diceAmountText, style);
-
-    diceValueText = "5";
-    style = { font: "30px Arial", fill: "#000", align: "left" };
-    diceValueTextElement = game.add.text(55, -5, diceValueText, style);
-
-    gameControlsGroup.add(diceAmountTextElement);
-    gameControlsGroup.add(diceValueTextElement);
-    gameControlsGroup.add(decrementDiceAmountButton);
-    gameControlsGroup.add(incrementDiceAmountButton);
-    gameControlsGroup.add(decrementDiceValueButton);
-    gameControlsGroup.add(incrementDiceValueButton);
+    gameControlsGroup.add(decrementDieQuantityButton);
+    gameControlsGroup.add(incrementDieQuantityButton);
+    gameControlsGroup.add(decrementDieValueButton);
+    gameControlsGroup.add(incrementDieValueButton);
     gameControlsGroup.add(challengeButton);
     gameControlsGroup.add(makeBidButton);
     // end gameControlsGroup
@@ -330,177 +391,56 @@ function create() {
     // sceneButtonGroup.add(button7);
     // sceneButtonGroup.add(button8);
     // End scene UI testButtonGroup
-
-    // loop until engine(game).numPlayers = 4
-        // waitGame();
-    // startGame();
-    // loop until engine(game).hasWinner == true
-        // continueGame();
-    // endGame();
 }
 
 function testMethod1() {
-    // diePool.resetDiePool();
-    var testAjax = {
-        game: {
-            name: gameName,
-            turn: "1",
-            diepool: [],
-            completed: 1
-        }
-    };
-    //If used a lot, make into a function
-    for(var die in diePool.allObjects) {
-        testAjax.game.diepool.push(diePool.allObjects[die].id);
-    }
-    testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
-    $.ajax({
-        url: '/games/',
-        type: 'POST',
-        dataType: 'json',
-        data: testAjax,
-        success: function(response) {
-            console.log("POST");
-            console.log(response);
-        }
-    });
-    dieSpriteGroup.renderSprites("box");
-    testButtonText.text = "renderSprites";
-    // console.log(diePool.allObjects.length);
+    // globalDiePool.resetDiePool();
+    // globalDiePool.generatePool(numPlayers);
+    // var testAjax = {
+    //     _method: 'PUT',
+    //     game: {
+    //         turn: "Nicu",
+    //         diepool: [],
+    //         completed: 1,
+    //     }
+    // };
+    // //If used a lot, make into a function
+    // for(var die in globalDiePool.allObjects) {
+    //     testAjax.game.globalDiepool.push(globalDiePool.allObjects[die].id);
+    // }
+    // testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
+    // testAjax.game.diepool = testAjax.game.globalDiepool.substring(1, testAjax.game.globalDiepool.length-1);
+    // $.ajax({
+    //     url: '/games/'+gameId,
+    //     type: 'POST',
+    //     dataType: 'json',
+    //     data: testAjax,
+    //     success: function(response) {
+    //         console.log("POST");
+    //         console.log(response);
+    //     }
+    // });
+    startGame();
 }
 
 function testMethod2() {
-    diePool.shuffleDice();
-    testButtonText.text = "shuffleDice";
+    startRound();
+    // globalDiePool.shuffleDice();
+    // challenge();
+    // bid();
+    // // testButtonText.text = "Challenge";
+    // startRound();
 }
 
 function testMethod3() {
-    joinLobby();
+    startTurn();
+    // joinLobby();
     // readyButton();
 }
 
 function testMethod4() {
-    leaveLobby();
+    endTurn();
+    // leaveLobby();
     // playerPool.removePlayer(0);
     // playerSpriteGroup.renderSprites("octagonal");
-}
-
-// lobby methods
-function joinLobby () {
-    $.ajax({
-        url: '/session/user_id/',
-        type: 'GET',
-        dataType: 'json',
-        success: function(event) {
-            var playerId = event.uid;
-            // var playerDice = event.dice;
-            var game_user_info = {
-                game_user : {
-                    game_id: gameId,
-                    user_id: playerId
-                    // dice: playerDice
-                }
-            };
-            $.ajax({
-                url: '/game_users/',
-                type: 'POST',
-                dataType: 'json',
-                data: game_user_info,
-                success: function(event) {
-                    console.log(event);
-                }
-            });
-        }
-    });
-}
-
-function leaveLobby () {
-    $.ajax({
-        url: '/session/user_id/',
-        type: 'GET',
-        dataType: 'json',
-        success: function(event) {
-            var playerId = event.uid;
-            // var playerDice = event.dice;
-            var game_user_info = {
-                _method: "DELETE",
-                game_user : {
-                    game_id: gameId,
-                    user_id: playerId
-                    // dice: playerDice
-                }
-            };
-            //Player ID is not the same as database ID
-            $.ajax({
-                url: '/game_users/'+playerId,
-                type: 'POST',
-                dataType: 'json',
-                data: game_user_info
-            });
-        }
-    });
-}
-// end lobby methods
-
-function waitGame(){
-    // if client connection is recieved
-    players.push(new Player("2:00", playerNames[numPlayers], numPlayers));
-    players[numPlayers].getDice(diePool.allObjects);
-    playerText.text += players[numPlayers].playerNameText;
-    numPlayers++;
-    logo.alpha = 1;
-    state = "Wait";
-    debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
-    // numPlayersTimeout = setTimeout("waitGame()", 3000);
-}
-
-function startGame() {
-    // probably do some threading here to load assets faster?
-    // clearTimeout(numPlayersTimeout);
-    // once done, update engine(game).assetsLoaded == true
-    // mine a directory and load every single asset from that directory
-    logo.alpha = 0;
-    state = "Start";
-    debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
-    assetsLoadedTimeout = setTimeout("startGame()", 5000);
-    assetsLoaded = true;
-}
-
-function continueGame() {
-    // clearTimeout(assetsLoadedTimeout);
-    state = "Continue";
-    debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
-    diePoolText.text = "Die pool\n";
-    for (var die in diePool.allObjects) {
-        diePoolText.text += " " + diePool.allObjects[die].value.toString();
-    }
-    // update diePool depending on engine(game) rules...
-    // use diePool API
-    // hasWinnerTimeout = setTimeout("continueGame()", 3000);
-}
-
-function endGame() {
-    // reset flags
-    clearTimeout(hasWinnerTimeout);
-    numPlayers = 0;
-    assetsLoaded = false;
-    hasWinner = false;
-    state = "End";
-    diePoolText.text = "";
-    players = [];
-    playerText.text = "";
-    debugText.text = "[State]: " + state + "; [numPlayers]: " + numPlayers + "; [assetsLoaded]: " + assetsLoaded + "; [hasWinner]: " + hasWinner;
-
-    emitter = game.add.emitter(game.world.centerX, 250, 200);
-    emitter.makeParticles('dollars');
-    emitter.setRotation(0, 0);
-    emitter.setAlpha(0.3, 0.8);
-    emitter.setScale(0.5, 1);
-    emitter.gravity = 0;
-    emitter.start(false, 4000, 20);
-
-    setTimeout(function(){
-        emitter.destroy();
-        waitGame();
-    }, 3000);
 }

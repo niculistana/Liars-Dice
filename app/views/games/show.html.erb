@@ -10,11 +10,30 @@
         <%= javascript_include_tag 'engine', 'data-turbolinks-track' => true %>
         <%= javascript_include_tag 'player', 'data-turbolinks-track' => true %>
         <%= javascript_include_tag 'diepool', 'data-turbolinks-track' => true %>
-        <%= javascript_include_tag 'die', 'data-turbolinks-track' => true %>
+        <div class="uiOverlay"> 
+          <div class="overLayTopLeft hidden"id="roundNumber">
+            Round: <span class="numRounds">1</span>
+          </div>
+          <div class="overLayTopRight hidden" id="challengeTime">
+            <span class="turnSeconds">40</span> Seconds
+          </div>
+          <div id="dieQuantity">
+            <%= 1 =%>
+          </div>
+          <div id="dieValue">
+            <%= 1 =%>
+          </div>
+          <div id="lie">
+            LIE
+          </div>
+          <div id="bid">
+            BID
+          </div>
+        </div>
       </div>
     </div>
     <div id="chat-well" class="col-xs-12 col-md-4 well">
-      <h3>Chat</h3>
+      <h3><%= @game.name %></h3>
       <div id="messages" class="col-md-12">
         <div class="message">
           <span class="name"></span>
