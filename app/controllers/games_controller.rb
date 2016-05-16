@@ -1,8 +1,7 @@
 class GamesController < ApplicationController
     before_action :set_game, only: [:show, :edit, :update,
-    :destroy, :bid, :challenge, :start_game, :end_game, :start_round, :end_round, 
-    :start_turn, :end_turn, :join]
-    before_action :set_turn, only: [:start_turn]
+    :destroy, :bid, :challenge, :start_game, :end_game, :start_round, :end_round, :join]
+    before_action :set_turn, only: [:bid]
 
   # GET /games
   # GET /games.json
@@ -93,17 +92,18 @@ class GamesController < ApplicationController
   #If valid, save
   #If not, return with prompt
   def bid
-
-    puts game_params[:quantity]
-    return_params = {
+    bid_params = {
+      :prev_player_id => game_params[:prev_player_id], 
+      :turn => @turn,
       :quantity => game_params[:quantity],
-      :value => game_params[:value],
-      :name => User.find(game_params[:prev_player_id]).username
+      :value => game_params[:value]
     }
+
     if game_params[:quantity].to_i > @game.quantity.to_i || 
       game_params[:value].to_i > @game.value.to_i
-      @game.update(game_params)
-      Pusher.trigger('game_channel'+@game.id.to_s, 'bid_event', return_params)
+      game_params[:turn] = @turn
+      @game.update(bid_params)
+      Pusher.trigger('game_channel'+@game.id.to_s, 'bid_event', bid_params)
       head :ok
     else
       respond_to do |format|
@@ -137,7 +137,7 @@ class GamesController < ApplicationController
       game_user.update({dice_quantity: new_quantity})
     else
       game_user = GameUser.all.where("user_id = ? AND game_id = ?", 
-        @game.prev_player_id, @game.id).first()
+      @game.prev_player_id, @game.id).first()
       new_quantity = game_user.dice_quantity - 1
       game_user.update({dice_quantity: new_quantity})
       return_data[:uname] = User.find(game_user.user_id).username
@@ -208,18 +208,6 @@ class GamesController < ApplicationController
       :round => game_params[:round]
     }
     Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_round_start', response_hash)
-    head :ok
-  end
-
-  def start_turn
-    @game.update({:turn => @turn})
-    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_turn_start', game_params)
-    head :ok
-  end
-
-  def end_turn
-    @game.update(game_params)
-    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_turn_end', game_params)
     head :ok
   end
 

@@ -43,7 +43,7 @@ var playerDiceGroup;
 
 function preload() {
     //For production, we change the url to intense-temple
-    game.load.baseURL = "https://staging-4242.herokuapp.com";
+    game.load.baseURL = "http://localhost:3000/";
     // staging url
     // game.load.baseURL = "https://staging-4242.herokuapp.com";
 
@@ -132,9 +132,20 @@ function onGetNameIdSuccess(event) {
 
         dieQuantity = event.quantity;
         dieValue = event.value;
-        var playerUsername = event.name;
-        testButtonText.text = playerUsername + " placed a bid: " + 
-        dieQuantity + " #" + dieValue + "'s";
+        previousPlayerId = event.prev_player_id;
+
+        $.get("/session/recent_user_name/"+previousPlayerId, function (event){
+            var playerUsername = event.uname;
+            testButtonText.text = playerUsername + " placed a bid: " + dieQuantity + " #" + dieValue + "'s";
+        });
+
+        var nextPlayerId = event.turn;
+        setTimeout(function(){
+            $.get("/session/recent_user_name/"+nextPlayerId, function (event){
+                var playerUsername = event.uname;
+                testButtonText.text = "It's " + playerUsername + "'s turn.";
+            });
+        }, 2000);
     });
     channel.bind("render_add", function(event) {
         console.log("I have rendered");
@@ -174,32 +185,41 @@ function onGetNameIdSuccess(event) {
         var gameRound = event.round;
         $(".numRounds").text(gameRound);
         testButtonText.text = "Round " + gameRound + " has started. Bid amount and value is reset. Get ready!";
-        //startTurn();
+
+        setTimeout(function(){
+            $.get('/session/game_turn_id', function(event) {
+                var playerId = event.turn;
+                $.get('/session/recent_user_name/'+playerId, function(event) {
+                    var playerUsername = event.uname;
+                    testButtonText.text = "It's " + playerUsername + "'s turn.";
+                });
+            });
+        },2000);
     });
 
-    var deleteInterval;
-    var turnTime;
-    channel.bind("render_turn_start", function(event) {
-        var gameTurnId = event.turn;
-        console.log(event);
-        $.get('/game_users/'+gameTurnId+'/user_username', function(event){
-            playerUsername = event.uname;
-            testButtonText.text = "It's " + playerUsername + "'s turn to bid or challenge.";
-            turnTime = 40;
-            var seconds;
-            var deleteInterval = setInterval(function () {
-                seconds = parseInt(turnTime % 60, 10);
-                seconds = seconds < 10 ? "0" + seconds : seconds;
+    // var deleteInterval;
+    // var turnTime;
+    // channel.bind("render_turn_start", function(event) {
+    //     var gameTurnId = event.turn;
+    //     console.log(event);
+    //     $.get('/game_users/'+gameTurnId+'/user_username', function(event){
+    //         playerUsername = event.uname;
+    //         testButtonText.text = "It's " + playerUsername + "'s turn to bid or challenge.";
+    //         turnTime = 40;
+    //         var seconds;
+    //         var deleteInterval = setInterval(function () {
+    //             seconds = parseInt(turnTime % 60, 10);
+    //             seconds = seconds < 10 ? "0" + seconds : seconds;
 
-                $(".turnSeconds").text(seconds);
-                if (--turnTime < 0) {
-                    clearInterval(deleteInterval);
-                    turnTime = 0;
-                    testButtonText.text = "Time is up! " +  playerUsername + " lost a die.";
-                }
-            }, 1000);
-        });
-    });
+    //             $(".turnSeconds").text(seconds);
+    //             if (--turnTime < 0) {
+    //                 clearInterval(deleteInterval);
+    //                 turnTime = 0;
+    //                 testButtonText.text = "Time is up! " +  playerUsername + " lost a die.";
+    //             }
+    //         }, 1000);
+    //     });
+    // });
 
     channel.bind("render_game_end", function(event) {
         var winnerId = event.winner_id;
@@ -214,20 +234,6 @@ function onGetNameIdSuccess(event) {
         // increment round number here
         testButtonText.text = "Round # 2 ended. Starting round # 3.";
     });
-
-    channel.bind("render_turn_end", function(event) {
-        var gameTurnId = event.turn;
-        $.get('/game_users/'+gameTurnId.charAt(0)+'/user_username', function(event){
-            clearInterval(deleteInterval);
-            testButtonText.text = event.uname + "'s turn ended.";
-        });
-        setTimeout(function(){
-            $.get('/game_users/'+gameTurnId.charAt(2)+'/user_username', function(event){
-                testButtonText.text = "Next turn: " + event.uname + ". Get ready!";
-            });
-        }, 1000);
-    });
-
 }
 
 function create() {

@@ -13,7 +13,7 @@ function bid() {
             };
             $.post('/games/'+gameId+'/bid', bid_info, function(event){
                 //Handle if user fucked up
-                testButtonText.text = event.bad_response; 
+                testButtonText.text = event.bad_response;
             });
         });
     });
@@ -67,7 +67,6 @@ function challenge() {
 }
 
 /*** End bidding methods ***/
-
 
 /*** lobby methods ***/
 function joinLobby () {
@@ -174,57 +173,6 @@ function onSuccessStartRound(event) {
     });
 }
 
-function endRound() {
-    // broadcast using pusher(render_round_end):
-        // broadcast who lost a die this round
-        // move on to the next round
-}
-
-function startTurn() {
-    $.get('/session/name_id/', onSuccessStartTurn);
-    // switch turns to the next least recently updated person
-    // broadcast using pusher (render_turn_start)
-        // broadcast who's turn it is
-    // restart turn clock
-}
-
-function onSuccessStartTurn(event) {
-    var gameId = event.id;
-    $.get('/session/game_turn_id/', function(event) {
-        var turnId = event.turn;
-        var turn_start_info = {
-            game: {
-                turn: turnId
-            }
-        };
-        $.post('/games/'+gameId+'/start_turn/', turn_start_info);
-    });
-}
-
-function endTurn() {
-    $.get('/session/name_id/', onSuccessEndTurn);
-    // switch turns to the next least recently updated person
-    // broadcast using pusher (render_turn_end):
-        // broadcast who's upcoming turn it is
-}
-
-function onSuccessEndTurn(event) {
-    var gameId = event.id;
-    $.get('/session/game_user_ids/', function(event) {
-        var turnIds = event.turn;
-        newTurn = turnIds.substring(2,turnIds.length) + "," + turnIds.charAt(0);
-        var turn_end_info = {
-            game: {
-                turn: newTurn
-            }
-        };
-        $.post('/games/'+gameId+'/end_turn/', turn_end_info);
-    });
-    // broadcast using pusher (render_turn_end):
-        // broadcast the winner
-        // broadcast game over
-}
-
 function endGame() {
     // switch turns to the next least recently updated person
     $.get('/session/name_id/', onSuccessEndGame);
@@ -242,11 +190,5 @@ function onSuccessEndGame(event) {
         };
         $.post('/games/'+gameId+'/end_game/', game_end_info);
     });
-    // backend:
-        // set state to 2 (finished)
-        // increment winner leaderboard
-    // broadcast using pusher (render_turn_end):
-        // broadcast the winner
-        // broadcast game over
 }
 /*** end game state methods ***/
