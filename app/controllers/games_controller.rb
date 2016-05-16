@@ -76,11 +76,13 @@ class GamesController < ApplicationController
     increment = {:logged_in_users => @game.logged_in_users+=1}
     if @game.logged_in_users < @game.max_users
       @game.update(increment);
+      Pusher.trigger('chat_channel'+@game.id.to_s, 'chat_add', {:name => current_user.username})
       redirect_to @game
     end
 
     if @game.logged_in_users == @game.max_users
       @game.update({:state => 1});
+      Pusher.trigger('chat_channel'+@game.id.to_s, 'chat_add', {:name => current_user.username})
       Pusher.trigger('game_channel'+@game.id.to_s, 'render_add', {:logged_in_users => @game.logged_in_users})
     end
     head :ok
