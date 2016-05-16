@@ -36,9 +36,11 @@ class GameUsersController < ApplicationController
   # POST /game_users
   # POST /game_users.json
   def create
-    if GameUser.where("game_id = ? AND user_id = ?", game_user_params[:game_id],
-      game_user_params[:user_id]).empty?
+    game_user_array = GameUser.where("game_id = ? AND user_id = ?", game_user_params[:game_id],
+      game_user_params[:user_id])
+    if game_user_array.empty?
       @game_user = GameUser.new(game_user_params)
+
       #Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_add', game_user_params)
       respond_to do |format|
         if @game_user.save
@@ -49,9 +51,14 @@ class GameUsersController < ApplicationController
           format.json { render json: @game_user.errors, status: :unprocessable_entity }
         end
       end
+    elsif game_user_array.length == 1
+      total_user = GameUser.where("game_id = ?", game_user_params[:game_id])
+      respond_to do |format|
+        format.json {render json: {:response => "disconnect", :users_len => total_user.length}}
+      end
     else
       respond_to do |format|
-        format.json {render json: {:fail => true}}
+        format.json {render json: {:response => "fail"}}
       end
     end
   end

@@ -1,8 +1,7 @@
 class GamesController < ApplicationController
     before_action :set_game, only: [:show, :edit, :update,
-    :destroy, :bid, :challenge, :start_game, :end_game, :start_round, :end_round, 
-    :start_turn, :end_turn, :join]
-    before_action :set_turn, only: [:start_turn]
+    :destroy, :bid, :challenge, :start_game, :end_game, :start_round, :end_round, :join]
+    before_action :set_turn, only: [:bid]
 
   # GET /games
   # GET /games.json
@@ -76,11 +75,13 @@ class GamesController < ApplicationController
     increment = {:logged_in_users => @game.logged_in_users+=1}
     if @game.logged_in_users < @game.max_users
       @game.update(increment);
+      Pusher.trigger('chat_channel'+@game.id.to_s, 'chat_add', {:name => current_user.username})
       redirect_to @game
     end
 
     if @game.logged_in_users == @game.max_users
       @game.update({:state => 1});
+      Pusher.trigger('chat_channel'+@game.id.to_s, 'chat_add', {:name => current_user.username})
       Pusher.trigger('game_channel'+@game.id.to_s, 'render_add', {:logged_in_users => @game.logged_in_users})
     end
     head :ok
@@ -91,12 +92,18 @@ class GamesController < ApplicationController
   #If valid, save
   #If not, return with prompt
   def bid
+    bid_params = {
+      :prev_player_id => game_params[:prev_player_id], 
+      :turn => @turn,
+      :quantity => game_params[:quantity],
+      :value => game_params[:value]
+    }
 
-    puts game_params[:quantity]
     if game_params[:quantity].to_i > @game.quantity.to_i || 
       game_params[:value].to_i > @game.value.to_i
-      @game.update(game_params)
-      Pusher.trigger('game_channel'+@game.id.to_s, 'bid_event', game_params)
+      game_params[:turn] = @turn
+      @game.update(bid_params)
+      Pusher.trigger('game_channel'+@game.id.to_s, 'bid_event', bid_params)
       head :ok
     else
       respond_to do |format|
@@ -112,7 +119,7 @@ class GamesController < ApplicationController
   #if true, that means challenger lost
   #if false, that means challengee lost (previous player)
   def challenge
-    return_data = {:diepool => @game.diepool, :uname => game_params[:name], 
+    return_data = {:diepool => @game.diepool, :uname => game_params[:uname], 
       :uid => game_params[:uid]}
     total_quantity = 0
     @game.diepool.split(",").map do |str|
@@ -130,11 +137,15 @@ class GamesController < ApplicationController
       game_user.update({dice_quantity: new_quantity})
     else
       game_user = GameUser.all.where("user_id = ? AND game_id = ?", 
-        @game.prev_player_id, @game.id).first()
+      @game.prev_player_id, @game.id).first()
       new_quantity = game_user.dice_quantity - 1
       game_user.update({dice_quantity: new_quantity})
+      return_data[:uname] = User.find(game_user.user_id).username
     end
     lose_dice
+
+    num_users_remaining = GameUser.where("game_id = ? AND dice_quantity > ?", session[:game_id], 0).count
+    return_data[:num_users_remaining] = num_users_remaining
 
     Pusher.trigger('game_channel'+@game.id.to_s, 'challenge_event', return_data)
     head :ok
@@ -169,6 +180,7 @@ class GamesController < ApplicationController
     (1..len).each do |t|
       die_array.push(rand(1..6))
     end
+    #update round here
     @game.update(:diepool => die_array.join(","))
     die_array
   end
@@ -199,15 +211,9 @@ class GamesController < ApplicationController
     head :ok
   end
 
-  def start_turn
-    @game.update({:turn => @turn})
-    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_turn_start', game_params)
-    head :ok
-  end
-
-  def end_turn
+  def end_game
     @game.update(game_params)
-    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_turn_end', game_params)
+    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_game_end', game_params)
     head :ok
   end
 
@@ -232,7 +238,7 @@ class GamesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
       params.require(:game).permit(:name, :owner, :turn, :round, :max_users, :logged_in_users,
-       :diepool, :state, :quantity, :value, :prev_player_id, :uid)
+       :diepool, :state, :quantity, :value, :prev_player_id, :uid, :uname, :winner_id)
     end
 
     def switch_turns

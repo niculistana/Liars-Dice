@@ -17,7 +17,7 @@ u8 =  User.create(email: "lamest@test.com", username:"BlackBeard" , wins: 40 ,lo
 u9 =  User.create(email: "lamerest@test.com", username:"Davy Jones" , wins: 17 ,losses: 18 ,password:"lameduck", password_confirmation:"lameduck")
 u10 = User.create(email: "superlame@test.com", username:"Locker" , wins: 16 ,losses: 16 ,password:"lameduck", password_confirmation:"lameduck") 
 
-g1 = Game.create(name: "Nicu's Game", turn: "nicu", round:0, max_users: 4, quantity: 9, state: 0, value: 8, logged_in_users: 4, diepool: "1,2,3,4,5,6", completed: 0)
+# g1 = Game.create(name: "Nicu's Game", turn: "nicu", round:0, max_users: 4, quantity: 9, state: 0, value: 8, logged_in_users: 4, diepool: "1,2,3,4,5,6", :winner_id,: 0)
 
 # GameUser.create(game_id: g1.id, user_id: u1.id, dice: "1,2,3,4,5")
 # GameUser.create(game_id: g1.id, user_id: u2.id, dice: "5,4,3,2,1")

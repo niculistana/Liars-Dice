@@ -6,32 +6,32 @@ Rails.application.routes.draw do
   resources :games, only: [:show]
   resources :users, only: [:index, :pages]
 
-  root                      "pages#landing"
-  get 'join'             => "pages#join",         as: :join
-  get 'about'            => "pages#about",        as: :about
-  get "session/name_id"  => "session#name_id"
-  get "session/user_id"  => "session#user_id"
-  get "session/game_user_ids/"  => "session#game_user_ids"
-  get "session/game_turn_id"  => "session#game_turn_id"
-  post "games/join/:id" => "games#join"
-  get "games/join/:id" => "games#show"
-  # get "session/user_username"  => "session#user_username"
-  get "session/recent_user"  => "session#recent_user"
-  get "session/least_recent_user"  => "session#least_recent_user"
+  root                                   "pages#landing"
+  get 'join'                          => "pages#join",         as: :join
+  get 'about'                         => "pages#about",        as: :about
+  get "session/name_id"               => "session#name_id"
+  get "session/user_id"               => "session#user_id"
+  get "session/game_user_ids/"        => "session#game_user_ids"
+  get "session/game_winner_id"          => "session#game_winner_id"
+  get "session/game_turn_id"          => "session#game_turn_id"
+  get "games/join/:id"                => "games#show"
+  get "session/recent_user"           => "session#recent_user"
+  get "session/least_recent_user"     => "session#least_recent_user"
   get "session/recent_user_name/:id"  => "session#recent_user_name"
-  post "chat/message"    => "chat#message"
-  post "games/:id/bid"       => "games#bid"
-  post "games/:id/challenge" => "games#challenge"
-  post "games/lose_dice" => "games#lose_dice"
-  post "games/deal_dice" => "games#deal_dice"
-  post "games/:id/start_game" => "games#start_game"
-  post "games/:id/start_round" => "games#start_round"
-  post "games/:id/start_turn" => "games#start_turn"
-  post "games/:id/end_turn" => "games#end_turn"
-  get "game_users/:id/user_username" => "game_users#user_username"
-  # /game_users/1/user_username
-  post "game_users/show_dice" => "game_users#show_dice"
-  post "/"               => "games#create"
+  get "game_users/:id/user_username"  => "game_users#user_username"
+  post "games/join/:id"               => "games#join"
+  post "chat/message"                 => "chat#message"
+  post "games/:id/bid"                => "games#bid"
+  post "games/:id/challenge"          => "games#challenge"
+  post "games/lose_dice"              => "games#lose_dice"
+  post "games/deal_dice"              => "games#deal_dice"
+  post "games/:id/start_game"         => "games#start_game"
+  post "games/:id/start_round"        => "games#start_round"
+  post "games/:id/start_turn"         => "games#start_turn"
+  post "games/:id/end_turn"           => "games#end_turn"
+  post "games/:id/end_game"           => "games#end_game"
+  post "game_users/show_dice"         => "game_users#show_dice"
+  post "/"                            => "games#create"
 
   #devise_scope :user do
   #  authenticated :user do

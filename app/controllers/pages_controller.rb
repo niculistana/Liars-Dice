@@ -13,7 +13,5 @@ class PagesController < ApplicationController
 
   def leaderboard
   end
-
-  def spectate
-  end
+  
 end

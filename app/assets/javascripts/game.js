@@ -1,8 +1,6 @@
 var game = new Phaser.Game(740, 600, Phaser.AUTO, 'phaser-window', { preload: preload, create: create });
-var assetsLoaded = false;
 var logo;
 var text;
-var state;
 var globalDiePool;
 var playerStash;
 var dieBidPool;
@@ -11,7 +9,6 @@ var channel;
 var channel2;
 var gameId = "";
 var gameName = "";
-var numPlayers = 4;
 
 var gameFileKeys = ['dollars', 'logo', 'dice1', 'dice2', 'dice3', 'dice4', 'dice5', 'dice6',
 'player1','player2','player3','player4','player5','player6','player7','player8'];
@@ -44,14 +41,13 @@ var gameControlsGroup;
 var gameMenuGroup;
 var playerDiceGroup;
 
-// timeouts for scenes
-var numPlayersTimeout;
-var assetsLoadedTimeout;
-var hasWinnerTimeout;
-
 function preload() {
     //For production, we change the url to intense-temple
     game.load.baseURL = "http://localhost:3000/";
+    // staging url
+    // game.load.baseURL = "https://staging-4242.herokuapp.com";
+
+    // production url
     // game.load.baseURL = "https://intense-temple-36417.herokuapp.com";
     game.load.path = "assets/";
     game.load.spritesheet('rect_buttons', 'sprites/uipack_fixed/new_ui/buttons/rect_buttons.png', 192, 49);
@@ -60,11 +56,10 @@ function preload() {
     game.load.spritesheet('square_buttons_minus', 'sprites/uipack_fixed/new_ui/buttons/square_buttons_minus.png', 51, 49);
     game.load.images(gameFileKeys, gameFiles);
     globalDiePool = new diePool();
-    globalDiePool.generatePool(numPlayers);
+    globalDiePool.generatePool(4);
     playerStash = new diePool();
     dieBidPool = new diePool();
-    playerPool = new playerPool(numPlayers);
-    // playerPool.generatePool();
+    playerPool = new playerPool(4);
 }
 
 $(document).ready(function(event){
@@ -79,6 +74,8 @@ function onGetNameIdSuccess(event) {
     channel = pusher.subscribe("game_channel"+gameId);
     channel2 = pusher.subscribe("chat_channel"+gameId);
     channel2.bind('chat', chat);
+    channel2.bind("chat_add", playerAdd);
+
     channel.bind('challenge_event', function(data) {
         //Convert diepool from the controller into diepool object
         testButtonText.text = data.uname + " challenges the bid!";
@@ -93,18 +90,33 @@ function onGetNameIdSuccess(event) {
         //settimeout before rendering diepool?
         //render diepool
         console.log(globalDiePool.allObjects);
+        dieSpriteGroup.renderSprites("box");
 
-        //Maybe remove a die
-        //Deal back die, with the loser getting the less die
+        //Render who won or lost
         if(data.result) {
             //Challenger loses dice
+            testButtonText.text = data.uname + " lost the challenge!";
             console.log("Current player lost");
         } else {
             //Challengee loses dice
+            testButtonText.text = data.uname + " lost the challenge!";
             console.log("previous player lost");
         }
-        //deal back dice
+        //Call start round to render new dice and start new round
+
+        num_users_remaining = data.num_users_remaining;
+        console.log("num_users_remaining: " + num_users_remaining);
+        setTimeout(function(){
+            globalDieGroup.removeAll();
+            stashGroup.removeAll();
+            dieBidGroup.removeAll();
+            if (num_users_remaining > 1)
+                startRound();
+            else
+                endGame();
+        }, 3000);
     });
+
     channel.bind("bid_event", function(event) {
         //render bid to everyone
         $('#dieQuantity').text(event.quantity);
@@ -120,9 +132,20 @@ function onGetNameIdSuccess(event) {
 
         dieQuantity = event.quantity;
         dieValue = event.value;
-        var playerUsername = event.name;
-        testButtonText.text = playerUsername + " placed a bid: " + 
-        dieQuantity + " #" + dieValue + "'s";
+        previousPlayerId = event.prev_player_id;
+
+        $.get("/session/recent_user_name/"+previousPlayerId, function (event){
+            var playerUsername = event.uname;
+            testButtonText.text = playerUsername + " placed a bid: " + dieQuantity + " #" + dieValue + "'s";
+        });
+
+        var nextPlayerId = event.turn;
+        setTimeout(function(){
+            $.get("/session/recent_user_name/"+nextPlayerId, function (event){
+                var playerUsername = event.uname;
+                testButtonText.text = "It's " + playerUsername + "'s turn.";
+            });
+        }, 2000);
     });
     channel.bind("render_add", function(event) {
         console.log("I have rendered");
@@ -133,17 +156,8 @@ function onGetNameIdSuccess(event) {
         }
         playerSpriteGroup.renderSprites("octagonal");
         startGame();
-        // $.get('/session/recent_user/', function(event) {
-        //     var playerId = event.user_id;
-        //     var playerUsername = event.uname;
-        //     var dice = event.dice;
-        //     testButtonText.text = playerUsername + " joined the game.";
-        //     playerPool.addPlayer(new Player(playerUsername, playerId));
-        //     console.log(playerPool.allObjects);
-        //     // playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
-        //     playerSpriteGroup.renderSprites("octagonal");
-        // });
     });
+
     channel.bind("render_delete", function(event) {
         console.log("I have rendered");
         console.log(event);
@@ -158,7 +172,7 @@ function onGetNameIdSuccess(event) {
     });
 
     channel.bind("render_game_start", function(event) {
-        logo.alpha = 0;
+        logo.destroy();
         var gameName = event.name;
         $(".overLayTopLeft").removeClass("hidden");
         $(".overLayTopRight").removeClass("hidden");
@@ -169,38 +183,55 @@ function onGetNameIdSuccess(event) {
     channel.bind("render_round_start", function(event) {
         globalDiePool.allObjects = event.diepool.split(",");
         var gameRound = event.round;
+        $(".numRounds").text(gameRound);
         testButtonText.text = "Round " + gameRound + " has started. Bid amount and value is reset. Get ready!";
-        //startTurn();
+
+        setTimeout(function(){
+            $.get('/session/game_turn_id', function(event) {
+                var playerId = event.turn;
+                $.get('/session/recent_user_name/'+playerId, function(event) {
+                    var playerUsername = event.uname;
+                    testButtonText.text = "It's " + playerUsername + "'s turn.";
+                    var name = $("<span>").addClass("name").text("It's "+data.name);
+                    var message = $("<span>").addClass("chat-message").text("'s turn.");
+                    var chatPost = $("<div>").addClass("message").append(name).append(message);
+                    $('#messages').append(chatPost);
+                    $('#messages').scrollTop($('#messages').scrollTop()+$('#messages').height())
+                });
+            });
+        },2000);
     });
 
-    var deleteInterval;
-    var turnTime;
-    channel.bind("render_turn_start", function(event) {
-        var gameTurnId = event.turn;
-        console.log(event);
-        $.get('/game_users/'+gameTurnId+'/user_username', function(event){
-            playerUsername = event.uname;
-            testButtonText.text = "It's " + playerUsername + "'s turn to bid or challenge.";
-            turnTime = 40;
-            var seconds;
-            var deleteInterval = setInterval(function () {
-                seconds = parseInt(turnTime % 60, 10);
-                seconds = seconds < 10 ? "0" + seconds : seconds;
+    // var deleteInterval;
+    // var turnTime;
+    // channel.bind("render_turn_start", function(event) {
+    //     var gameTurnId = event.turn;
+    //     console.log(event);
+    //     $.get('/game_users/'+gameTurnId+'/user_username', function(event){
+    //         playerUsername = event.uname;
+    //         testButtonText.text = "It's " + playerUsername + "'s turn to bid or challenge.";
+    //         turnTime = 40;
+    //         var seconds;
+    //         var deleteInterval = setInterval(function () {
+    //             seconds = parseInt(turnTime % 60, 10);
+    //             seconds = seconds < 10 ? "0" + seconds : seconds;
 
-                $(".turnSeconds").text(seconds);
-                if (--turnTime < 0) {
-                    clearInterval(deleteInterval);
-                    turnTime = 0;
-                    testButtonText.text = "Time is up! " +  playerUsername + " lost a die.";
-                }
-            }, 1000);
-        });
-    });
+    //             $(".turnSeconds").text(seconds);
+    //             if (--turnTime < 0) {
+    //                 clearInterval(deleteInterval);
+    //                 turnTime = 0;
+    //                 testButtonText.text = "Time is up! " +  playerUsername + " lost a die.";
+    //             }
+    //         }, 1000);
+    //     });
+    // });
 
     channel.bind("render_game_end", function(event) {
-        // do event broadcasting stuff here
-        // render next player in queue
-        testButtonText.text = "Game ayyLmao is over! The winner is: Listana! Congratulations :)";
+        var winnerId = event.winner_id;
+        $.get('/session/recent_user_name/'+winnerId, function(event) {
+            var winnerUserName = event.uname;
+            testButtonText.text = "Game is over! The winner is " + winnerUserName + "! Congratulations :)";
+        });
     });
 
     channel.bind("render_round_end", function(event) {
@@ -208,20 +239,6 @@ function onGetNameIdSuccess(event) {
         // increment round number here
         testButtonText.text = "Round # 2 ended. Starting round # 3.";
     });
-
-    channel.bind("render_turn_end", function(event) {
-        var gameTurnId = event.turn;
-        $.get('/game_users/'+gameTurnId.charAt(0)+'/user_username', function(event){
-            clearInterval(deleteInterval);
-            testButtonText.text = event.uname + "'s turn ended.";
-        });
-        setTimeout(function(){
-            $.get('/game_users/'+gameTurnId.charAt(2)+'/user_username', function(event){
-                testButtonText.text = "Next turn: " + event.uname + ". Get ready!";
-            });
-        }, 1000);
-    });
-
 }
 
 function create() {
@@ -277,10 +294,10 @@ function create() {
     graphics.drawRect(-360, 190, 300, 100);
 
     // shows the die group
-    dieGroup = game.add.group();
-    dieSpriteGroup = new SpriteGroup("dice", dieGroup, globalDiePool, 120, 1450);
-    // dieSpriteGroup.renderSprites("box");
-    dieGroup.scale.setTo(0.35,0.35);
+    //Put in top middle?
+    globalDieGroup = game.add.group();
+    dieSpriteGroup = new SpriteGroup("dice", globalDieGroup, globalDiePool, game.world.centerX+500, game.world.centerY+900);
+    globalDieGroup.scale.setTo(0.35,0.35);
     // end diceSpriteGroup
 
     // dieBidSpriteGroup
@@ -345,26 +362,26 @@ function create() {
     gameMenuGroup.position.x = game.world.centerX+115;
     gameMenuGroup.position.y = game.world.centerY+200;
 
-    menuButton1 = game.make.button(0, 25, 'rect_buttons', testMethod1, this, 2, 1, 0);
-    menuButton1.scale.setTo(0.60, 0.50);
-    window.rich = menuButton1;
+    // menuButton1 = game.make.button(0, 25, 'rect_buttons', testMethod1, this, 2, 1, 0);
+    // menuButton1.scale.setTo(0.60, 0.50);
+    // window.rich = menuButton1;
 
-    menuButton2 = game.make.button(0, 50, 'rect_buttons', testMethod2, this, 2, 1, 0);
-    menuButton2.scale.setTo(0.60, 0.50);
-    window.rich = menuButton2;
+    // menuButton2 = game.make.button(0, 50, 'rect_buttons', testMethod2, this, 2, 1, 0);
+    // menuButton2.scale.setTo(0.60, 0.50);
+    // window.rich = menuButton2;
 
-    menuButton3 = game.make.button(120, 25, 'rect_buttons', testMethod3, this, 2, 1, 0);
-    menuButton3.scale.setTo(0.60, 0.50);
-    window.rich = menuButton3;
+    // menuButton3 = game.make.button(120, 25, 'rect_buttons', testMethod3, this, 2, 1, 0);
+    // menuButton3.scale.setTo(0.60, 0.50);
+    // window.rich = menuButton3;
 
-    menuButton4 = game.make.button(120, 50, 'rect_buttons', testMethod4, this, 2, 1, 0);
-    menuButton4.scale.setTo(0.60, 0.50);
-    window.rich = menuButton4;
+    // menuButton4 = game.make.button(120, 50, 'rect_buttons', testMethod4, this, 2, 1, 0);
+    // menuButton4.scale.setTo(0.60, 0.50);
+    // window.rich = menuButton4;
 
-    gameMenuGroup.add(menuButton1);
-    gameMenuGroup.add(menuButton2);
-    gameMenuGroup.add(menuButton3);
-    gameMenuGroup.add(menuButton4);
+    // gameMenuGroup.add(menuButton1);
+    // gameMenuGroup.add(menuButton2);
+    // gameMenuGroup.add(menuButton3);
+    // gameMenuGroup.add(menuButton4);
     // end gameMenuGroup
 
     // *** end-bottom-ui ***
@@ -395,33 +412,8 @@ function create() {
 }
 
 function testMethod1() {
-    // globalDiePool.resetDiePool();
-    // globalDiePool.generatePool(numPlayers);
-    // var testAjax = {
-    //     _method: 'PUT',
-    //     game: {
-    //         turn: "Nicu",
-    //         diepool: [],
-    //         completed: 1,
-    //     }
-    // };
-    // //If used a lot, make into a function
-    // for(var die in globalDiePool.allObjects) {
-    //     testAjax.game.globalDiepool.push(globalDiePool.allObjects[die].id);
-    // }
-    // testAjax.game.diepool = JSON.stringify(testAjax.game.diepool);
-    // testAjax.game.diepool = testAjax.game.globalDiepool.substring(1, testAjax.game.globalDiepool.length-1);
-    // $.ajax({
-    //     url: '/games/'+gameId,
-    //     type: 'POST',
-    //     dataType: 'json',
-    //     data: testAjax,
-    //     success: function(response) {
-    //         console.log("POST");
-    //         console.log(response);
-    //     }
-    // });
-    startGame();
+    // startGame();
+    endGame();
 }
 
 function testMethod2() {

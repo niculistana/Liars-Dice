@@ -8,13 +8,12 @@ function bid() {
                 game: {
                     quantity: parseInt($('#dieQuantity').text()),
                     value: parseInt($('#dieValue').text()),
-                    name: playerUsername, 
                     prev_player_id: playerId
                 }
             };
             $.post('/games/'+gameId+'/bid', bid_info, function(event){
                 //Handle if user fucked up
-                testButtonText.text = event.bad_response; 
+                testButtonText.text = event.bad_response;
             });
         });
     });
@@ -56,7 +55,7 @@ function challenge() {
             var playerUsername = event.uname;
             var challenge_info = {
                 game: {
-                    name: playerUsername,
+                    uname: playerUsername,
                     uid: playerId
                 }
             };
@@ -68,7 +67,6 @@ function challenge() {
 }
 
 /*** End bidding methods ***/
-
 
 /*** lobby methods ***/
 function joinLobby () {
@@ -90,8 +88,17 @@ function onSuccessJoin (event) {
         }
     };
     $.post('/game_users/', game_user_info, function(event){
-        if(event.fail != true)
+        if(event.response != "fail" && event.response != "disconnect")
             $.post('/games/join/'+gameId, {logged_in_users: 1});
+        else if (event.response === "disconnect") {
+            //Re-render on disconnect and coming back
+            $.get('/session/user_id/', onSuccessGetDice);
+            for(var player = 0; player<event.users_len; player++) {
+                playerPool.addPlayer(new Player("", player));
+            }
+            logo.destroy();
+            playerSpriteGroup.renderSprites("octagonal");
+        }
     });
 }
 
@@ -126,7 +133,6 @@ function onSuccessStartGame(event) {
         }
     };
     $.post('/games/'+gameId+'/start_game', game_start_info);
-    $.get('/session/user_id/', onSuccessGetDice);
 }
 
 function onSuccessGetDice(event) {
@@ -147,6 +153,7 @@ function onSuccessGetDice(event) {
 }
 
 function startRound() {
+    $.get('/session/user_id/', onSuccessGetDice);
     $.get('/session/name_id/', onSuccessStartRound);
 }
 
@@ -166,96 +173,22 @@ function onSuccessStartRound(event) {
     });
 }
 
-function endRound() {
-    // broadcast using pusher(render_round_end):
-        // broadcast who lost a die this round
-        // move on to the next round
-}
-
-function startTurn() {
-    $.get('/session/name_id/', onSuccessStartTurn);
-    // switch turns to the next least recently updated person
-    // broadcast using pusher (render_turn_start)
-        // broadcast who's turn it is
-    // restart turn clock
-}
-
-function onSuccessStartTurn(event) {
-    var gameId = event.id;
-    $.get('/session/game_turn_id/', function(event) {
-        var turnId = event.turn;
-        var turn_start_info = {
-            game: {
-                turn: turnId
-            }
-        };
-        $.post('/games/'+gameId+'/start_turn/', turn_start_info);
-    });
-}
-
-function endTurn() {
-    $.get('/session/name_id/', onSuccessEndTurn);
-    // switch turns to the next least recently updated person
-    // broadcast using pusher (render_turn_end):
-        // broadcast who's upcoming turn it is
-}
-
 function endGame() {
     // switch turns to the next least recently updated person
+    $.get('/session/name_id/', onSuccessEndGame);
 }
 
-function onSuccessEndTurn(event) {
+function onSuccessEndGame(event) {
     var gameId = event.id;
-    $.get('/session/game_user_ids/', function(event) {
-        var turnIds = event.turn;
-        newTurn = turnIds.substring(2,turnIds.length) + "," + turnIds.charAt(0);
-        var turn_end_info = {
+    $.get('/session/game_winner_id/', function(event) {
+        var game_winner_id = event.user_id;
+        var game_end_info = {
             game: {
-                turn: newTurn
+                state: 2,
+                winner_id: game_winner_id
             }
         };
-        $.post('/games/'+gameId+'/end_turn/', turn_end_info);
+        $.post('/games/'+gameId+'/end_game/', game_end_info);
     });
-    // broadcast using pusher (render_turn_end):
-        // broadcast the winner
-        // broadcast game over
-}
-
-function onSuccessEndGame() {
-    // backend:
-        // set state to 2 (finished)
-        // increment winner leaderboard
-    // broadcast using pusher (render_turn_end):
-        // broadcast the winner
-        // broadcast game over
 }
 /*** end game state methods ***/
-
-//Behavior when player loses a challenge and then loses a dice
-function loseDice() {
-    diePool.removeDie(0);
-    var loseDiceAjax = {
-        _method: 'PUT',
-        game: {
-            name: gameName,
-            turn: "1",
-            diepool: [],
-            completed: 1
-        }
-    };
-    for(var die in diePool.allObjects) {
-        loseDiceAjax.game.diepool.push(diePool.allObjects[die].id);
-    }
-    loseDiceAjax.game.diepool = JSON.stringify(loseDiceAjax.game.diepool);
-    $.ajax({
-        url: '/games/'+gameId,
-        type: 'POST',
-        data: loseDiceAjax,
-        success: function(response) {
-            console.log("I have put");
-        }
-    });
-    dieGroup.removeAll();
-    dieSpriteGroup.renderSprites("box");
-    testButtonText.text = "removeDie";
-}
