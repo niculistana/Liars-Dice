@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get "session/name_id"               => "session#name_id"
   get "session/user_id"               => "session#user_id"
   get "session/game_user_ids/"        => "session#game_user_ids"
+  get "session/game_winner_id"          => "session#game_winner_id"
   get "session/game_turn_id"          => "session#game_turn_id"
   get "games/join/:id"                => "games#show"
   get "session/recent_user"           => "session#recent_user"
@@ -28,6 +29,7 @@ Rails.application.routes.draw do
   post "games/:id/start_round"        => "games#start_round"
   post "games/:id/start_turn"         => "games#start_turn"
   post "games/:id/end_turn"           => "games#end_turn"
+  post "games/:id/end_game"           => "games#end_game"
   post "game_users/show_dice"         => "game_users#show_dice"
   post "/"                            => "games#create"
 

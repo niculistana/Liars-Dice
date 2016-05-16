@@ -22,6 +22,14 @@ class SessionController < ApplicationController
     end
   end
 
+  def game_winner_id
+    game_winner_id = GameUser.where("game_id = ? AND dice_quantity > ?", session[:game_id], 0).first.user_id
+    respond_to do |format|
+      game_winner_message = {:status => "ok", :user_id => game_winner_id}
+      format.json {render :json => game_winner_message}
+    end
+  end
+
   # current user's turn
   def game_turn_id
     turn_id = Game.find(session[:game_id]).turn

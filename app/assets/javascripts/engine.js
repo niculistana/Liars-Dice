@@ -208,10 +208,6 @@ function endTurn() {
         // broadcast who's upcoming turn it is
 }
 
-function endGame() {
-    // switch turns to the next least recently updated person
-}
-
 function onSuccessEndTurn(event) {
     var gameId = event.id;
     $.get('/session/game_user_ids/', function(event) {
@@ -229,7 +225,23 @@ function onSuccessEndTurn(event) {
         // broadcast game over
 }
 
-function onSuccessEndGame() {
+function endGame() {
+    // switch turns to the next least recently updated person
+    $.get('/session/name_id/', onSuccessEndGame);
+}
+
+function onSuccessEndGame(event) {
+    var gameId = event.id;
+    $.get('/session/game_winner_id/', function(event) {
+        var game_winner_id = event.user_id;
+        var game_end_info = {
+            game: {
+                state: 2,
+                winner_id: game_winner_id
+            }
+        };
+        $.post('/games/'+gameId+'/end_game/', game_end_info);
+    });
     // backend:
         // set state to 2 (finished)
         // increment winner leaderboard
