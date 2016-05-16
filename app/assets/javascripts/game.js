@@ -44,6 +44,10 @@ var playerDiceGroup;
 function preload() {
     //For production, we change the url to intense-temple
     game.load.baseURL = "http://localhost:3000/";
+    // staging url
+    // game.load.baseURL = "https://staging-4242.herokuapp.com";
+
+    // production url
     // game.load.baseURL = "https://intense-temple-36417.herokuapp.com";
     game.load.path = "assets/";
     game.load.spritesheet('rect_buttons', 'sprites/uipack_fixed/new_ui/buttons/rect_buttons.png', 192, 49);
