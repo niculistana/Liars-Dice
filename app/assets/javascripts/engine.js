@@ -96,7 +96,7 @@ function onSuccessJoin (event) {
             for(var player = 0; player<event.users_len; player++) {
                 playerPool.addPlayer(new Player("", player));
             }
-            logo.alpha = 0;
+            logo.destroy();
             playerSpriteGroup.renderSprites("octagonal");
         }
     });

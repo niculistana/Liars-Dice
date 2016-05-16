@@ -40,6 +40,7 @@ class GameUsersController < ApplicationController
       game_user_params[:user_id])
     if game_user_array.empty?
       @game_user = GameUser.new(game_user_params)
+
       #Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_add', game_user_params)
       respond_to do |format|
         if @game_user.save

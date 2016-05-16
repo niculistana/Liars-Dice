@@ -172,7 +172,7 @@ function onGetNameIdSuccess(event) {
     });
 
     channel.bind("render_game_start", function(event) {
-        logo.alpha = 0;
+        logo.destroy();
         var gameName = event.name;
         $(".overLayTopLeft").removeClass("hidden");
         $(".overLayTopRight").removeClass("hidden");
@@ -192,6 +192,11 @@ function onGetNameIdSuccess(event) {
                 $.get('/session/recent_user_name/'+playerId, function(event) {
                     var playerUsername = event.uname;
                     testButtonText.text = "It's " + playerUsername + "'s turn.";
+                    var name = $("<span>").addClass("name").text("It's "+data.name);
+                    var message = $("<span>").addClass("chat-message").text("'s turn.");
+                    var chatPost = $("<div>").addClass("message").append(name).append(message);
+                    $('#messages').append(chatPost);
+                    $('#messages').scrollTop($('#messages').scrollTop()+$('#messages').height())
                 });
             });
         },2000);
@@ -357,26 +362,26 @@ function create() {
     gameMenuGroup.position.x = game.world.centerX+115;
     gameMenuGroup.position.y = game.world.centerY+200;
 
-    menuButton1 = game.make.button(0, 25, 'rect_buttons', testMethod1, this, 2, 1, 0);
-    menuButton1.scale.setTo(0.60, 0.50);
-    window.rich = menuButton1;
+    // menuButton1 = game.make.button(0, 25, 'rect_buttons', testMethod1, this, 2, 1, 0);
+    // menuButton1.scale.setTo(0.60, 0.50);
+    // window.rich = menuButton1;
 
-    menuButton2 = game.make.button(0, 50, 'rect_buttons', testMethod2, this, 2, 1, 0);
-    menuButton2.scale.setTo(0.60, 0.50);
-    window.rich = menuButton2;
+    // menuButton2 = game.make.button(0, 50, 'rect_buttons', testMethod2, this, 2, 1, 0);
+    // menuButton2.scale.setTo(0.60, 0.50);
+    // window.rich = menuButton2;
 
-    menuButton3 = game.make.button(120, 25, 'rect_buttons', testMethod3, this, 2, 1, 0);
-    menuButton3.scale.setTo(0.60, 0.50);
-    window.rich = menuButton3;
+    // menuButton3 = game.make.button(120, 25, 'rect_buttons', testMethod3, this, 2, 1, 0);
+    // menuButton3.scale.setTo(0.60, 0.50);
+    // window.rich = menuButton3;
 
-    menuButton4 = game.make.button(120, 50, 'rect_buttons', testMethod4, this, 2, 1, 0);
-    menuButton4.scale.setTo(0.60, 0.50);
-    window.rich = menuButton4;
+    // menuButton4 = game.make.button(120, 50, 'rect_buttons', testMethod4, this, 2, 1, 0);
+    // menuButton4.scale.setTo(0.60, 0.50);
+    // window.rich = menuButton4;
 
-    gameMenuGroup.add(menuButton1);
-    gameMenuGroup.add(menuButton2);
-    gameMenuGroup.add(menuButton3);
-    gameMenuGroup.add(menuButton4);
+    // gameMenuGroup.add(menuButton1);
+    // gameMenuGroup.add(menuButton2);
+    // gameMenuGroup.add(menuButton3);
+    // gameMenuGroup.add(menuButton4);
     // end gameMenuGroup
 
     // *** end-bottom-ui ***

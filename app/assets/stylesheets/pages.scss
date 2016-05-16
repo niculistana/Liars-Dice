@@ -125,11 +125,11 @@ body {
 }
 
 #gameRules {
-  color: yellow;
+  color: black;
   font-size: 1.9em;
   min-width: 500px;
   max-width: 800px;
-  background-color: #7D1935;
+  background-color: white;
   margin-left: auto;
   margin-right: auto;
   -webkit-border-radius: 5px;
@@ -141,5 +141,14 @@ body {
           }
   h1 {
     padding-top: 10px;
+    color: #660000;
+  }
+  #aboutButton {
+    margin: 0 auto;
+    position: relative;
+    width: 250px;
+    margin: -125px; 
+    left: 50%;
+    color: white;
   }
 }
