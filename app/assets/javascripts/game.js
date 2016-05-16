@@ -168,6 +168,7 @@ function onGetNameIdSuccess(event) {
     channel.bind("render_round_start", function(event) {
         globalDiePool.allObjects = event.diepool.split(",");
         var gameRound = event.round;
+        $(".numRounds").text(gameRound);
         testButtonText.text = "Round " + gameRound + " has started. Bid amount and value is reset. Get ready!";
         //startTurn();
     });
