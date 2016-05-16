@@ -11,7 +11,7 @@ class CreateGames < ActiveRecord::Migration
       t.integer :value, :default => 0
       t.integer :logged_in_users, :default => 0
       t.string :diepool
-      t.integer :completed, :default => 0
+      t.integer :winner_id
       t.integer :round, :default => 0
       t.integer :state, :default => 0
       

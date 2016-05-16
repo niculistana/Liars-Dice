@@ -142,6 +142,9 @@ class GamesController < ApplicationController
     end
     lose_dice
 
+    num_users_remaining = GameUser.where("game_id = ? AND dice_quantity > ?", session[:game_id], 0).count
+    return_data[:num_users_remaining] = num_users_remaining
+
     Pusher.trigger('game_channel'+@game.id.to_s, 'challenge_event', return_data)
     head :ok
     # respond_to do |format|
@@ -218,6 +221,12 @@ class GamesController < ApplicationController
     head :ok
   end
 
+  def end_game
+    @game.update(game_params)
+    Pusher.trigger('game_channel'+session[:game_id].to_s, 'render_game_end', game_params)
+    head :ok
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_game
@@ -239,7 +248,7 @@ class GamesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def game_params
       params.require(:game).permit(:name, :owner, :turn, :round, :max_users, :logged_in_users,
-       :diepool, :state, :quantity, :value, :prev_player_id, :uid, :uname)
+       :diepool, :state, :quantity, :value, :prev_player_id, :uid, :uname, :winner_id)
     end
 
     def switch_turns

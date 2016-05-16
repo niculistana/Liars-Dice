@@ -98,11 +98,17 @@ function onGetNameIdSuccess(event) {
             console.log("previous player lost");
         }
         //Call start round to render new dice and start new round
+
+        num_users_remaining = data.num_users_remaining;
+        console.log("num_users_remaining: " + num_users_remaining);
         setTimeout(function(){
             globalDieGroup.removeAll();
             stashGroup.removeAll();
             dieBidGroup.removeAll();
-            startRound();
+            if (num_users_remaining > 1)
+                startRound();
+            else
+                endGame();
         }, 3000);
     });
 
@@ -190,9 +196,11 @@ function onGetNameIdSuccess(event) {
     });
 
     channel.bind("render_game_end", function(event) {
-        // do event broadcasting stuff here
-        // render next player in queue
-        testButtonText.text = "Game ayyLmao is over! The winner is: Listana! Congratulations :)";
+        var winnerId = event.winner_id;
+        $.get('/session/recent_user_name/'+winnerId, function(event) {
+            var winnerUserName = event.uname;
+            testButtonText.text = "Game is over! The winner is " + winnerUserName + "! Congratulations :)";
+        });
     });
 
     channel.bind("render_round_end", function(event) {
@@ -387,7 +395,8 @@ function create() {
 }
 
 function testMethod1() {
-    startGame();
+    // startGame();
+    endGame();
 }
 
 function testMethod2() {
