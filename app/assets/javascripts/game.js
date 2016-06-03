@@ -48,7 +48,7 @@ function preload() {
     // game.load.baseURL = "https://staging-4242.herokuapp.com";
 
     // production url
-    // game.load.baseURL = "https://intense-temple-36417.herokuapp.com";
+    // game.load.baseURL = "https://intense-temple-36417.herokuapp.com/";
     game.load.path = "assets/";
     game.load.spritesheet('rect_buttons', 'sprites/uipack_fixed/new_ui/buttons/rect_buttons.png', 192, 49);
     game.load.spritesheet('square_buttons', 'sprites/uipack_fixed/new_ui/buttons/square_buttons.png', 51, 49);
@@ -192,39 +192,10 @@ function onGetNameIdSuccess(event) {
                 $.get('/session/recent_user_name/'+playerId, function(event) {
                     var playerUsername = event.uname;
                     testButtonText.text = "It's " + playerUsername + "'s turn.";
-                    var name = $("<span>").addClass("name").text("It's "+data.name);
-                    var message = $("<span>").addClass("chat-message").text("'s turn.");
-                    var chatPost = $("<div>").addClass("message").append(name).append(message);
-                    $('#messages').append(chatPost);
-                    $('#messages').scrollTop($('#messages').scrollTop()+$('#messages').height())
                 });
             });
         },2000);
     });
-
-    // var deleteInterval;
-    // var turnTime;
-    // channel.bind("render_turn_start", function(event) {
-    //     var gameTurnId = event.turn;
-    //     console.log(event);
-    //     $.get('/game_users/'+gameTurnId+'/user_username', function(event){
-    //         playerUsername = event.uname;
-    //         testButtonText.text = "It's " + playerUsername + "'s turn to bid or challenge.";
-    //         turnTime = 40;
-    //         var seconds;
-    //         var deleteInterval = setInterval(function () {
-    //             seconds = parseInt(turnTime % 60, 10);
-    //             seconds = seconds < 10 ? "0" + seconds : seconds;
-
-    //             $(".turnSeconds").text(seconds);
-    //             if (--turnTime < 0) {
-    //                 clearInterval(deleteInterval);
-    //                 turnTime = 0;
-    //                 testButtonText.text = "Time is up! " +  playerUsername + " lost a die.";
-    //             }
-    //         }, 1000);
-    //     });
-    // });
 
     channel.bind("render_game_end", function(event) {
         var winnerId = event.winner_id;
@@ -247,9 +218,9 @@ function create() {
     logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
 
     logo.anchor.setTo(0.5, 0.5);
-    logo.alpha = 0;
+    // logo.alpha = 0;
 
-    game.add.tween(logo).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true);
+    // game.add.tween(logo).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true);
     debugText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "left" });
     testButtonText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "left" });
     diePoolText = game.add.text(game.world.centerX, game.world.centerY, "",{ font: "12px Arial", fill: "#ff0044", align: "center", wordWrap: true, wordWrapWidth: 100 });

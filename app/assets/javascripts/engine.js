@@ -6,6 +6,7 @@ function bid() {
             var playerUsername = event.uname;
             var bid_info = {
                 game: {
+                    uid: playerId,
                     quantity: parseInt($('#dieQuantity').text()),
                     value: parseInt($('#dieValue').text()),
                     prev_player_id: playerId
@@ -188,6 +189,25 @@ function onSuccessEndGame(event) {
                 winner_id: game_winner_id
             }
         };
+
+        $.get('/session/user_id', function(event) {
+            currentPlayerId = event.uid;
+            if (currentPlayerId == game_winner_id) {
+                emitter = game.add.emitter(game.world.centerX, 250, 200);
+                emitter.makeParticles('dollars');
+                emitter.setRotation(0, 0);
+                emitter.setAlpha(0.3, 0.8);
+                emitter.setScale(0.5, 1);
+                emitter.gravity = 0;
+                emitter.start(false, 4000, 20);
+
+                setTimeout(function(){
+                    emitter.destroy();
+                    waitGame();
+                }, 20000);
+            }
+        });
+        
         $.post('/games/'+gameId+'/end_game/', game_end_info);
     });
 }

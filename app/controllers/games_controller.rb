@@ -1,5 +1,5 @@
 class GamesController < ApplicationController
-    before_action :set_game, only: [:show, :edit, :update,
+    before_action :set_game, only: [:show, :edit, :update, :check_turn?,
     :destroy, :bid, :challenge, :start_game, :end_game, :start_round, :end_round, :join]
     before_action :set_turn, only: [:bid]
 
@@ -87,6 +87,15 @@ class GamesController < ApplicationController
     head :ok
   end
 
+  #Checks if its the users turn
+  def check_turn?
+    #get game_params[:uid]
+    #check if uid is at the top of the queue
+    #if it is, return true
+    #else return false
+    game_params[:uid].to_i != @game.turn ? true : false
+  end
+
   #Save bid into the database
   #Check if bid is valid
   #If valid, save
@@ -99,16 +108,23 @@ class GamesController < ApplicationController
       :value => game_params[:value]
     }
 
-    if game_params[:quantity].to_i > @game.quantity.to_i || 
-      game_params[:value].to_i > @game.value.to_i
-      game_params[:turn] = @turn
-      @game.update(bid_params)
-      Pusher.trigger('game_channel'+@game.id.to_s, 'bid_event', bid_params)
-      head :ok
-    else
+    if check_turn?
       respond_to do |format|
-        test = {:status => "ok", :bad_response => "Your bid was not higher than the recent bid."}
+        test = {:status => "ok", :bad_response => "It is not your turn to bid"}
         format.json {render :json => test}
+      end
+    else
+      if game_params[:quantity].to_i > @game.quantity.to_i || 
+        game_params[:value].to_i > @game.value.to_i
+        game_params[:turn] = @turn
+        @game.update(bid_params)
+        Pusher.trigger('game_channel'+@game.id.to_s, 'bid_event', bid_params)
+        head :ok
+      else
+        respond_to do |format|
+          test = {:status => "ok", :bad_response => "Your bid was not higher than the recent bid."}
+          format.json {render :json => test}
+        end
       end
     end
   end
@@ -130,35 +146,38 @@ class GamesController < ApplicationController
 
     return_data[:result] = total_quantity >= @game.quantity ? true : false
 
-    if return_data[:result]
-      game_user = GameUser.all.where("user_id = ? AND game_id = ?", 
-        game_params[:uid], @game.id).first()
-      new_quantity = game_user.dice_quantity - 1
-      game_user.update({dice_quantity: new_quantity})
+    if check_turn?
+      respond_to do |format|
+        test = {:status => "ok", :bad_response => "It is not your turn to challenge"}
+        format.json {render :json => test}
+      end
     else
-      game_user = GameUser.all.where("user_id = ? AND game_id = ?", 
-      @game.prev_player_id, @game.id).first()
-      new_quantity = game_user.dice_quantity - 1
-      game_user.update({dice_quantity: new_quantity})
-      return_data[:uname] = User.find(game_user.user_id).username
+      if return_data[:result]
+        game_user = GameUser.all.where("user_id = ? AND game_id = ?", 
+          game_params[:uid], @game.id).first()
+        new_quantity = game_user.dice_quantity - 1
+        game_user.update({dice_quantity: new_quantity})
+      else
+        game_user = GameUser.all.where("user_id = ? AND game_id = ?", 
+        @game.prev_player_id, @game.id).first()
+        new_quantity = game_user.dice_quantity - 1
+        game_user.update({dice_quantity: new_quantity})
+        return_data[:uname] = User.find(game_user.user_id).username
+      end
+      lose_dice
+
+      num_users_remaining = GameUser.where("game_id = ? AND dice_quantity > ?", session[:game_id], 0).count
+      return_data[:num_users_remaining] = num_users_remaining
+
+      Pusher.trigger('game_channel'+@game.id.to_s, 'challenge_event', return_data)
+      head :ok
     end
-    lose_dice
-
-    num_users_remaining = GameUser.where("game_id = ? AND dice_quantity > ?", session[:game_id], 0).count
-    return_data[:num_users_remaining] = num_users_remaining
-
-    Pusher.trigger('game_channel'+@game.id.to_s, 'challenge_event', return_data)
-    head :ok
-    # respond_to do |format|
-    #   format.json {render :json => return_data}
-    # end
   end
 
   def lose_dice
     #subtract 1 dice from the player who made the bid if they lied
     #else subtract 1 dice from the player who challenged them
     die_pool = @game.diepool[0...-2]
-    #@game.update({diepool: die_pool})
     deal_dice(shuffle_dice(die_pool))
   end
 

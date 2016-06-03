@@ -1,7 +1,7 @@
 <% provide(:title, 'Landing') %>
 
 <div id="landingContainer" class="container">
-  <img src="/assets/sprites/piratedice.png" class="center-block" alt="Pirate Dice" id="landingImage">
+  <img src="assets/sprites/piratedice.png" class="center-block" alt="Pirate Dice" id="landingImage">
   <h1>LIAR'S DICE<h1/>
   <div class="row">
     <% if user_signed_in? %>
@@ -14,7 +14,7 @@
   </div>
   <div class="row">
     <%= link_to "Leaderboard", "#", data: {toggle: "modal", target: "#leaderBoardModal"} , class: "btn btn-info btn-lg" %>
-    <%= link_to "About", :about , class: "btn btn-success btn-lg" %>
+    <%= link_to "Game Rules", :about , class: "btn btn-success btn-lg" %>
   </div>
 </div> <!-- /container -->
 

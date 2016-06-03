@@ -2,16 +2,16 @@
 <div class="container" id="mainContainer">
   <h1>Liar's Dice</h1>
   <div class="row">
-    <div class="col-xs-12 col-md-8 well">
+    <div class="col-xs-12 col-md-8 well" id="phaser-window-main">
       <div id="phaser-window">
-        <%= javascript_include_tag 'phaser.min.js', 'data-turbolinks-track' => true %>
-        <%= javascript_include_tag 'game', 'data-turbolinks-track' => true %>
-        <%= javascript_include_tag 'chatbox', 'data-turbolinks-track' => true %>
-        <%= javascript_include_tag 'engine', 'data-turbolinks-track' => true %>
-        <%= javascript_include_tag 'player', 'data-turbolinks-track' => true %>
-        <%= javascript_include_tag 'diepool', 'data-turbolinks-track' => true %>
+        <%= javascript_include_tag 'phaser.min.js'%>
+        <%= javascript_include_tag 'game'%>
+        <%= javascript_include_tag 'chatbox'%>
+        <%= javascript_include_tag 'engine'%>
+        <%= javascript_include_tag 'player'%>
+        <%= javascript_include_tag 'diepool'%>
         <div class="uiOverlay"> 
-          <div class="overLayTopLeft hidden"id="roundNumber">
+          <div class="overLayTopLeft"id="roundNumber">
             Round: <span class="numRounds">1</span>
           </div>
           <div id="dieQuantity">
@@ -56,4 +56,5 @@
  <!-- <source src="/assets/sfx/gamebg.mp3" type="audio/mpeg"></source> -->
   <!-- Your browser does not support the audio element. -->
  <!-- </audio> -->
+  </div>
 </div>
