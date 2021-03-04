@@ -16,3 +16,11 @@ rails s
 
 ### Note
 This project is currently undergoing migration. Most methods may not necessarily be up to date.
+
+### Sample .env file
+```
+PUSHER_APP_ID=123456
+PUSHER_KEY=asdasdasdasdasdasd
+PUSHER_SECRET=asdasdasdasd
+PUSHER_CLUSTER=us
+```
