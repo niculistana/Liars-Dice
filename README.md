@@ -13,3 +13,6 @@ bundle
 rake db:migrate
 rails s
 ```
+
+### Note
+This project is currently undergoing migration. Most methods may not necessarily be up to date.

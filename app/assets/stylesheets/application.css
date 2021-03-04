@@ -14,10 +14,6 @@
  *= require_self
  *= require bootstrap.min
  */
-@font-face {
-  font-family: "TradeWinds";
-  src: url('/assets/TradeWinds-Regular');
-}
 
 body {
 	padding-top: 50px;
