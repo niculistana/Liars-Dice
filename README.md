@@ -11,6 +11,7 @@ rails 5.2.4
 ```
 bundle
 rake db:migrate
+rails assets:precompile
 rails s
 ```
 
