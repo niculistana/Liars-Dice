@@ -49,7 +49,7 @@ function preload() {
 
     // production url
     // game.load.baseURL = "https://intense-temple-36417.herokuapp.com/";
-    game.load.path = "assets/";
+    game.load.path = "phaser/";
     game.load.spritesheet('rect_buttons', 'sprites/uipack_fixed/new_ui/buttons/rect_buttons.png', 192, 49);
     game.load.spritesheet('square_buttons', 'sprites/uipack_fixed/new_ui/buttons/square_buttons.png', 51, 49);
     game.load.spritesheet('square_buttons_plus', 'sprites/uipack_fixed/new_ui/buttons/square_buttons_plus.png', 51, 49);
