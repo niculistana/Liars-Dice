@@ -1,1 +1,0 @@
-function diePool(){this.numDice=0,this.allObjects=[],this.generatePool=function(t){for(var i=0;5*t>i;i++)this.allObjects.push(Math.ceil(6*Math.random()))},this.addDie=function(t){this.allObjects.push(t)},this.emptyDiePool=function(){this.allObjects=[]}}

@@ -1,1 +1,0 @@
-function Player(i,n){this.id=n,this.name=i}
