@@ -43,7 +43,7 @@ var playerDiceGroup;
 
 function preload() {
     //For production, we change the url to intense-temple
-    game.load.baseURL = "http://localhost:3000/";
+    game.load.baseURL = "/";
     // staging url
     // game.load.baseURL = "https://staging-4242.herokuapp.com";
 
