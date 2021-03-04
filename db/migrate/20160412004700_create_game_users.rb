@@ -1,4 +1,4 @@
-class CreateGameUsers < ActiveRecord::Migration
+class CreateGameUsers < ActiveRecord::Migration[4.2]
   def change
     create_table :game_users do |t|
       t.references :game, index: true, foreign_key: true
