@@ -8,9 +8,9 @@ class ChatController < ApplicationController
     else
       username = "Guest"
     end
-    puts session[:game_id]
-    Pusher.trigger('chat_channel'+session[:game_id].to_s, 'chat', {name: username, 
-      message: params[:chatMessage]})
+    ActionCable.server.broadcast("chat_channel_" + session[:game_id].to_s, { name: username, message: params[:chatMessage] })
+    # Pusher.trigger('chat_channel'+session[:game_id].to_s, 'chat', {name: username, 
+    #   message: params[:chatMessage]})
 
     head :ok
   end

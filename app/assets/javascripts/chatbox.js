@@ -9,6 +9,7 @@ function getTime() {
 }
 
 function chat(data) {
+    console.log({data})
     var name = $("<span>").addClass("name").text(data.name);
     var message = $("<span>").addClass("chat-message").text(getTime()+": "+data.message);
     var chatPost = $("<div>").addClass("message").append(name).append(message);
@@ -41,14 +42,14 @@ function submitMessage() {
             type: 'POST',
             url: "/chat/message",
             data: chatMessage,
-            dataType: 'json',
-            success: function (data) {
-                console.log("I succeed");
-            },
-            error: function(xhr, err, errThrown) {
-                console.log(err);
-                console.log(errThrown);
-            }
+            dataType: 'json'
+            // success: function (data) {
+            //     console.log("I succeed");
+            // },
+            // error: function(xhr, err, errThrown) {
+            //     console.log(err);
+            //     console.log(errThrown);
+            // }
         });
     }
 }

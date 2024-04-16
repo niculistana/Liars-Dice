@@ -24,6 +24,7 @@ var pusher = new Pusher("926b2fce0ff5222dc001", {
     cluster: 'eu',
     encrypted: true
 });
+var consumer = ActionCable.createConsumer()
 
 // temporary button groups
 var testButtonGroup;
@@ -70,146 +71,159 @@ function onGetNameIdSuccess(event) {
     gameId = event.id.toString();
     gameName = event.name;
     joinLobby();
-    console.log("game_channel"+gameId);
-    channel = pusher.subscribe("game_channel"+gameId);
-    channel2 = pusher.subscribe("chat_channel"+gameId);
-    channel2.bind('chat', chat);
-    channel2.bind("chat_add", playerAdd);
-
-    channel.bind('challenge_event', function(data) {
-        //Convert diepool from the controller into diepool object
-        testButtonText.text = data.uname + " challenges the bid!";
-        var diePoolController = data.diepool.split(",").map(Number);
-        var newObject = [];
-        for(var i = 0; i < diePoolController.length; i++) {
-            newObject.push(diePoolController[i]);
+    console.log("game_channel_"+gameId);
+    channel = consumer.subscriptions.create("AppearanceChannel", {
+        connected: function() {
+            console.log('appeared')
         }
-        //Set globalDiePool.allObjects = newObject
-        globalDiePool.allObjects = newObject;
-
-        //settimeout before rendering diepool?
-        //render diepool
-        console.log(globalDiePool.allObjects);
-        dieSpriteGroup.renderSprites("box");
-
-        //Render who won or lost
-        if(data.result) {
-            //Challenger loses dice
-            testButtonText.text = data.uname + " lost the challenge!";
-            console.log("Current player lost");
-        } else {
-            //Challengee loses dice
-            testButtonText.text = data.uname + " lost the challenge!";
-            console.log("previous player lost");
+    });
+    channel2 = consumer.subscriptions.create("ChatChannel", {
+        connected: function() {
+            console.log('chatting');
+        },
+        received: function(data) {
+            console.log(data)
         }
-        //Call start round to render new dice and start new round
+    })
+    // channel = consumer.subscriptions.create("game_channel_"+gameId);
+    // channel2 = consumer.subscriptions.create("chat_channel_"+gameId, chat);
+    // channel2.bind('chat', chat);
+    // channel2.bind("chat_add", playerAdd);
 
-        num_users_remaining = data.num_users_remaining;
-        console.log("num_users_remaining: " + num_users_remaining);
-        setTimeout(function(){
-            globalDieGroup.removeAll();
-            stashGroup.removeAll();
-            dieBidGroup.removeAll();
-            if (num_users_remaining > 1)
-                startRound();
-            else
-                endGame();
-        }, 3000);
-    });
+    // channel.bind('challenge_event', function(data) {
+    //     //Convert diepool from the controller into diepool object
+    //     testButtonText.text = data.uname + " challenges the bid!";
+    //     var diePoolController = data.diepool.split(",").map(Number);
+    //     var newObject = [];
+    //     for(var i = 0; i < diePoolController.length; i++) {
+    //         newObject.push(diePoolController[i]);
+    //     }
+    //     //Set globalDiePool.allObjects = newObject
+    //     globalDiePool.allObjects = newObject;
 
-    channel.bind("bid_event", function(event) {
-        //render bid to everyone
-        $('#dieQuantity').text(event.quantity);
-        $('#dieValue').text(event.value);
+    //     //settimeout before rendering diepool?
+    //     //render diepool
+    //     console.log(globalDiePool.allObjects);
+    //     dieSpriteGroup.renderSprites("box");
 
-        dieBidPool.emptyDiePool();
-        dieBidGroup.removeAll();
-        dieValue = parseInt($("#dieValue").text());
-        dieQuantity = parseInt($("#dieQuantity").text());
-        for (var i = 0; i < dieQuantity; i++) 
-            dieBidPool.addDie(Math.ceil(dieValue));
-        dieBidSpriteGroup.renderSprites("box");
+    //     //Render who won or lost
+    //     if(data.result) {
+    //         //Challenger loses dice
+    //         testButtonText.text = data.uname + " lost the challenge!";
+    //         console.log("Current player lost");
+    //     } else {
+    //         //Challengee loses dice
+    //         testButtonText.text = data.uname + " lost the challenge!";
+    //         console.log("previous player lost");
+    //     }
+    //     //Call start round to render new dice and start new round
 
-        dieQuantity = event.quantity;
-        dieValue = event.value;
-        previousPlayerId = event.prev_player_id;
+    //     num_users_remaining = data.num_users_remaining;
+    //     console.log("num_users_remaining: " + num_users_remaining);
+    //     setTimeout(function(){
+    //         globalDieGroup.removeAll();
+    //         stashGroup.removeAll();
+    //         dieBidGroup.removeAll();
+    //         if (num_users_remaining > 1)
+    //             startRound();
+    //         else
+    //             endGame();
+    //     }, 3000);
+    // });
 
-        $.get("/session/recent_user_name/"+previousPlayerId, function (event){
-            var playerUsername = event.uname;
-            testButtonText.text = playerUsername + " placed a bid: " + dieQuantity + " #" + dieValue + "'s";
-        });
+    // channel.bind("bid_event", function(event) {
+    //     //render bid to everyone
+    //     $('#dieQuantity').text(event.quantity);
+    //     $('#dieValue').text(event.value);
 
-        var nextPlayerId = event.turn;
-        setTimeout(function(){
-            $.get("/session/recent_user_name/"+nextPlayerId, function (event){
-                var playerUsername = event.uname;
-                testButtonText.text = "It's " + playerUsername + "'s turn.";
-            });
-        }, 2000);
-    });
-    channel.bind("render_add", function(event) {
-        console.log("I have rendered");
-        console.log(event);
-        //if event.logged_in_users
-        for(var player = 0; player<event.logged_in_users; player++) {
-            playerPool.addPlayer(new Player("", player));
-        }
-        playerSpriteGroup.renderSprites("octagonal");
-        startGame();
-    });
+    //     dieBidPool.emptyDiePool();
+    //     dieBidGroup.removeAll();
+    //     dieValue = parseInt($("#dieValue").text());
+    //     dieQuantity = parseInt($("#dieQuantity").text());
+    //     for (var i = 0; i < dieQuantity; i++) 
+    //         dieBidPool.addDie(Math.ceil(dieValue));
+    //     dieBidSpriteGroup.renderSprites("box");
 
-    channel.bind("render_delete", function(event) {
-        console.log("I have rendered");
-        console.log(event);
-        var playerId = event.user_id;
-        $.get('/session/recent_user_name/'+playerId, function(event) {
-            var playerUsername = event.uname;
-            testButtonText.text = playerUsername + " left the game.";
-            playerGroup.removeAll();
-            playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
-            playerSpriteGroup.renderSprites("octagonal");
-        });
-    });
+    //     dieQuantity = event.quantity;
+    //     dieValue = event.value;
+    //     previousPlayerId = event.prev_player_id;
 
-    channel.bind("render_game_start", function(event) {
-        logo.destroy();
-        var gameName = event.name;
-        $(".overLayTopLeft").removeClass("hidden");
-        $(".overLayTopRight").removeClass("hidden");
-        testButtonText.text = gameName + " has started, enjoy!";
-        startRound();
-    });
+    //     $.get("/session/recent_user_name/"+previousPlayerId, function (event){
+    //         var playerUsername = event.uname;
+    //         testButtonText.text = playerUsername + " placed a bid: " + dieQuantity + " #" + dieValue + "'s";
+    //     });
 
-    channel.bind("render_round_start", function(event) {
-        globalDiePool.allObjects = event.diepool.split(",");
-        var gameRound = event.round;
-        $(".numRounds").text(gameRound);
-        testButtonText.text = "Round " + gameRound + " has started. Bid amount and value is reset. Get ready!";
+    //     var nextPlayerId = event.turn;
+    //     setTimeout(function(){
+    //         $.get("/session/recent_user_name/"+nextPlayerId, function (event){
+    //             var playerUsername = event.uname;
+    //             testButtonText.text = "It's " + playerUsername + "'s turn.";
+    //         });
+    //     }, 2000);
+    // });
+    // channel.bind("render_add", function(event) {
+    //     console.log("I have rendered");
+    //     console.log(event);
+    //     //if event.logged_in_users
+    //     for(var player = 0; player<event.logged_in_users; player++) {
+    //         playerPool.addPlayer(new Player("", player));
+    //     }
+    //     playerSpriteGroup.renderSprites("octagonal");
+    //     startGame();
+    // });
 
-        setTimeout(function(){
-            $.get('/session/game_turn_id', function(event) {
-                var playerId = event.turn;
-                $.get('/session/recent_user_name/'+playerId, function(event) {
-                    var playerUsername = event.uname;
-                    testButtonText.text = "It's " + playerUsername + "'s turn.";
-                });
-            });
-        },2000);
-    });
+    // channel.bind("render_delete", function(event) {
+    //     console.log("I have rendered");
+    //     console.log(event);
+    //     var playerId = event.user_id;
+    //     $.get('/session/recent_user_name/'+playerId, function(event) {
+    //         var playerUsername = event.uname;
+    //         testButtonText.text = playerUsername + " left the game.";
+    //         playerGroup.removeAll();
+    //         playerPool.removePlayer(playerPool.getUserIndexByUserName(playerUsername));
+    //         playerSpriteGroup.renderSprites("octagonal");
+    //     });
+    // });
 
-    channel.bind("render_game_end", function(event) {
-        var winnerId = event.winner_id;
-        $.get('/session/recent_user_name/'+winnerId, function(event) {
-            var winnerUserName = event.uname;
-            testButtonText.text = "Game is over! The winner is " + winnerUserName + "! Congratulations :)";
-        });
-    });
+    // channel.bind("render_game_start", function(event) {
+    //     logo.destroy();
+    //     var gameName = event.name;
+    //     $(".overLayTopLeft").removeClass("hidden");
+    //     $(".overLayTopRight").removeClass("hidden");
+    //     testButtonText.text = gameName + " has started, enjoy!";
+    //     startRound();
+    // });
 
-    channel.bind("render_round_end", function(event) {
-        // do event broadcasting stuff here
-        // increment round number here
-        testButtonText.text = "Round # 2 ended. Starting round # 3.";
-    });
+    // channel.bind("render_round_start", function(event) {
+    //     globalDiePool.allObjects = event.diepool.split(",");
+    //     var gameRound = event.round;
+    //     $(".numRounds").text(gameRound);
+    //     testButtonText.text = "Round " + gameRound + " has started. Bid amount and value is reset. Get ready!";
+
+    //     setTimeout(function(){
+    //         $.get('/session/game_turn_id', function(event) {
+    //             var playerId = event.turn;
+    //             $.get('/session/recent_user_name/'+playerId, function(event) {
+    //                 var playerUsername = event.uname;
+    //                 testButtonText.text = "It's " + playerUsername + "'s turn.";
+    //             });
+    //         });
+    //     },2000);
+    // });
+
+    // channel.bind("render_game_end", function(event) {
+    //     var winnerId = event.winner_id;
+    //     $.get('/session/recent_user_name/'+winnerId, function(event) {
+    //         var winnerUserName = event.uname;
+    //         testButtonText.text = "Game is over! The winner is " + winnerUserName + "! Congratulations :)";
+    //     });
+    // });
+
+    // channel.bind("render_round_end", function(event) {
+    //     // do event broadcasting stuff here
+    //     // increment round number here
+    //     testButtonText.text = "Round # 2 ended. Starting round # 3.";
+    // });
 }
 
 function create() {
