@@ -12,7 +12,17 @@
 
 ActiveRecord::Schema.define(version: 2024_04_06_062948) do
 
-  create_table "game_users", force: :cascade do |t|
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_graphql"
+  enable_extension "pg_stat_statements"
+  enable_extension "pgcrypto"
+  enable_extension "pgjwt"
+  enable_extension "pgsodium"
+  enable_extension "plpgsql"
+  enable_extension "supabase_vault"
+  enable_extension "uuid-ossp"
+
+  create_table "game_users", id: :serial, force: :cascade do |t|
     t.integer "game_id"
     t.integer "user_id"
     t.string "dice"
@@ -24,7 +34,7 @@ ActiveRecord::Schema.define(version: 2024_04_06_062948) do
     t.index ["user_id"], name: "index_game_users_on_user_id"
   end
 
-  create_table "games", force: :cascade do |t|
+  create_table "games", id: :serial, force: :cascade do |t|
     t.string "name"
     t.string "owner"
     t.integer "prev_player_id"
@@ -41,7 +51,7 @@ ActiveRecord::Schema.define(version: 2024_04_06_062948) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :serial, force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "username", default: "", null: false
@@ -60,6 +70,7 @@ ActiveRecord::Schema.define(version: 2024_04_06_062948) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["wins"], name: "index_users_on_wins"
+    t.check_constraint "(email_change_confirm_status >= 0) AND (email_change_confirm_status <= 2)", name: "users_email_change_confirm_status_check"
   end
 
   add_foreign_key "game_users", "games"

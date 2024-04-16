@@ -11,9 +11,10 @@ gem 'devise', '~> 4.7.1'
 gem "rails-erd", group: :development
 
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3', '~> 1.4', group: :development
-gem 'pg', group: :production
+# gem 'sqlite3', '~> 1.4', group: :development
+gem 'pg'
 gem 'rails_12factor', group: :production
+gem 'dotenv', groups: [:development, :test]
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
